@@ -1,0 +1,8 @@
+{
+  "updated_at": "2026-02-16T02:32:38.691675+00:00",
+  "invitation_config": {
+    "custom_code_enabled": true,
+    "custom_code": "sunnygym",
+    "one_time_validity_days": 15
+  }
+}

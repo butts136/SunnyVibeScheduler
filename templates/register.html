@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Créer un compte | Sunny Vibe Nutrition</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body class="with-left-nav">
+  <div class="app-layout">
+    {% include '_left_nav.html' %}
+    <div class="page">
+      <div class="card form-card">
+      <h1>Créer un compte</h1>
+      <p class="subtitle">Réservation de la salle d'entraînement. Un code d'invitation valide est requis.</p>
+
+      {% if errors %}
+      <div class="alert error">
+        <ul>
+          {% for error in errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      <form method="post" class="form-grid" novalidate>
+        <label>
+          Prénom
+          <input type="text" name="first_name" value="{{ form_data.first_name }}" required>
+        </label>
+
+        <label>
+          Nom
+          <input type="text" name="last_name" value="{{ form_data.last_name }}" required>
+        </label>
+
+        <label>
+          Adresse courriel
+          <input type="email" name="email" value="{{ form_data.email }}" placeholder="exemple@domaine.com">
+        </label>
+
+        <label>
+          Téléphone
+          <input type="tel" name="phone" value="{{ form_data.phone }}" placeholder="514 123-4567">
+        </label>
+
+        <label>
+          Date de naissance
+          <input type="date" name="birth_date" value="{{ form_data.birth_date }}" required>
+        </label>
+
+        <label class="full-width">
+          Code d'invitation
+          <input type="text" name="invitation_code" value="{{ form_data.invitation_code }}" required>
+        </label>
+
+        <label>
+          Mot de passe
+          <input type="password" name="password" minlength="8" required>
+        </label>
+
+        <label>
+          Confirmation du mot de passe
+          <input type="password" name="password_confirm" minlength="8" required>
+        </label>
+
+        <div class="full-width config-section-block" style="margin-top: 4px;">
+          <h3>Sécurité du compte</h3>
+          <p class="field-help">Ajoutez 3 questions/réponses personnelles. Elles serviront pour récupérer votre mot de passe.</p>
+
+          <div class="config-row">
+            <label for="security_question_1">Question #1</label>
+            <input id="security_question_1" type="text" name="security_question_1" value="{{ form_data.security_question_1 }}" maxlength="140" required>
+          </div>
+          <div class="config-row">
+            <label for="security_answer_1">Réponse #1</label>
+            <input id="security_answer_1" type="text" name="security_answer_1" maxlength="140" required>
+          </div>
+
+          <div class="config-row">
+            <label for="security_question_2">Question #2</label>
+            <input id="security_question_2" type="text" name="security_question_2" value="{{ form_data.security_question_2 }}" maxlength="140" required>
+          </div>
+          <div class="config-row">
+            <label for="security_answer_2">Réponse #2</label>
+            <input id="security_answer_2" type="text" name="security_answer_2" maxlength="140" required>
+          </div>
+
+          <div class="config-row">
+            <label for="security_question_3">Question #3</label>
+            <input id="security_question_3" type="text" name="security_question_3" value="{{ form_data.security_question_3 }}" maxlength="140" required>
+          </div>
+          <div class="config-row">
+            <label for="security_answer_3">Réponse #3</label>
+            <input id="security_answer_3" type="text" name="security_answer_3" maxlength="140" required>
+          </div>
+        </div>
+
+        <div class="full-width actions">
+          <button class="btn primary" type="submit">Créer le compte</button>
+          <a class="btn" href="{{ url_for('index') }}">Retour</a>
+        </div>
+      </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

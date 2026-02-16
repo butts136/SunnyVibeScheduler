@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Calendrier de réservation | Sunny Vibe Nutrition</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body class="calendar-body with-left-nav">
+  <div class="app-layout">
+    {% include '_left_nav.html' %}
+    <div class="calendar-main">
+      <div class="calendar-shell">
+        <section class="calendar-panel">
+      <div class="calendar-panel-head">
+        <h1>Calendrier de réservation</h1>
+        <p class="subtitle">Choisissez une journée puis une plage horaire disponible.</p>
+      </div>
+
+      <div class="calendar-nav" aria-label="Navigation des mois">
+        <button id="prevMonthBtn" class="nav-btn" type="button" aria-label="Mois précédent">&lsaquo;</button>
+        <h2 id="monthLabel" class="month-label"></h2>
+        <button id="nextMonthBtn" class="nav-btn" type="button" aria-label="Mois suivant">&rsaquo;</button>
+      </div>
+
+      <div class="reservation-calendar-wrapper">
+        <div class="weekdays" aria-hidden="true">
+          <span>Lun</span>
+          <span>Mar</span>
+          <span>Mer</span>
+          <span>Jeu</span>
+          <span>Ven</span>
+          <span>Sam</span>
+          <span>Dim</span>
+        </div>
+
+        <div id="calendarGrid" class="day-grid" role="grid" aria-label="Calendrier mensuel"></div>
+      </div>
+
+      <div class="calendar-legend">
+        <span><i class="legend-dot green"></i> Disponibilites</span>
+        <span><i class="legend-dot purple"></i> Réservé partiel</span>
+        <span><i class="legend-dot red"></i> Complet ou ferme</span>
+      </div>
+
+      <div class="actions">
+        <a class="btn" href="{{ url_for('index') }}">Accueil</a>
+      </div>
+        </section>
+
+        <section class="day-panel">
+      <div class="day-panel-head">
+        <h2 id="selectedDateLabel">Jour selectionne</h2>
+        <p id="selectedDateSubtext" class="subtitle">Choisissez une date dans le calendrier.</p>
+      </div>
+
+      <div id="daySummary" class="day-summary"></div>
+
+      <div id="timelineContainer" class="timeline-container"></div>
+
+      {% if user_can_book %}
+      <div class="actions booking-actions">
+        <button id="addBookingBtn" class="btn primary" type="button">Ajouter une réservation</button>
+      </div>
+      {% else %}
+      <p class="subtitle">Connectez-vous avec un compte utilisateur pour ajouter une réservation.</p>
+      {% endif %}
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <dialog id="bookingModal" class="user-modal booking-modal">
+    <div class="user-modal-head">
+      <h3>Ajouter une réservation</h3>
+      <button id="closeBookingModalBtn" class="btn" type="button">Fermer</button>
+    </div>
+    <div class="user-modal-content">
+      <div id="bookingFormMessage"></div>
+      <div id="bookingRules" class="booking-rules" aria-live="polite"></div>
+      <form id="bookingForm" class="reservation-config-form" novalidate>
+        <div class="config-row">
+          <label for="bookingDateInput">Date</label>
+          <input id="bookingDateInput" type="date" name="date" required>
+        </div>
+
+        <div class="config-row">
+          <label for="bookingStartInput">Heure de début</label>
+          <div class="time-input-wrap">
+            <input id="bookingStartInput" type="time" name="start_time" required>
+            <div class="time-arrows">
+              <button class="time-arrow-btn" type="button" data-target="bookingStartInput" data-direction="up" aria-label="Augmenter l'heure de début">&#9650;</button>
+              <button class="time-arrow-btn" type="button" data-target="bookingStartInput" data-direction="down" aria-label="Diminuer l'heure de début">&#9660;</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="config-row">
+          <label for="bookingEndInput">Heure de fin</label>
+          <div class="time-input-wrap">
+            <input id="bookingEndInput" type="time" name="end_time" required>
+            <div class="time-arrows">
+              <button class="time-arrow-btn" type="button" data-target="bookingEndInput" data-direction="up" aria-label="Augmenter l'heure de fin">&#9650;</button>
+              <button class="time-arrow-btn" type="button" data-target="bookingEndInput" data-direction="down" aria-label="Diminuer l'heure de fin">&#9660;</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="config-row">
+          <label for="bookingTitleInput">Titre (optionnel)</label>
+          <input id="bookingTitleInput" type="text" name="title" maxlength="120" placeholder="Ex: Entraînement">
+        </div>
+
+        {% if reservation_config_json.allow_companion_booking %}
+        <div id="bookingCompanionWrap" class="config-row">
+          <label for="bookingCompanionCountInput">Nombre d’accompagnateurs</label>
+          <input id="bookingCompanionCountInput" type="number" min="0" step="1" value="0" name="companion_count">
+          <p class="field-help">Le total de personnes = vous + accompagnateurs.</p>
+        </div>
+        {% endif %}
+
+        <div id="bookingPrivateWrap" class="config-row checkbox-row">
+          <label for="bookingPrivateInput">Je désire ne pas partager la salle avec des étrangers</label>
+          <input id="bookingPrivateInput" type="checkbox" name="is_private">
+        </div>
+
+        <div class="actions">
+          <button class="btn primary" type="submit">Confirmer la réservation</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <script>
+    window.SUNNYVIBE_OPENING_HOURS = {{ opening_hours_json|tojson }};
+    window.SUNNYVIBE_HOLIDAYS = {{ holidays_json|tojson }};
+    window.SUNNYVIBE_SPECIAL_DATES = {{ special_dates_json|tojson }};
+    window.SUNNYVIBE_RESERVATION_CONFIG = {{ reservation_config_json|tojson }};
+    window.SUNNYVIBE_BOOKINGS = {{ bookings_json|tojson }};
+    window.SUNNYVIBE_BLOCKED_RULES = {{ blocked_slots_json|tojson }};
+    window.SUNNYVIBE_USER_CAN_BOOK = {{ user_can_book|tojson }};
+  </script>
+  <script src="{{ url_for('static', filename='calendar.js', v=calendar_js_version) }}"></script>
+</body>
+</html>

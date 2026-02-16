@@ -1,0 +1,16 @@
+{
+  "updated_at": "2026-02-16T02:41:59.989627+00:00",
+  "reservation_config": {
+    "max_simultaneous_bookings": 3,
+    "min_duration_minutes": 30,
+    "max_duration_minutes": 90,
+    "latest_start_before_close_minutes": 30,
+    "slot_interval_enabled": true,
+    "slot_interval_minutes": 15,
+    "allow_back_to_back": false,
+    "fixed_time_only": true,
+    "fixed_time_interval_minutes": 15,
+    "allow_companion_booking": false,
+    "allow_private_room_choice": true
+  }
+}

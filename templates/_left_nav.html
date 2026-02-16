@@ -1,0 +1,119 @@
+<button
+  id="leftNavToggle"
+  class="left-nav-toggle"
+  type="button"
+  aria-label="Ouvrir le volet de navigation"
+  aria-expanded="false"
+  aria-controls="leftNav"
+>
+  <span class="left-nav-toggle-icon" aria-hidden="true"></span>
+  Menu
+</button>
+
+<aside id="leftNav" class="left-nav" aria-label="Navigation principale">
+  <div class="left-nav-head">
+    <h2>Sunny Vibe</h2>
+  </div>
+
+  <nav class="left-nav-links" aria-label="Navigation générale">
+    <a class="btn" href="{{ url_for('index') }}">Accueil</a>
+    <a class="btn" href="{{ url_for('calendar') }}">Réservation Salle d'entrainement</a>
+    {% if is_user_authenticated %}<a class="btn" href="{{ url_for('my_bookings') }}">Mes réservations</a>{% endif %}
+    <a class="btn" href="{{ url_for('horaire') }}">Horaires</a>
+    {% if is_admin_authenticated %}<a class="btn" href="{{ url_for('admin_dashboard') }}">Tableau de bord</a>{% endif %}
+  </nav>
+
+  {% if admin_nav_mode and is_admin_authenticated %}
+  <nav class="admin-tabs" aria-label="Sections administrateur">
+    <section class="admin-nav-section">
+      <h3 class="admin-nav-title">Réservations</h3>
+      <div class="admin-nav-subtabs">
+        <button class="admin-tab {% if active_tab == 'bookings-panel' %}is-active{% endif %}" type="button" data-tab-target="bookings-panel">Gérer les réservations</button>
+        <button class="admin-tab {% if active_tab == 'blocked-slots-panel' %}is-active{% endif %}" type="button" data-tab-target="blocked-slots-panel">Blocages horaires</button>
+        <button class="admin-tab {% if active_tab == 'configuration-panel' %}is-active{% endif %}" type="button" data-tab-target="configuration-panel">Règles de réservation</button>
+      </div>
+    </section>
+
+    <section class="admin-nav-section">
+      <h3 class="admin-nav-title">Disponibilités</h3>
+      <div class="admin-nav-subtabs">
+        <button class="admin-tab {% if active_tab == 'opening-hours-panel' %}is-active{% endif %}" type="button" data-tab-target="opening-hours-panel">Heures d'ouverture</button>
+        <button class="admin-tab {% if active_tab == 'invitation-codes-panel' %}is-active{% endif %}" type="button" data-tab-target="invitation-codes-panel">Invitations</button>
+      </div>
+    </section>
+
+    <section class="admin-nav-section">
+      <h3 class="admin-nav-title">Utilisateurs</h3>
+      <div class="admin-nav-subtabs">
+        <button class="admin-tab {% if active_tab == 'users-panel' %}is-active{% endif %}" type="button" data-tab-target="users-panel">Gestion des comptes</button>
+      </div>
+    </section>
+  </nav>
+  {% endif %}
+
+  <section class="left-nav-auth" aria-label="Compte et connexion">
+    <h3 class="left-nav-section-title">Compte et Connexion</h3>
+    {% if is_user_authenticated %}
+    <p class="left-nav-help"><strong>Connecté en tant que {{ connection_display_name }}</strong></p>
+    {% elif is_admin_authenticated %}
+    <p class="left-nav-help"><strong>Connecté en tant que Administrateur</strong></p>
+    {% else %}
+    <p class="left-nav-help">Connectez-vous ou créez un compte pour réserver la salle.</p>
+    {% endif %}
+    <div class="left-nav-links">
+    {% if is_user_authenticated or is_admin_authenticated %}
+      <a class="btn danger" href="{{ url_for('logout') }}">Déconnexion</a>
+    {% else %}
+      <a class="btn primary" href="{{ url_for('login') }}">Connexion</a>
+      <a class="btn" href="{{ url_for('register') }}">Créer un compte</a>
+    {% endif %}
+    </div>
+  </section>
+</aside>
+
+<div id="leftNavBackdrop" class="left-nav-backdrop" hidden></div>
+
+<script>
+  (function initLeftNav() {
+    const nav = document.getElementById('leftNav');
+    const toggle = document.getElementById('leftNavToggle');
+    const backdrop = document.getElementById('leftNavBackdrop');
+    if (!nav || !toggle || !backdrop) {
+      return;
+    }
+
+    const closeNav = () => {
+      nav.classList.remove('is-open');
+      toggle.setAttribute('aria-expanded', 'false');
+      backdrop.hidden = true;
+    };
+
+    const openNav = () => {
+      nav.classList.add('is-open');
+      toggle.setAttribute('aria-expanded', 'true');
+      backdrop.hidden = false;
+    };
+
+    toggle.addEventListener('click', () => {
+      if (nav.classList.contains('is-open')) {
+        closeNav();
+      } else {
+        openNav();
+      }
+    });
+
+    backdrop.addEventListener('click', closeNav);
+
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        closeNav();
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      if (!window.matchMedia('(max-width: 980px)').matches) {
+        closeNav();
+      }
+    });
+  })();
+</script>
