@@ -1,0 +1,19 @@
+# Python cache / virtual env
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Environment variables / local secrets
+.env
+.env.*
+
+# Local runtime data with sensitive content
+data/admin_account.key
+data/admin_account.json
+data/sunnyvibe.db
+data/invitation_config.json
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
