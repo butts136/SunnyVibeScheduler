@@ -1430,14 +1430,30 @@ body.hours-calendar-body {
   background: #dbe4ef;
 }
 
+.hours-desktop-month-divider {
+  grid-column: 1 / -1;
+  border-top: 1px solid #d8e2ef;
+  border-bottom: 1px solid #d8e2ef;
+  background: linear-gradient(90deg, #edf5ff 0%, #f2fbff 100%);
+  color: #0f3c61;
+  text-align: center;
+  font-weight: 900;
+  text-transform: capitalize;
+  letter-spacing: 0.03em;
+  font-size: 0.74rem;
+  padding: 5px 8px;
+}
+
 .hours-desktop-day {
-  min-height: 118px;
-  padding: 8px 8px 9px;
+  min-height: 126px;
+  padding: 9px 8px 10px;
   background: #ffffff;
-  border: 1px solid #e3ebf5;
+  border: 1px solid #e0e8f2;
+  border-radius: 0;
   display: grid;
   gap: 4px;
   align-content: start;
+  text-align: center;
 }
 
 .hours-desktop-day.empty {
@@ -1466,32 +1482,69 @@ body.hours-calendar-body {
 }
 
 .hours-desktop-weekday {
-  font-size: 0.73rem;
+  font-size: 0.68rem;
   text-transform: uppercase;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
   color: #475569;
   font-weight: 800;
 }
 
 .hours-desktop-date {
-  font-size: 0.82rem;
-  color: #0f172a;
+  font-size: 0.9rem;
+  color: #0f3c61;
   font-weight: 800;
+  line-height: 1.2;
 }
 
 .hours-desktop-hours {
-  font-size: 0.78rem;
-  color: #1e293b;
+  display: inline-block;
+  justify-self: center;
+  font-size: 0.74rem;
+  color: #1d4f7a;
   font-weight: 800;
+  background: #eef6ff;
+  border: 1px solid #d4e4f7;
+  border-radius: 999px;
+  padding: 3px 8px;
 }
 
 .hours-desktop-note {
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   color: #334155;
 }
 
 .hours-desktop-note.holiday {
   color: #b45309;
+}
+
+.hours-desktop-status-row {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.hours-desktop-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 2px 7px;
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+}
+
+.hours-desktop-status.is-special {
+  color: #1d4ed8;
+  background: #dbeafe;
+  border: 1px solid #bfdbfe;
+}
+
+.hours-desktop-status.is-holiday {
+  color: #b45309;
+  background: #ffedd5;
+  border: 1px solid #fed7aa;
 }
 
 .hours-calendar-mobile-panel {
@@ -1520,9 +1573,9 @@ body.hours-calendar-body {
   border: 1px solid #d9e4f1;
   border-radius: 12px;
   background: #ffffff;
-  padding: 10px;
+  padding: 14px 12px;
   display: grid;
-  gap: 2px;
+  gap: 4px;
 }
 
 .hours-mobile-day.is-today {
@@ -1544,32 +1597,32 @@ body.hours-calendar-body {
 }
 
 .hours-mobile-line.weekday {
-  font-size: 0.82rem;
+  font-size: 1rem;
   font-weight: 900;
   color: #0f172a;
 }
 
 .hours-mobile-line.day {
-  font-size: 0.8rem;
+  font-size: 0.98rem;
   font-weight: 800;
   color: #1e293b;
 }
 
 .hours-mobile-line.year {
-  font-size: 0.76rem;
+  font-size: 0.9rem;
   font-weight: 700;
   color: #475569;
 }
 
 .hours-mobile-line.hours {
-  font-size: 0.8rem;
+  font-size: 1rem;
   font-weight: 900;
   color: #0f3c61;
-  margin-top: 3px;
+  margin-top: 4px;
 }
 
 .hours-mobile-line.info {
-  font-size: 0.74rem;
+  font-size: 0.88rem;
 }
 
 .hours-mobile-line.info.special {
@@ -1605,27 +1658,27 @@ body.hours-calendar-body {
 
 @media (max-width: 560px) {
   .hours-mobile-day {
-    padding: 8px;
-    gap: 1px;
+    padding: 11px 10px;
+    gap: 3px;
   }
 
   .hours-mobile-month-divider {
-    font-size: 0.68rem;
-    padding: 3px 8px;
+    font-size: 0.76rem;
+    padding: 4px 10px;
   }
 
   .hours-mobile-line.weekday {
-    font-size: 0.76rem;
+    font-size: 0.9rem;
   }
 
   .hours-mobile-line.day,
   .hours-mobile-line.hours {
-    font-size: 0.74rem;
+    font-size: 0.88rem;
   }
 
   .hours-mobile-line.year,
   .hours-mobile-line.info {
-    font-size: 0.68rem;
+    font-size: 0.8rem;
   }
 }
 
