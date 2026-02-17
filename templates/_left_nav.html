@@ -88,12 +88,14 @@
       nav.classList.remove('is-open');
       toggle.setAttribute('aria-expanded', 'false');
       backdrop.hidden = true;
+      document.body.classList.remove('nav-open');
     };
 
     const openNav = () => {
       nav.classList.add('is-open');
       toggle.setAttribute('aria-expanded', 'true');
       backdrop.hidden = false;
+      document.body.classList.add('nav-open');
     };
 
     toggle.addEventListener('click', () => {
