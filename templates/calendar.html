@@ -147,6 +147,7 @@
     window.SUNNYVIBE_BOOKINGS = {{ bookings_json|tojson }};
     window.SUNNYVIBE_BLOCKED_RULES = {{ blocked_slots_json|tojson }};
     window.SUNNYVIBE_USER_CAN_BOOK = {{ user_can_book|tojson }};
+    window.SUNNYVIBE_API_BOOKINGS_URL = {{ url_for('create_booking')|tojson }};
   </script>
   <script src="{{ url_for('static', filename='calendar.js', v=calendar_js_version) }}"></script>
 </body>

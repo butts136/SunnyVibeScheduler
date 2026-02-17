@@ -58,6 +58,7 @@
   const configuredBookings = sanitizeBookings(window.SUNNYVIBE_BOOKINGS || {});
   const configuredBlockedRules = sanitizeBlockedRules(window.SUNNYVIBE_BLOCKED_RULES || []);
   const userCanBook = Boolean(window.SUNNYVIBE_USER_CAN_BOOK);
+  const createBookingApiUrl = resolveApiUrl(window.SUNNYVIBE_API_BOOKINGS_URL || 'api/bookings');
   const timeInputDirection = new WeakMap();
   const previousTimeValue = new WeakMap();
 
@@ -219,7 +220,7 @@
       }
 
       try {
-        const response = await fetch('/api/bookings', {
+        const response = await fetch(createBookingApiUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
@@ -1750,6 +1751,19 @@
     }
 
     return new Date(monthDate.getFullYear(), monthDate.getMonth(), 1);
+  }
+
+  function resolveApiUrl(value) {
+    const raw = String(value || '').trim();
+    if (!raw) {
+      return 'api/bookings';
+    }
+
+    try {
+      return new URL(raw, window.location.href).toString();
+    } catch (error) {
+      return raw;
+    }
   }
 
   render();
