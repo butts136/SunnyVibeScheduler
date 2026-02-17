@@ -4537,6 +4537,17 @@ body.calendar-body .day-cell .day-state-pill {
   color: #b45309;
 }
 
+.calendar-mobile-empty-month {
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 10px 12px;
+}
+
 @media (max-width: 760px) {
   body.calendar-body .weekdays,
   body.calendar-body .day-grid {
@@ -4582,6 +4593,11 @@ body.calendar-body .day-cell .day-state-pill {
 
   body.calendar-body .calendar-mobile-holiday {
     font-size: 0.68rem;
+  }
+
+  body.calendar-body .calendar-mobile-empty-month {
+    font-size: 0.74rem;
+    padding: 8px 10px;
   }
 }
 

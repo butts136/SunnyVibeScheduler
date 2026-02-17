@@ -651,7 +651,12 @@
       } else {
         cellBtn.addEventListener('click', () => {
           state.selectedDate = cellDate;
+          if (dayPanelEl) {
+            dayPanelEl.hidden = false;
+            dayPanelEl.removeAttribute('hidden');
+          }
           render();
+          scrollToDayPanelIfMobile();
         });
       }
 
@@ -679,12 +684,16 @@
     divider.textContent = monthTitle;
     calendarMobileListEl.appendChild(divider);
 
+    let renderedDays = 0;
     for (let dayNumber = 1; dayNumber <= daysInMonth; dayNumber += 1) {
       const cellDate = new Date(year, month, dayNumber);
       const dayData = getDayData(cellDate);
       const isToday = isSameDay(cellDate, today);
       const isSelected = isSameDay(cellDate, state.selectedDate);
       const isPast = cellDate < today;
+      if (isPast) {
+        continue;
+      }
       const holidayData = getHolidayForDate(cellDate);
       const isClosedDay = dayData.totalMinutes === 0;
       const bookingCount = getBookingCountForDate(cellDate);
@@ -740,11 +749,24 @@
       } else {
         card.addEventListener('click', () => {
           state.selectedDate = cellDate;
+          if (dayPanelEl) {
+            dayPanelEl.hidden = false;
+            dayPanelEl.removeAttribute('hidden');
+          }
           render();
+          scrollToDayPanelIfMobile();
         });
       }
 
       calendarMobileListEl.appendChild(card);
+      renderedDays += 1;
+    }
+
+    if (renderedDays === 0) {
+      const emptyState = document.createElement('div');
+      emptyState.className = 'calendar-mobile-empty-month';
+      emptyState.textContent = 'Aucune date à venir pour ce mois.';
+      calendarMobileListEl.appendChild(emptyState);
     }
   }
 
@@ -752,6 +774,7 @@
     if (!state.selectedDate) {
       if (dayPanelEl) {
         dayPanelEl.hidden = true;
+        dayPanelEl.setAttribute('hidden', 'hidden');
       }
 
       if (selectedDateLabelEl) {
@@ -774,6 +797,7 @@
 
     if (dayPanelEl) {
       dayPanelEl.hidden = false;
+      dayPanelEl.removeAttribute('hidden');
     }
 
     const data = getDayData(state.selectedDate);
@@ -1640,6 +1664,22 @@
 
   function mondayIndex(jsDay) {
     return (jsDay + 6) % 7;
+  }
+
+  function scrollToDayPanelIfMobile() {
+    if (!dayPanelEl) {
+      return;
+    }
+
+    if (!window.matchMedia('(max-width: 980px)').matches) {
+      return;
+    }
+
+    try {
+      dayPanelEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (error) {
+      dayPanelEl.scrollIntoView(true);
+    }
   }
 
   function getDefaultSelectionForMonth(monthDate, currentDate) {
