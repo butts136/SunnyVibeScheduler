@@ -1553,7 +1553,7 @@ body.hours-calendar-body {
 
 .hours-mobile-list {
   display: grid;
-  gap: 8px;
+  gap: 12px;
 }
 
 .hours-mobile-month-divider {
@@ -1564,18 +1564,18 @@ body.hours-calendar-body {
   font-weight: 900;
   text-transform: capitalize;
   text-align: center;
-  font-size: 0.76rem;
+  font-size: 1.02rem;
   letter-spacing: 0.02em;
-  padding: 4px 10px;
+  padding: 8px 12px;
 }
 
 .hours-mobile-day {
   border: 1px solid #d9e4f1;
   border-radius: 12px;
   background: #ffffff;
-  padding: 14px 12px;
+  padding: 18px 14px;
   display: grid;
-  gap: 4px;
+  gap: 6px;
 }
 
 .hours-mobile-day.is-today {
@@ -1597,32 +1597,32 @@ body.hours-calendar-body {
 }
 
 .hours-mobile-line.weekday {
-  font-size: 1rem;
+  font-size: 1.36rem;
   font-weight: 900;
   color: #0f172a;
 }
 
 .hours-mobile-line.day {
-  font-size: 0.98rem;
+  font-size: 1.3rem;
   font-weight: 800;
   color: #1e293b;
 }
 
 .hours-mobile-line.year {
-  font-size: 0.9rem;
+  font-size: 1.16rem;
   font-weight: 700;
   color: #475569;
 }
 
 .hours-mobile-line.hours {
-  font-size: 1rem;
+  font-size: 1.34rem;
   font-weight: 900;
   color: #0f3c61;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .hours-mobile-line.info {
-  font-size: 0.88rem;
+  font-size: 1.08rem;
 }
 
 .hours-mobile-line.info.special {
@@ -1658,27 +1658,27 @@ body.hours-calendar-body {
 
 @media (max-width: 560px) {
   .hours-mobile-day {
-    padding: 11px 10px;
-    gap: 3px;
+    padding: 14px 12px;
+    gap: 5px;
   }
 
   .hours-mobile-month-divider {
-    font-size: 0.76rem;
-    padding: 4px 10px;
+    font-size: 0.94rem;
+    padding: 7px 10px;
   }
 
   .hours-mobile-line.weekday {
-    font-size: 0.9rem;
+    font-size: 1.16rem;
   }
 
   .hours-mobile-line.day,
   .hours-mobile-line.hours {
-    font-size: 0.88rem;
+    font-size: 1.08rem;
   }
 
   .hours-mobile-line.year,
   .hours-mobile-line.info {
-    font-size: 0.8rem;
+    font-size: 0.96rem;
   }
 }
 
