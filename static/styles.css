@@ -109,7 +109,7 @@ body > * {
   padding-left: 276px;
 }
 
-.app-layout > :not(.left-nav):not(.left-nav-toggle):not(.left-nav-backdrop) {
+.app-layout > :not(.left-nav):not(.left-nav-toggle):not(.left-nav-backdrop):not(.left-nav-mobile-bar) {
   width: 100%;
   margin-left: auto;
   margin-right: auto;
@@ -178,6 +178,10 @@ body > * {
 }
 
 .left-nav-toggle {
+  display: none;
+}
+
+.left-nav-mobile-bar {
   display: none;
 }
 
@@ -518,17 +522,16 @@ body > * {
     transform: translateX(-110%);
     transition: transform 0.2s ease;
     width: min(82vw, 300px);
+    z-index: 1200;
+    pointer-events: none;
   }
 
   .left-nav.is-open {
     transform: translateX(0);
+    pointer-events: auto;
   }
 
   .left-nav-toggle {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    z-index: 1200;
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -539,6 +542,21 @@ body > * {
     font-weight: 700;
     color: #111827;
     box-shadow: 0 8px 20px rgba(16, 24, 40, 0.16);
+  }
+
+  .left-nav-mobile-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1205;
+    display: flex;
+    justify-content: center;
+    padding: 6px 10px max(6px, env(safe-area-inset-bottom));
+    border-top: 1px solid #dbe4ef;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 -8px 22px rgba(15, 23, 42, 0.08);
   }
 
   .left-nav-toggle-icon {
@@ -571,11 +589,11 @@ body > * {
     position: fixed;
     inset: 0;
     background: rgba(15, 23, 42, 0.35);
-    z-index: 1150;
+    z-index: 1190;
   }
 
-  .app-layout > :not(.left-nav):not(.left-nav-toggle):not(.left-nav-backdrop) {
-    padding-top: 42px;
+  .app-layout > :not(.left-nav):not(.left-nav-toggle):not(.left-nav-backdrop):not(.left-nav-mobile-bar) {
+    padding-bottom: 56px;
   }
 }
 
@@ -2888,5 +2906,386 @@ body.calendar-body .day-cell .day-state-pill {
 
   body.calendar-body .day-cell .day-state-pill {
     font-size: 0.58rem;
+  }
+}
+
+/* Global mobile cleanup: compact UI + smaller text across pages/tabs */
+@media (max-width: 980px) {
+  html {
+    font-size: 14px;
+  }
+
+  body {
+    padding: 10px;
+  }
+
+  .page,
+  .home-main {
+    max-width: none;
+    gap: 10px;
+  }
+
+  .card {
+    padding: 14px;
+    border-radius: 10px;
+  }
+
+  .card h1 {
+    font-size: 1.2rem;
+    margin-bottom: 6px;
+  }
+
+  .subtitle {
+    font-size: 0.84rem;
+    margin-bottom: 10px;
+  }
+
+  .btn {
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.84rem;
+  }
+
+  .actions {
+    gap: 8px;
+  }
+
+  .alert {
+    padding: 8px 10px;
+    font-size: 0.82rem;
+    margin-bottom: 10px;
+  }
+
+  .form-grid {
+    gap: 8px;
+  }
+
+  .form-grid label {
+    gap: 4px;
+    font-size: 0.82rem;
+  }
+
+  .form-grid input,
+  .form-grid select {
+    padding: 7px 8px;
+    font-size: 0.84rem;
+    border-radius: 8px;
+  }
+
+  .left-nav {
+    width: min(86vw, 280px);
+    padding: 8px;
+  }
+
+  .left-nav-head h2 {
+    font-size: 0.96rem;
+  }
+
+  .left-nav-links {
+    gap: 5px;
+  }
+
+  .left-nav-help {
+    font-size: 0.74rem;
+    line-height: 1.25;
+  }
+
+  .left-nav-section-title {
+    font-size: 0.66rem;
+  }
+
+  .left-nav-auth {
+    padding-top: 8px;
+    gap: 6px;
+  }
+
+  .left-nav-mobile-bar {
+    padding: 4px 8px max(4px, env(safe-area-inset-bottom));
+  }
+
+  .left-nav-toggle {
+    padding: 6px 10px;
+    min-height: 32px;
+    font-size: 0.8rem;
+    border-radius: 8px;
+  }
+
+  .home-hero {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .home-hero h1 {
+    font-size: 1.26rem;
+  }
+
+  .home-lead {
+    margin-top: 8px;
+    font-size: 0.82rem;
+  }
+
+  .home-status-card {
+    padding: 8px;
+    gap: 3px;
+  }
+
+  .home-status-card span {
+    font-size: 0.64rem;
+  }
+
+  .home-status-card strong {
+    font-size: 0.8rem;
+  }
+
+  .home-panel {
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+  .home-panel h2 {
+    font-size: 0.96rem;
+    margin-bottom: 6px;
+  }
+
+  .home-list,
+  .home-steps {
+    gap: 6px;
+    font-size: 0.8rem;
+    padding-left: 16px;
+  }
+
+  .home-link {
+    padding: 8px;
+    border-radius: 9px;
+    gap: 2px;
+  }
+
+  .home-link strong {
+    font-size: 0.82rem;
+  }
+
+  .home-link span {
+    font-size: 0.72rem;
+  }
+
+  .calendar-panel,
+  .day-panel {
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .calendar-panel-head h1 {
+    font-size: 1rem;
+  }
+
+  .month-label {
+    font-size: 0.9rem;
+  }
+
+  .calendar-legend {
+    font-size: 0.68rem;
+    gap: 6px;
+    margin: 6px 0 8px;
+  }
+
+  .day-panel-head h2 {
+    font-size: 1rem;
+  }
+
+  .day-summary {
+    margin: 8px 0 10px;
+    gap: 6px;
+  }
+
+  .summary-chip {
+    padding: 7px 8px;
+    border-radius: 9px;
+  }
+
+  .summary-chip small {
+    font-size: 0.66rem;
+  }
+
+  .summary-chip strong {
+    font-size: 0.84rem;
+  }
+
+  .timeline-container {
+    min-height: 250px;
+    padding: 8px 8px 10px;
+    border-radius: 10px;
+  }
+
+  .admin-card {
+    padding: 10px;
+  }
+
+  .admin-tabs {
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .admin-nav-title {
+    font-size: 0.64rem;
+  }
+
+  .admin-nav-subtabs {
+    gap: 6px;
+  }
+
+  .admin-tab {
+    padding: 6px 8px;
+    font-size: 0.76rem;
+    border-radius: 8px;
+  }
+
+  .admin-section {
+    margin: 10px 0 12px;
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .admin-section h2 {
+    font-size: 1rem;
+    margin-bottom: 6px;
+  }
+
+  .opening-hours-card,
+  .config-section-block {
+    padding: 8px;
+    border-radius: 10px;
+    gap: 7px;
+  }
+
+  .opening-hours-card-head h2,
+  .config-section-block h3 {
+    font-size: 0.92rem;
+  }
+
+  .opening-hours-card-head p,
+  .field-help {
+    font-size: 0.74rem;
+  }
+
+  .opening-hours-row {
+    padding: 8px;
+  }
+
+  .opening-hours-row input[type="time"],
+  .config-row input[type="number"],
+  .config-row input[type="date"],
+  .config-row input[type="time"],
+  .config-row input[type="text"],
+  .config-row select {
+    min-height: 34px;
+    padding: 6px 8px;
+    font-size: 0.82rem;
+  }
+
+  .bookings-table th,
+  .bookings-table td {
+    padding: 7px 6px;
+    font-size: 0.78rem;
+  }
+
+  .bookings-table th {
+    font-size: 0.68rem;
+  }
+
+  .admin-bookings-toolbar {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .bookings-date-filter label {
+    font-size: 0.8rem;
+  }
+
+  .bookings-date-filter input[type="date"] {
+    min-height: 34px;
+    padding: 6px 8px;
+    font-size: 0.82rem;
+  }
+
+  .admin-bookings-timeline {
+    min-height: 300px;
+  }
+
+  .booking-day-title {
+    font-size: 0.9rem;
+  }
+
+  .booking-day-count {
+    font-size: 0.66rem;
+    padding: 3px 8px;
+  }
+
+  .booking-item.booking-item-simple {
+    margin-bottom: 8px;
+    border-radius: 10px;
+    padding: 8px 10px;
+  }
+
+  .booking-item-meta {
+    font-size: 0.78rem;
+    gap: 3px;
+  }
+
+  .users-cards-grid {
+    gap: 8px;
+  }
+
+  .user-card-btn {
+    padding: 9px;
+    border-radius: 10px;
+  }
+
+  .user-card-name {
+    font-size: 0.86rem;
+  }
+
+  .user-card-subtitle {
+    font-size: 0.74rem;
+  }
+
+  .user-modal .user-modal-head {
+    padding: 10px 12px;
+  }
+
+  .user-modal .user-modal-content {
+    padding: 10px 12px 12px;
+  }
+}
+
+@media (max-width: 560px) {
+  html {
+    font-size: 13px;
+  }
+
+  .card {
+    padding: 10px;
+  }
+
+  .btn {
+    padding: 5px 8px;
+    font-size: 0.78rem;
+  }
+
+  .left-nav-toggle {
+    font-size: 0.76rem;
+  }
+
+  .home-hero h1 {
+    font-size: 1.12rem;
+  }
+
+  .admin-tab {
+    font-size: 0.72rem;
+    padding: 5px 7px;
+  }
+
+  .bookings-table th,
+  .bookings-table td {
+    font-size: 0.72rem;
   }
 }
