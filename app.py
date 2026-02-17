@@ -1956,103 +1956,19 @@ def horaire():
     holidays = _load_holidays()
     special_dates = _load_special_dates()
     day_order = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
-    day_labels = {day_key: day_label for day_key, day_label, _ in DAY_CONFIG}
-    weekly_schedule = []
+    hours_by_day = []
     for day_key in day_order:
         day_data = opening_hours.get(day_key, {'closed': True, 'start': '09:00', 'end': '09:00'})
-        is_closed = bool(day_data.get('closed', True))
-        if is_closed:
-            hours_text = 'Fermé'
+        if day_data.get('closed', True):
+            hours_by_day.append('Fermé')
         else:
-            hours_text = f"{day_data.get('start', '09:00')} à {day_data.get('end', '17:00')}"
-        weekly_schedule.append(
-            {
-                'day_key': day_key,
-                'label': day_labels.get(day_key, day_key),
-                'is_closed': is_closed,
-                'hours_text': hours_text,
-            }
-        )
-
-    today = datetime.now().date()
-    horizon_end = today + timedelta(days=60)
-
-    holidays_display = []
-    seen_holidays = set()
-    for item in holidays:
-        if not isinstance(item, dict):
-            continue
-
-        holiday_name = str(item.get('name') or '').strip() or 'Journée fériée'
-        holiday_alert = str(item.get('alert') or '').strip() or DEFAULT_HOLIDAY_ALERT
-        holiday_date = str(item.get('date') or '').strip()
-        holiday_month_day = str(item.get('month_day') or '').strip()
-        candidate_dates = []
-
-        if _is_valid_iso_date_text(holiday_date):
-            candidate_dates.append(datetime.strptime(holiday_date, '%Y-%m-%d').date())
-        elif _is_valid_month_day_text(holiday_month_day):
-            month_value = int(holiday_month_day.split('-')[0])
-            day_value = int(holiday_month_day.split('-')[1])
-            for year_value in sorted({today.year, horizon_end.year}):
-                try:
-                    candidate_dates.append(datetime(year_value, month_value, day_value).date())
-                except ValueError:
-                    continue
-
-        for candidate_date in candidate_dates:
-            if candidate_date < today or candidate_date > horizon_end:
-                continue
-            unique_key = (candidate_date.isoformat(), holiday_name.lower())
-            if unique_key in seen_holidays:
-                continue
-            seen_holidays.add(unique_key)
-            holidays_display.append(
-                {
-                    'name': holiday_name,
-                    'alert': holiday_alert,
-                    'date_label': f"{candidate_date.day} {FRENCH_MONTHS.get(candidate_date.month, candidate_date.month)} {candidate_date.year}",
-                    'sort_date': candidate_date,
-                }
-            )
-
-    holidays_display.sort(key=lambda item: (item['sort_date'], item['name'].lower()))
-
-    special_dates_display = []
-    sorted_special_dates = sorted(
-        [item for item in special_dates if isinstance(item, dict)],
-        key=lambda item: str(item.get('date') or '9999-99-99'),
-    )
-    for item in sorted_special_dates:
-        raw_date = str(item.get('date') or '').strip()
-        if not _is_valid_iso_date_text(raw_date):
-            continue
-
-        parsed_date = datetime.strptime(raw_date, '%Y-%m-%d').date()
-        if parsed_date < today or parsed_date > horizon_end:
-            continue
-
-        date_label = f"{parsed_date.day} {FRENCH_MONTHS.get(parsed_date.month, parsed_date.month)} {parsed_date.year}"
-
-        is_closed = bool(item.get('closed', False))
-        if is_closed:
-            hours_text = 'Fermé (horaire spécial)'
-        else:
-            hours_text = f"{item.get('start', '09:00')} à {item.get('end', '17:00')} (horaire spécial)"
-
-        special_dates_display.append(
-            {
-                'date_label': date_label,
-                'hours_text': hours_text,
-                'reason': str(item.get('reason') or '').strip(),
-            }
-        )
+            hours_by_day.append(f"{day_data.get('start', '09:00')} à {day_data.get('end', '17:00')}")
 
     return render_template(
         'horaire.html',
-        weekly_schedule=weekly_schedule,
-        holidays_display=holidays_display,
-        special_dates_display=special_dates_display,
+        hours_by_day=hours_by_day,
+        holidays_json=holidays,
+        special_dates_json=special_dates,
     )
 
 

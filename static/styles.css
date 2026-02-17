@@ -1369,6 +1369,266 @@ body.hours-overview-body {
   }
 }
 
+/* Opening hours calendar page */
+body.hours-calendar-body {
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 14px;
+}
+
+.hours-calendar-main {
+  width: 100%;
+  max-width: 1160px;
+  margin: 0 auto;
+  display: grid;
+  gap: 10px;
+}
+
+.hours-calendar-head {
+  max-width: none;
+  text-align: left;
+  padding: 14px;
+}
+
+.hours-calendar-head h1 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.hours-calendar-desktop-panel {
+  border: 1px solid #d9e4f1;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.09);
+  overflow: hidden;
+}
+
+.hours-calendar-weekdays {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 1px;
+  background: #dbe4ef;
+}
+
+.hours-calendar-weekdays span {
+  background: linear-gradient(90deg, #1f4f7b 0%, #28736c 100%);
+  color: #ffffff;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-align: center;
+  padding: 7px 4px;
+}
+
+.hours-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 1px;
+  background: #dbe4ef;
+}
+
+.hours-desktop-day {
+  min-height: 118px;
+  padding: 8px 8px 9px;
+  background: #ffffff;
+  border: 1px solid #e3ebf5;
+  display: grid;
+  gap: 4px;
+  align-content: start;
+}
+
+.hours-desktop-day.empty {
+  background: rgba(255, 255, 255, 0.74);
+}
+
+.hours-desktop-day.is-today {
+  box-shadow: inset 0 0 0 2px #fb923c;
+  background: linear-gradient(180deg, #fff4e3 0%, #fffaf2 100%);
+}
+
+.hours-desktop-day.is-holiday {
+  border-left: 4px solid #fb923c;
+}
+
+.hours-desktop-day.is-special {
+  border-right: 4px solid #2563eb;
+}
+
+.hours-desktop-weekday,
+.hours-desktop-date,
+.hours-desktop-hours,
+.hours-desktop-note {
+  margin: 0;
+  line-height: 1.24;
+}
+
+.hours-desktop-weekday {
+  font-size: 0.73rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: #475569;
+  font-weight: 800;
+}
+
+.hours-desktop-date {
+  font-size: 0.82rem;
+  color: #0f172a;
+  font-weight: 800;
+}
+
+.hours-desktop-hours {
+  font-size: 0.78rem;
+  color: #1e293b;
+  font-weight: 800;
+}
+
+.hours-desktop-note {
+  font-size: 0.68rem;
+  color: #334155;
+}
+
+.hours-desktop-note.holiday {
+  color: #b45309;
+}
+
+.hours-calendar-mobile-panel {
+  display: none;
+}
+
+.hours-mobile-list {
+  display: grid;
+  gap: 8px;
+}
+
+.hours-mobile-month-divider {
+  border: 1px solid #d3deec;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #edf5ff 0%, #f2fbff 100%);
+  color: #0f3c61;
+  font-weight: 900;
+  text-transform: capitalize;
+  text-align: center;
+  font-size: 0.76rem;
+  letter-spacing: 0.02em;
+  padding: 4px 10px;
+}
+
+.hours-mobile-day {
+  border: 1px solid #d9e4f1;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 10px;
+  display: grid;
+  gap: 2px;
+}
+
+.hours-mobile-day.is-today {
+  box-shadow: inset 0 0 0 2px #fb923c;
+  background: linear-gradient(180deg, #fff4e3 0%, #fffaf2 100%);
+}
+
+.hours-mobile-day.is-holiday {
+  border-left: 4px solid #fb923c;
+}
+
+.hours-mobile-day.is-special {
+  border-right: 4px solid #2563eb;
+}
+
+.hours-mobile-line {
+  margin: 0;
+  line-height: 1.25;
+}
+
+.hours-mobile-line.weekday {
+  font-size: 0.82rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.hours-mobile-line.day {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.hours-mobile-line.year {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #475569;
+}
+
+.hours-mobile-line.hours {
+  font-size: 0.8rem;
+  font-weight: 900;
+  color: #0f3c61;
+  margin-top: 3px;
+}
+
+.hours-mobile-line.info {
+  font-size: 0.74rem;
+}
+
+.hours-mobile-line.info.special {
+  color: #1d4ed8;
+}
+
+.hours-mobile-line.info.holiday,
+.hours-mobile-line.info.holiday-alert {
+  color: #b45309;
+}
+
+@media (max-width: 980px) {
+  body.hours-calendar-body {
+    padding: 8px;
+  }
+
+  .hours-calendar-head {
+    padding: 10px;
+  }
+
+  .hours-calendar-head h1 {
+    font-size: 1.04rem;
+  }
+
+  .hours-calendar-desktop-panel {
+    display: none;
+  }
+
+  .hours-calendar-mobile-panel {
+    display: block;
+  }
+}
+
+@media (max-width: 560px) {
+  .hours-mobile-day {
+    padding: 8px;
+    gap: 1px;
+  }
+
+  .hours-mobile-month-divider {
+    font-size: 0.68rem;
+    padding: 3px 8px;
+  }
+
+  .hours-mobile-line.weekday {
+    font-size: 0.76rem;
+  }
+
+  .hours-mobile-line.day,
+  .hours-mobile-line.hours {
+    font-size: 0.74rem;
+  }
+
+  .hours-mobile-line.year,
+  .hours-mobile-line.info {
+    font-size: 0.68rem;
+  }
+}
+
 /* Opening hours page */
 body.horaire-body {
   align-items: flex-start;
