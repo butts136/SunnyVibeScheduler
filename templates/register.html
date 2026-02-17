@@ -12,7 +12,7 @@
     <div class="page">
       <div class="card form-card">
       <h1>Créer un compte</h1>
-      <p class="subtitle">Réservation de la salle d'entraînement. Un code d'invitation valide est requis.</p>
+      <p class="subtitle">Inscrivez-vous pour réserver la salle d'entraînement. Un code d'invitation valide est requis.</p>
 
       {% if errors %}
       <div class="alert error">
@@ -25,6 +25,7 @@
       {% endif %}
 
       <form method="post" class="form-grid" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
         <label>
           Prénom
           <input type="text" name="first_name" value="{{ form_data.first_name }}" required>

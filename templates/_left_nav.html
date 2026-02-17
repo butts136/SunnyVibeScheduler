@@ -19,7 +19,7 @@
 
   <nav class="left-nav-links" aria-label="Navigation générale">
     <a class="btn" href="{{ url_for('index') }}">Accueil</a>
-    <a class="btn" href="{{ url_for('calendar') }}">Réservation Salle d'entrainement</a>
+    <a class="btn" href="{{ url_for('calendar') }}">Réservation Salle d'entraînement</a>
     {% if is_user_authenticated %}<a class="btn" href="{{ url_for('my_bookings') }}">Mes réservations</a>{% endif %}
     <a class="btn" href="{{ url_for('horaire') }}">Horaires</a>
     {% if is_admin_authenticated %}<a class="btn" href="{{ url_for('admin_dashboard') }}">Tableau de bord</a>{% endif %}

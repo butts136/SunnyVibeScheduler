@@ -12,7 +12,7 @@
     <div class="page">
       <div class="card form-card">
       <h1>Connexion</h1>
-      <p class="subtitle">Un seul écran pour accès utilisateur et administrateur.</p>
+      <p class="subtitle">Connectez-vous avec votre compte utilisateur ou administrateur.</p>
 
       {% if not admin_exists %}
       <div class="alert error">
@@ -43,6 +43,7 @@
       {% if admin_exists %}
       <form method="post" action="{{ url_for('login') }}" class="form-grid" novalidate>
         <input type="hidden" name="form_action" value="login">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
         <label class="full-width">
           Adresse courriel ou téléphone
@@ -67,6 +68,7 @@
       <h2 class="section-title">Créer le compte administrateur</h2>
       <form method="post" action="{{ url_for('login') }}" class="form-grid" novalidate>
         <input type="hidden" name="form_action" value="create_admin">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
         <label class="full-width">
           Courriel administrateur
           <input type="email" name="admin_identifier" value="{{ form_data.admin_identifier }}" required>

@@ -14,7 +14,7 @@
         <section class="calendar-panel">
       <div class="calendar-panel-head">
         <h1>Calendrier de réservation</h1>
-        <p class="subtitle">Choisissez une journée puis une plage horaire disponible.</p>
+        <p class="subtitle">Sélectionnez une journée puis choisissez une plage horaire disponible.</p>
       </div>
 
       <div class="calendar-nav" aria-label="Navigation des mois">
@@ -38,9 +38,9 @@
       </div>
 
       <div class="calendar-legend">
-        <span><i class="legend-dot green"></i> Disponibilites</span>
+        <span><i class="legend-dot green"></i> Disponibilités</span>
         <span><i class="legend-dot purple"></i> Réservé partiel</span>
-        <span><i class="legend-dot red"></i> Complet ou ferme</span>
+        <span><i class="legend-dot red"></i> Complet ou fermé</span>
       </div>
 
       <div class="actions">
@@ -50,8 +50,8 @@
 
         <section class="day-panel">
       <div class="day-panel-head">
-        <h2 id="selectedDateLabel">Jour selectionne</h2>
-        <p id="selectedDateSubtext" class="subtitle">Choisissez une date dans le calendrier.</p>
+        <h2 id="selectedDateLabel">Jour sélectionné</h2>
+        <p id="selectedDateSubtext" class="subtitle">Sélectionnez une date dans le calendrier.</p>
       </div>
 
       <div id="daySummary" class="day-summary"></div>
@@ -120,7 +120,7 @@
         {% endif %}
 
         <div id="bookingPrivateWrap" class="config-row checkbox-row">
-          <label for="bookingPrivateInput">Je désire ne pas partager la salle avec des étrangers</label>
+          <label for="bookingPrivateInput">Réservation privée (salle non partagée)</label>
           <input id="bookingPrivateInput" type="checkbox" name="is_private">
         </div>
 

@@ -13,12 +13,24 @@
   --bg-animated-3: #d5ffe2;
   --bg-animated-4: #ffe9c7;
   --mobile-nav-bar-height: 48px;
+  --focus-ring: 0 0 0 3px rgba(255, 122, 162, 0.3);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --min-tap-size: 44px;
+  --transition-fast: 0.15s ease;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
 
 html,
-body { height: 100%; }
+body {
+  height: 100%;
+  scroll-behavior: smooth;
+}
 
 body {
   margin: 0;
@@ -78,6 +90,19 @@ body > * {
   }
   100% {
     background-position: 10% 8%, 90% 12%, 12% 90%, 50% 50%;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
@@ -384,6 +409,7 @@ body.register-body {
   padding: 12px;
   background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
   color: #0f172a;
+  transition: border-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .home-link strong {
@@ -424,16 +450,28 @@ body.register-body {
 }
 
 .btn {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 10px 18px;
+  min-height: var(--min-tap-size);
   border-radius: 10px;
   text-decoration: none;
   color: #111827;
   background: transparent;
   border: 1px solid rgba(17, 24, 39, 0.08);
   font-weight: 600;
-  transition: all 0.18s ease;
+  font-size: inherit;
+  line-height: 1.3;
+  transition: all var(--transition-fast);
   cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 .btn.primary {
@@ -450,6 +488,10 @@ body.register-body {
 .btn.danger {
   border-color: #dc2626;
   color: #b91c1c;
+}
+
+.btn.danger:focus-visible {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.25);
 }
 
 .form-grid {
@@ -471,16 +513,18 @@ body.register-body {
 .form-grid select {
   width: 100%;
   padding: 10px 12px;
+  min-height: var(--min-tap-size);
   border: 1px solid #d1d5db;
   border-radius: 10px;
   font-size: 0.98rem;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .form-grid input:focus,
 .form-grid select:focus {
   outline: none;
   border-color: #ff9fbc;
-  box-shadow: 0 0 0 3px rgba(255, 122, 162, 0.15);
+  box-shadow: var(--focus-ring);
 }
 
 .full-width { grid-column: 1 / -1; }
@@ -512,6 +556,7 @@ body.register-body {
   padding: 12px;
   margin: 0 0 14px;
   font-size: 0.95rem;
+  line-height: 1.4;
 }
 
 .alert ul {
@@ -522,11 +567,13 @@ body.register-body {
 .alert.error {
   background: var(--danger-bg);
   color: var(--danger-text);
+  border-left: 4px solid var(--danger-text);
 }
 
 .alert.success {
   background: var(--success-bg);
   color: var(--success-text);
+  border-left: 4px solid var(--success-text);
 }
 
 @media (max-width: 720px) {
@@ -558,7 +605,7 @@ body.register-body {
 
   .left-nav {
     transform: translateX(-110%);
-    transition: transform 0.2s ease;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     width: min(82vw, 300px);
     top: 0;
     bottom: calc(var(--mobile-nav-bar-height) + env(safe-area-inset-bottom));
@@ -583,9 +630,16 @@ body.register-body {
     background: #fff;
     border-radius: 10px;
     padding: 8px 12px;
+    min-height: var(--min-tap-size);
     font-weight: 700;
     color: #111827;
     box-shadow: 0 8px 20px rgba(16, 24, 40, 0.16);
+    cursor: pointer;
+    transition: box-shadow var(--transition-fast), transform var(--transition-fast);
+  }
+
+  .left-nav-toggle:active {
+    transform: scale(0.96);
   }
 
   .left-nav-mobile-bar {
@@ -600,6 +654,7 @@ body.register-body {
     padding: 6px 10px max(6px, env(safe-area-inset-bottom));
     border-top: 1px solid #dbe4ef;
     background: rgba(255, 255, 255, 0.94);
+    -webkit-backdrop-filter: blur(6px);
     backdrop-filter: blur(6px);
     box-shadow: 0 -8px 22px rgba(15, 23, 42, 0.08);
     transform: translateZ(0);
@@ -636,6 +691,7 @@ body.register-body {
     inset: 0;
     background: rgba(15, 23, 42, 0.35);
     z-index: 1190;
+    animation: fadeIn 0.2s ease;
   }
 
   .app-layout > :not(.left-nav):not(.left-nav-toggle):not(.left-nav-backdrop):not(.left-nav-mobile-bar) {
@@ -667,6 +723,7 @@ body.calendar-body {
 .calendar-panel,
 .day-panel {
   background: rgba(255, 255, 255, 0.95);
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   border-radius: 18px;
   box-shadow: 0 14px 32px rgba(16, 24, 40, 0.12);
@@ -712,11 +769,12 @@ body.calendar-body {
   background: linear-gradient(180deg, #ffffff 0%, #edf4fb 100%);
   border-radius: 10px;
   height: 40px;
+  min-width: 40px;
   font-size: 1.2rem;
   line-height: 1;
   color: #0f3c61;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .nav-btn:hover:not(:disabled) {
@@ -768,8 +826,9 @@ body.calendar-body {
   align-items: center;
   text-align: center;
   cursor: pointer;
-  transition: transform 0.14s ease, box-shadow 0.14s ease;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
   gap: 6px;
+  contain: layout style;
 }
 
 .day-cell .date-label {
@@ -1329,8 +1388,8 @@ body.horaire-body {
   }
 
   .horaire-day {
-    min-height: 58px;
-    padding: 2px 1px;
+    min-height: 54px;
+    padding: 3px 2px;
     gap: 2px;
   }
 
@@ -1343,7 +1402,7 @@ body.horaire-body {
   }
 
   .horaire-day-number {
-    font-size: 0.68rem;
+    font-size: 0.66rem;
     line-height: 1;
   }
 
@@ -1464,9 +1523,11 @@ body.horaire-body {
   background: #fff;
   color: #1f2937;
   padding: 9px 11px;
+  min-height: var(--min-tap-size);
   font-weight: 700;
+  font-size: inherit;
   cursor: pointer;
-  transition: border-color 0.14s ease, background 0.14s ease, transform 0.1s ease;
+  transition: border-color var(--transition-fast), background var(--transition-fast), transform 0.1s ease;
 }
 
 .admin-tab.is-active {
@@ -1534,6 +1595,7 @@ body.horaire-body {
   padding: 12px;
   display: grid;
   gap: 10px;
+  transition: box-shadow var(--transition-fast);
 }
 
 .my-booking-item.is-past {
@@ -1820,9 +1882,11 @@ body.horaire-body {
   background: transparent;
   color: #334155;
   font-weight: 800;
+  font-size: inherit;
   padding: 8px 12px;
   min-height: 38px;
   cursor: pointer;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
 }
 
 .invitation-mode-btn:hover {
@@ -1864,6 +1928,9 @@ body.horaire-body {
 
 .bookings-table-wrap {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #c1cdd9 transparent;
 }
 
 .bookings-table {
@@ -2371,6 +2438,13 @@ body.horaire-body {
   display: grid;
   gap: 6px;
   cursor: pointer;
+  min-height: var(--min-tap-size);
+  font: inherit;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+.user-card-btn:active {
+  transform: scale(0.98);
 }
 
 .user-card-btn:hover {
@@ -2390,10 +2464,11 @@ body.horaire-body {
 
 .user-modal {
   width: min(980px, calc(100vw - 24px));
-  max-height: calc(100vh - 24px);
+  max-height: calc(100dvh - 24px);
   border: none;
   border-radius: 14px;
   padding: 0;
+  overflow: hidden;
 }
 
 .user-modal::backdrop {
@@ -2407,6 +2482,10 @@ body.horaire-body {
   gap: 12px;
   padding: 14px 16px;
   border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #ffffff;
 }
 
 .user-modal-head h3 {
@@ -2525,8 +2604,18 @@ body.horaire-body {
 .config-row select {
   width: 100%;
   padding: 9px 10px;
+  min-height: var(--min-tap-size);
   border: 1px solid #d1d5db;
   border-radius: 8px;
+  font-size: inherit;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.config-row input:focus,
+.config-row select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.14);
 }
 
 .config-row.checkbox-row {
@@ -2662,6 +2751,7 @@ body.horaire-body {
 
 .booking-modal {
   width: min(640px, calc(100vw - 24px));
+  max-height: min(90vh, calc(100dvh - 24px));
   border: 1px solid #dbe4ef;
   border-radius: 22px;
   padding: 0;
@@ -2670,9 +2760,12 @@ body.horaire-body {
     radial-gradient(circle at 0% 100%, rgba(134, 239, 172, 0.15) 0%, rgba(255, 255, 255, 0) 46%),
     #ffffff;
   box-shadow: 0 26px 70px rgba(15, 23, 42, 0.26);
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .booking-modal::backdrop {
+  -webkit-backdrop-filter: blur(3px);
   backdrop-filter: blur(3px);
   background: rgba(9, 14, 23, 0.5);
 }
@@ -2779,7 +2872,9 @@ body.horaire-body {
   font-weight: 900;
   line-height: 1;
   cursor: pointer;
-  transition: transform 0.1s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.1s ease, border-color var(--transition-fast), box-shadow var(--transition-fast);
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .time-arrow-btn:hover {
@@ -2877,12 +2972,22 @@ body.horaire-body {
     min-height: 36px;
   }
 
+  .booking-modal {
+    width: calc(100vw - 12px);
+    max-height: calc(100dvh - 12px);
+    border-radius: 16px;
+  }
+
   .booking-modal .user-modal-head {
-    padding: 14px 14px 12px;
+    padding: 12px 14px 10px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: linear-gradient(90deg, #f8fbff 0%, #f7fffa 100%);
   }
 
   .booking-modal .user-modal-content {
-    padding: 12px 14px 14px;
+    padding: 10px 14px 14px;
   }
 
   .time-input-wrap {
@@ -3178,13 +3283,13 @@ body.calendar-body .day-cell .day-state-pill {
   }
 
   body.calendar-body .day-cell {
-    min-height: 74px;
+    min-height: 68px;
     padding: 4px 3px;
     gap: 2px;
   }
 
   body.calendar-body .day-cell.outside {
-    min-height: 74px;
+    min-height: 68px;
   }
 
   body.calendar-body .day-cell .date-label {
@@ -3279,20 +3384,26 @@ body.calendar-body .day-cell .day-state-pill {
 
   body.calendar-body .day-cell,
   body.calendar-body .day-cell.outside {
-    min-height: 66px;
-    padding: 3px 2px;
+    min-height: 56px;
+    padding: 2px 1px;
   }
 
   body.calendar-body .day-cell .date-label {
-    font-size: 0.66rem;
+    font-size: 0.62rem;
   }
 
   body.calendar-body .day-cell .hours-label {
-    font-size: 0.52rem;
+    font-size: 0.48rem;
+    padding: 1px 3px;
   }
 
   body.calendar-body .day-cell .day-state-pill {
-    font-size: 0.58rem;
+    font-size: 0.52rem;
+    padding: 1px 4px;
+  }
+
+  body.calendar-body .day-cell .holiday-name {
+    display: none;
   }
 }
 
@@ -3351,9 +3462,10 @@ body.calendar-body .day-cell .day-state-pill {
   }
 
   .btn {
-    padding: 6px 10px;
+    padding: 8px 12px;
     border-radius: 8px;
     font-size: 0.84rem;
+    min-height: 38px;
   }
 
   .actions {
@@ -3587,8 +3699,8 @@ body.calendar-body .day-cell .day-state-pill {
   .config-row input[type="time"],
   .config-row input[type="text"],
   .config-row select {
-    min-height: 34px;
-    padding: 6px 8px;
+    min-height: 38px;
+    padding: 7px 8px;
     font-size: 0.82rem;
   }
 
@@ -3677,8 +3789,9 @@ body.calendar-body .day-cell .day-state-pill {
   }
 
   .btn {
-    padding: 5px 8px;
+    padding: 7px 10px;
     font-size: 0.78rem;
+    min-height: 36px;
   }
 
   .left-nav-toggle {
@@ -3741,8 +3854,8 @@ body.calendar-body .day-cell .day-state-pill {
 
 .admin-body #bookings-panel .day-cell,
 .admin-body #bookings-panel .day-cell.outside {
-  min-height: 74px;
-  padding: 4px 3px;
+  min-height: 64px;
+  padding: 3px 2px;
   gap: 2px;
 }
 

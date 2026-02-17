@@ -15,8 +15,13 @@ from cryptography.fernet import Fernet, InvalidToken
 from flask import Flask, jsonify, redirect, render_template, request, session, url_for
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY', 'dev-secret-key-change-me')
+
+_fallback_key = secrets.token_hex(32)
+app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY', _fallback_key)
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=1)
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_COOKIE_SECURE'] = os.environ.get('FLASK_ENV') == 'production'
 
 DATA_DIR = Path(__file__).resolve().parent / 'data'
 ADMIN_STORE_PATH = DATA_DIR / 'admin_account.json'
@@ -1904,9 +1909,34 @@ def _enforce_session_idle_timeout():
     return None
 
 
+@app.after_request
+def _set_security_headers(response):
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    return response
+
+
+def _generate_csrf_token():
+    if 'csrf_token' not in session:
+        session['csrf_token'] = secrets.token_hex(32)
+    return session['csrf_token']
+
+
+def _validate_csrf_token():
+    token = request.form.get('csrf_token', '')
+    expected = session.get('csrf_token', '')
+    if not token or not expected or not hmac.compare_digest(token, expected):
+        return False
+    return True
+
+
 @app.context_processor
 def _inject_auth_status():
-    return _auth_status_context()
+    ctx = _auth_status_context()
+    ctx['csrf_token'] = _generate_csrf_token()
+    return ctx
 
 
 _init_db()
@@ -1957,6 +1987,10 @@ def register():
     }
 
     if request.method == 'POST':
+        if not _validate_csrf_token():
+            errors.append("Jeton de sécurité invalide. Veuillez réessayer.")
+            return render_template('register.html', errors=errors, form_data=form_data)
+
         form_data['first_name'] = request.form.get('first_name', '').strip()
         form_data['last_name'] = request.form.get('last_name', '').strip()
         form_data['email'] = request.form.get('email', '').strip()
@@ -2154,6 +2188,17 @@ def login():
     if request.method == 'POST':
         form_action = request.form.get('form_action', 'login').strip()
 
+        if not _validate_csrf_token():
+            errors.append("Jeton de sécurité invalide. Veuillez réessayer.")
+            return render_template(
+                'login.html',
+                errors=errors,
+                success_message=success_message,
+                form_data=form_data,
+                admin_exists=admin_exists,
+                user_exists=user_exists,
+            )
+
         if form_action == 'create_admin':
             form_data['admin_identifier'] = request.form.get('admin_identifier', '').strip()
             admin_password = request.form.get('admin_password', '')
@@ -2300,6 +2345,17 @@ def password_reset():
             session.pop('password_reset_verified_at', None)
 
     if request.method == 'POST':
+        if not _validate_csrf_token():
+            errors.append("Jeton de sécurité invalide. Veuillez réessayer.")
+            return render_template(
+                'password_reset.html',
+                errors=errors,
+                success_message=success_message,
+                reset_lookup_data=reset_lookup_data,
+                reset_password_data=reset_password_data,
+                reset_questions=reset_questions,
+            )
+
         form_action = request.form.get('form_action', 'reset_lookup').strip()
 
         if form_action == 'reset_lookup':
@@ -2438,6 +2494,10 @@ def force_password_change():
     errors = []
 
     if request.method == 'POST':
+        if not _validate_csrf_token():
+            errors.append("Jeton de sécurité invalide. Veuillez réessayer.")
+            return render_template('force_password_change.html', errors=errors)
+
         new_password = request.form.get('new_password', '')
         new_password_confirm = request.form.get('new_password_confirm', '')
 
@@ -2576,93 +2636,96 @@ def my_bookings():
     reservation_config = _load_reservation_config()
 
     if request.method == 'POST':
-        user_action = request.form.get('user_action', '').strip()
-        booking_id_text = request.form.get('booking_id', '').strip()
-
-        if not booking_id_text.isdigit():
-            errors.append("Réservation invalide.")
+        if not _validate_csrf_token():
+            errors.append("Jeton de sécurité invalide. Veuillez réessayer.")
         else:
-            booking_id = int(booking_id_text)
-            conn = _get_db_connection()
-            try:
-                booking_row = conn.execute(
-                    '''
-                    SELECT id, user_id, start, end, title, companion_count, is_private
-                    FROM bookings
-                    WHERE id = ? AND user_id = ?
-                    LIMIT 1
-                    ''',
-                    (booking_id, user_id),
-                ).fetchone()
-            finally:
-                conn.close()
+            user_action = request.form.get('user_action', '').strip()
+            booking_id_text = request.form.get('booking_id', '').strip()
 
-            if not booking_row:
-                errors.append("Réservation introuvable.")
+            if not booking_id_text.isdigit():
+                errors.append("Réservation invalide.")
             else:
-                if user_action == 'delete_booking':
-                    conn = _get_db_connection()
-                    try:
-                        conn.execute('DELETE FROM bookings WHERE id = ? AND user_id = ?', (booking_id, user_id))
-                        conn.commit()
-                        success_message = 'Réservation annulée.'
-                    finally:
-                        conn.close()
+                booking_id = int(booking_id_text)
+                conn = _get_db_connection()
+                try:
+                    booking_row = conn.execute(
+                        '''
+                        SELECT id, user_id, start, end, title, companion_count, is_private
+                        FROM bookings
+                        WHERE id = ? AND user_id = ?
+                        LIMIT 1
+                        ''',
+                        (booking_id, user_id),
+                    ).fetchone()
+                finally:
+                    conn.close()
 
-                if user_action == 'update_booking':
-                    date_text = request.form.get('date', '').strip()
-                    start_text = request.form.get('start_time', '').strip()
-                    end_text = request.form.get('end_time', '').strip()
-                    title = request.form.get('title', '').strip()
-                    raw_companion_count = request.form.get('companion_count', '0').strip()
-                    raw_is_private = request.form.get('is_private', '')
-
-                    if raw_companion_count == '':
-                        companion_count = 0
-                    elif raw_companion_count.isdigit():
-                        companion_count = int(raw_companion_count)
-                    else:
-                        companion_count = -1
-
-                    is_private = raw_is_private == 'on'
-
-                    is_valid, error_message, _ = _validate_booking_request(
-                        user_id,
-                        date_text,
-                        start_text,
-                        end_text,
-                        companion_count=companion_count,
-                        is_private=is_private,
-                        exclude_booking_id=booking_id,
-                    )
-                    if not is_valid:
-                        errors.append(error_message)
-                    else:
-                        start_storage = _date_and_time_to_storage(date_text, start_text)
-                        end_storage = _date_and_time_to_storage(date_text, end_text)
+                if not booking_row:
+                    errors.append("Réservation introuvable.")
+                else:
+                    if user_action == 'delete_booking':
                         conn = _get_db_connection()
                         try:
-                            conn.execute(
-                                '''
-                                UPDATE bookings
-                                SET start = ?, end = ?, title = ?, allow_companion = ?, companion_count = ?, is_private = ?
-                                WHERE id = ? AND user_id = ?
-                                ''',
-                                (
-                                    start_storage,
-                                    end_storage,
-                                    title or None,
-                                    1 if companion_count > 0 else 0,
-                                    companion_count,
-                                    1 if is_private else 0,
-                                    booking_id,
-                                    user_id,
-                                ),
-                            )
+                            conn.execute('DELETE FROM bookings WHERE id = ? AND user_id = ?', (booking_id, user_id))
                             conn.commit()
-                            success_message = 'Réservation modifiée.'
+                            success_message = 'Réservation annulée.'
                         finally:
                             conn.close()
+
+                    if user_action == 'update_booking':
+                        date_text = request.form.get('date', '').strip()
+                        start_text = request.form.get('start_time', '').strip()
+                        end_text = request.form.get('end_time', '').strip()
+                        title = request.form.get('title', '').strip()
+                        raw_companion_count = request.form.get('companion_count', '0').strip()
+                        raw_is_private = request.form.get('is_private', '')
+
+                        if raw_companion_count == '':
+                            companion_count = 0
+                        elif raw_companion_count.isdigit():
+                            companion_count = int(raw_companion_count)
+                        else:
+                            companion_count = -1
+
+                        is_private = raw_is_private == 'on'
+
+                        is_valid, error_message, _ = _validate_booking_request(
+                            user_id,
+                            date_text,
+                            start_text,
+                            end_text,
+                            companion_count=companion_count,
+                            is_private=is_private,
+                            exclude_booking_id=booking_id,
+                        )
+                        if not is_valid:
+                            errors.append(error_message)
+                        else:
+                            start_storage = _date_and_time_to_storage(date_text, start_text)
+                            end_storage = _date_and_time_to_storage(date_text, end_text)
+                            conn = _get_db_connection()
+                            try:
+                                conn.execute(
+                                    '''
+                                    UPDATE bookings
+                                    SET start = ?, end = ?, title = ?, allow_companion = ?, companion_count = ?, is_private = ?
+                                    WHERE id = ? AND user_id = ?
+                                    ''',
+                                    (
+                                        start_storage,
+                                        end_storage,
+                                        title or None,
+                                        1 if companion_count > 0 else 0,
+                                        companion_count,
+                                        1 if is_private else 0,
+                                        booking_id,
+                                        user_id,
+                                    ),
+                                )
+                                conn.commit()
+                                success_message = 'Réservation modifiée.'
+                            finally:
+                                conn.close()
 
     bookings = _load_bookings_for_user(user_id)
     return render_template(
@@ -2717,7 +2780,10 @@ def admin_dashboard():
     }
 
     if request.method == 'POST':
-        admin_action = request.form.get('admin_action', '').strip()
+        if not _validate_csrf_token():
+            errors.append("Jeton de sécurité invalide. Veuillez réessayer.")
+
+        admin_action = request.form.get('admin_action', '').strip() if not errors else ''
 
         if admin_action == 'save_opening_hours':
             active_tab = 'opening-hours-panel'

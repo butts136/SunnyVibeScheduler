@@ -52,6 +52,7 @@
               <form method="post" class="reservation-config-form" novalidate>
                 <input type="hidden" name="user_action" value="update_booking">
                 <input type="hidden" name="booking_id" value="{{ booking.id }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
                 <div class="config-row">
                   <label for="date_{{ booking.id }}">Date</label>
@@ -103,9 +104,10 @@
               </form>
             </details>
 
-            <form method="post" class="inline-form" onsubmit="return confirm('Annuler cette réservation ?');">
+            <form method="post" class="inline-form" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
               <input type="hidden" name="user_action" value="delete_booking">
               <input type="hidden" name="booking_id" value="{{ booking.id }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
               <button class="btn danger" type="submit">Annuler la réservation</button>
             </form>
             {% endif %}

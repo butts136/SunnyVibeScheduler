@@ -38,6 +38,7 @@
               </div>
 
               <form method="post" class="opening-hours-form" novalidate>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <input type="hidden" name="admin_action" value="save_opening_hours">
                 <div class="opening-hours-head row-grid">
                   <span>Jour</span>
@@ -76,6 +77,7 @@
               </div>
 
               <form method="post" class="reservation-config-form opening-special-form" novalidate>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <input type="hidden" name="admin_action" value="save_special_date">
 
                 <div class="opening-special-grid">
@@ -134,6 +136,7 @@
                       {% endif %}
                     </span>
                     <form method="post" class="inline-form" onsubmit="return confirm('Supprimer cette date spéciale ?');">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                       <input type="hidden" name="admin_action" value="delete_special_date">
                       <input type="hidden" name="special_date" value="{{ special_day.date }}">
                       <button class="btn danger" type="submit">Supprimer</button>
@@ -209,6 +212,7 @@
           <p class="subtitle">Bloquez des plages ponctuelles, répétitives, ou sur les journées fériées.</p>
 
           <form method="post" class="reservation-config-form blocked-slot-form" novalidate>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <input type="hidden" name="admin_action" value="create_blocked_slot">
 
             <section class="config-section-block">
@@ -293,6 +297,7 @@
 
                 <div class="blocked-slot-actions">
                   <form method="post" class="inline-form" onsubmit="return confirm('Supprimer ce blocage ?');">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                     <input type="hidden" name="admin_action" value="delete_blocked_slot">
                     <input type="hidden" name="blocked_slot_id" value="{{ slot.id }}">
                     <button class="btn danger" type="submit">Supprimer</button>
@@ -312,6 +317,7 @@
           <p class="subtitle">Réglages simples qui définissent exactement ce que les membres peuvent réserver.</p>
 
           <form method="post" class="reservation-config-form reservation-config-modern" novalidate>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <input type="hidden" name="admin_action" value="save_reservation_config">
 
             <section class="config-section-block reservation-config-card">
@@ -479,6 +485,7 @@
 
           <div class="invitation-mode-panel is-active" data-invitation-panel="unique">
             <form method="post" class="reservation-config-form" novalidate>
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
               <input type="hidden" name="admin_action" value="generate_invitation_code">
 
               <section class="config-section-block">
@@ -522,6 +529,7 @@
                       <td>{{ row.created_at }}</td>
                       <td>
                         <form method="post" class="inline-form" onsubmit="return confirm('Supprimer ce code invitation ?');">
+                          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                           <input type="hidden" name="admin_action" value="delete_invitation_code">
                           <input type="hidden" name="invitation_code_id" value="{{ row.id }}">
                           <button class="btn btn-icon-danger" type="submit" title="Supprimer le code" aria-label="Supprimer le code">&times;</button>
@@ -540,6 +548,7 @@
 
           <div class="invitation-mode-panel" data-invitation-panel="custom" hidden>
             <form method="post" class="reservation-config-form" novalidate>
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
               <input type="hidden" name="admin_action" value="save_invitation_config">
 
               <section class="config-section-block">
@@ -744,6 +753,7 @@
 
         <div class="modal-actions">
           <form method="post" class="inline-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <input type="hidden" name="admin_action" value="toggle_user_block">
             <input type="hidden" name="user_id" value="${escapeHtml(user.id)}">
             <input type="hidden" name="blocked_value" value="${user.is_blocked ? '0' : '1'}">
@@ -751,19 +761,22 @@
           </form>
 
           <form method="post" class="inline-form user-limit-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <input type="hidden" name="admin_action" value="set_user_limit">
             <input type="hidden" name="user_id" value="${escapeHtml(user.id)}">
             <input type="number" min="0" name="reservation_limit" value="${escapeHtml(limitValue)}" placeholder="Limite">
             <button class="btn" type="submit">Appliquer limite</button>
           </form>
 
-          <form method="post" class="inline-form" onsubmit="return confirm('Générer un mot de passe temporaire à 6 chiffres ?');">
+          <form method="post" class="inline-form" onsubmit="return confirm('G\u00e9n\u00e9rer un mot de passe temporaire \u00e0 6 chiffres ?');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <input type="hidden" name="admin_action" value="reset_user_password">
             <input type="hidden" name="user_id" value="${escapeHtml(user.id)}">
             <button class="btn primary" type="submit">Réinitialiser mot de passe</button>
           </form>
 
-          <form method="post" class="inline-form" onsubmit="return confirm('Supprimer ce compte utilisateur et ses réservations ?');">
+          <form method="post" class="inline-form" onsubmit="return confirm('Supprimer ce compte utilisateur et ses r\u00e9servations ?');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <input type="hidden" name="admin_action" value="delete_user">
             <input type="hidden" name="user_id" value="${escapeHtml(user.id)}">
             <button class="btn danger" type="submit">Supprimer le compte</button>
@@ -899,7 +912,8 @@
                   ${privacyLine}
                 </div>
                 <div class="booking-item-actions">
-                  <form method="post" class="inline-form" onsubmit="return confirm('Supprimer cette réservation ?');">
+                  <form method="post" class="inline-form" onsubmit="return confirm('Supprimer cette r\u00e9servation ?');">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                     <input type="hidden" name="admin_action" value="delete_booking">
                     <input type="hidden" name="booking_id" value="${escapeHtml(booking.id)}">
                     <button class="btn danger" type="submit">Supprimer la réservation</button>

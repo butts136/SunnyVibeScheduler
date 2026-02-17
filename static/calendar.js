@@ -1,6 +1,12 @@
 'use strict';
 
 (function initCalendarPage() {
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.appendChild(document.createTextNode(text));
+    return div.innerHTML;
+  }
+
   const monthLabelEl = document.getElementById('monthLabel');
   const calendarGridEl = document.getElementById('calendarGrid');
   const prevMonthBtn = document.getElementById('prevMonthBtn');
@@ -600,10 +606,10 @@
           ? `${bookingCount} rés.`
           : (dayData.hasPartialReservations ? 'Partiel' : (dayData.hasAvailability ? 'Disponible' : 'Complet')));
       cellBtn.innerHTML = `
-        <div class="date-label">${dateLabel}</div>
-        <div class="hours-label">${hoursLabel}</div>
-        <div class="day-state-pill">${dayStateText}</div>
-        ${holidayData ? `<div class="holiday-name">${holidayData.name}</div><div class="holiday-alert">${holidayData.alert}</div>` : ''}
+        <div class="date-label">${escapeHtml(dateLabel)}</div>
+        <div class="hours-label">${escapeHtml(hoursLabel)}</div>
+        <div class="day-state-pill">${escapeHtml(dayStateText)}</div>
+        ${holidayData ? `<div class="holiday-name">${escapeHtml(holidayData.name)}</div><div class="holiday-alert">${escapeHtml(holidayData.alert)}</div>` : ''}
       `;
 
       if (isClosedDay) {
@@ -725,8 +731,8 @@
         itemEl.dataset.bookingId = String(placement.bookingId);
       }
       itemEl.innerHTML = `
-        <span class="timeline-reservation-time">${formatHour(placement.startMinutes / 60)} - ${formatHour(placement.endMinutes / 60)}</span>
-        <span class="timeline-reservation-label">${placement.label}</span>
+        <span class="timeline-reservation-time">${escapeHtml(formatHour(placement.startMinutes / 60))} - ${escapeHtml(formatHour(placement.endMinutes / 60))}</span>
+        <span class="timeline-reservation-label">${escapeHtml(placement.label)}</span>
       `;
       if (isAdminMode && placement.bookingId) {
         itemEl.addEventListener('click', () => {
