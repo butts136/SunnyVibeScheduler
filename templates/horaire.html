@@ -5,202 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Calendrier des heures d'ouvertures</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-  <style>
-    html, body {
-      height: 100%;
-    }
-    body.with-left-nav {
-      align-items: flex-start;
-      justify-content: flex-start;
-      padding: 18px;
-      overflow: hidden;
-    }
-    .app-layout {
-      height: calc(100vh - 36px);
-    }
-    .horaire-main {
-      width: 100%;
-      height: 100%;
-      min-height: 0;
-      display: flex;
-      flex-direction: column;
-    }
-    .page-head {
-      display: grid;
-      gap: 10px;
-      margin-bottom: 10px;
-      flex-shrink: 0;
-    }
-    h2 {
-      text-align: center;
-      color: #0f172a;
-      margin: 0;
-      letter-spacing: 0.01em;
-      font-size: 2rem;
-      font-weight: 900;
-    }
-    .top-actions {
-      display: flex;
-      justify-content: center;
-    }
-    .top-actions a {
-      text-decoration: none;
-      color: #ffffff;
-      font-weight: 700;
-      border: 1px solid #1f4f7b;
-      background: linear-gradient(180deg, #2b6ca3 0%, #225c8d 100%);
-      border-radius: 999px;
-      padding: 9px 14px;
-      box-shadow: 0 10px 22px rgba(24, 58, 88, 0.25);
-    }
-    .top-actions a:hover {
-      filter: brightness(1.05);
-    }
-    .calendar-wrapper {
-      flex: 1;
-      overflow-y: auto;
-      overflow-x: hidden;
-      min-height: 0;
-      height: auto;
-      border: 1px solid #d8e5f1;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.86);
-      box-shadow: 0 16px 35px rgba(15, 23, 42, 0.1);
-      padding: 1px;
-    }
-    .calendar {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 1px;
-      background-color: #dbe4ef;
-    }
-    .header {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      background: linear-gradient(90deg, #1f4f7b 0%, #28736c 100%);
-      color: white;
-      text-align: center;
-      padding: 12px 0;
-      font-weight: 800;
-      font-size: 1.02rem;
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
-    }
-    .day {
-      background: #ffffff;
-      border: 1px solid #e0e8f2;
-      padding: 12px;
-      text-align: center;
-      box-sizing: border-box;
-      min-height: 180px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 10px;
-      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-    }
-    .day:hover {
-      transform: translateY(-2px);
-      border-color: #c7d8ea;
-      box-shadow: 0 12px 22px rgba(15, 23, 42, 0.08);
-    }
-    .today {
-      position: relative;
-      border: 3px solid #f97316;
-      background: linear-gradient(180deg, #fff0d9 0%, #fff8ee 100%);
-      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.96), 0 0 0 4px rgba(251, 146, 60, 0.32);
-    }
-    .today::before {
-      content: "AUJOURD'HUI";
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: #fb923c;
-      color: #ffffff;
-      border-radius: 999px;
-      padding: 3px 8px;
-      font-size: 0.68rem;
-      font-weight: 900;
-      letter-spacing: 0.03em;
-    }
-    .holiday {
-      background: linear-gradient(180deg, #fff7f2 0%, #fffefe 100%);
-      border-left: 4px solid #fb923c;
-    }
-    .alert {
-      font-size: 0.82rem;
-      color: #b45309;
-      margin-top: 6px;
-      font-weight: 700;
-      line-height: 1.35;
-    }
-    .holiday-name {
-      font-size: 0.92rem;
-      font-weight: 800;
-      color: #c2410c;
-      margin-top: 6px;
-    }
-    .date-label, .hours-label {
-      font-size: 1.08rem;
-      margin-top: 3px;
-      line-height: 1.3;
-    }
-    .hours-label {
-      display: inline-block;
-      margin-top: 6px;
-      padding: 8px 14px;
-      border-radius: 999px;
-      background: #eef6ff;
-      color: #1d4f7a;
-      font-weight: 800;
-      font-size: 1.22rem;
-      border: 1px solid #d4e4f7;
-    }
-    .holiday-name {
-      font-size: 1.05rem;
-    }
-    .alert {
-      font-size: 0.96rem;
-    }
-    @media (max-width: 768px) {
-      .calendar {
-        grid-template-columns: repeat(7, minmax(78px, 1fr));
-      }
-      .calendar-wrapper { min-height: 0; }
-      .day {
-        border-radius: 12px;
-        box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
-        min-height: 160px;
-        padding: 14px;
-      }
-      h2 {
-        font-size: 1.6rem;
-      }
-      .date-label, .hours-label {
-        font-size: 1.08rem;
-      }
-      .holiday-name {
-        font-size: 0.96rem;
-      }
-      .alert {
-        font-size: 0.86rem;
-      }
-    }
-  </style>
 </head>
-<body class="with-left-nav">
+<body class="with-left-nav horaire-body">
   <div class="app-layout">
     {% include '_left_nav.html' %}
     <main class="horaire-main">
-      <div class="page-head">
-        <h2>Calendrier des heures d'ouvertures</h2>
-        <div class="top-actions">
-          <a href="{{ url_for('index') }}">Retour à l'accueil</a>
+      <div class="horaire-page-head">
+        <h2 class="horaire-title">Calendrier des heures d'ouvertures</h2>
+        <div class="horaire-top-actions">
+          <a class="btn" href="{{ url_for('index') }}">Retour à l'accueil</a>
         </div>
       </div>
-      <div class="calendar-wrapper" id="calendar-wrapper">
-        <div class="calendar" id="calendar"></div>
+      <div class="horaire-calendar-wrapper" id="calendar-wrapper">
+        <div class="horaire-grid" id="calendar"></div>
       </div>
     </main>
   </div>
@@ -268,7 +85,7 @@
       if (isFirstMonth) {
         for (const j of jours) {
           const div = document.createElement('div');
-          div.className = 'header';
+          div.className = 'horaire-header';
           div.textContent = j;
           calendar.appendChild(div);
         }
@@ -289,12 +106,12 @@
         } else {
           const heure = getHoursForDate(dateObj);
           const holidayData = getFerieName(dateObj);
-          let classes = 'day';
-          if (holidayData) classes += ' holiday';
-          if (dateObj.toDateString() === today.toDateString()) classes += ' today';
-          const inner = `<div class="date-label">${d} ${dateObj.toLocaleDateString('fr-CA', {month: 'long', year: 'numeric'})}</div>
-            <div class="hours-label">${heure}</div>
-            ${holidayData ? `<div class="holiday-name">${holidayData.name}</div><div class="alert">${holidayData.alert}</div>` : ''}`;
+          let classes = 'horaire-day';
+          if (holidayData) classes += ' is-holiday';
+          if (dateObj.toDateString() === today.toDateString()) classes += ' is-today';
+          const inner = `<div class="horaire-date-label"><span class="horaire-day-number">${d}</span><span class="horaire-day-meta">${dateObj.toLocaleDateString('fr-CA', {month: 'short', year: '2-digit'})}</span></div>
+            <div class="horaire-hours-label">${heure}</div>
+            ${holidayData ? `<div class="horaire-holiday-name">${holidayData.name}</div><div class="horaire-alert">${holidayData.alert}</div>` : ''}`;
           weekRow.push({ classes, inner });
         }
         col++;
@@ -317,7 +134,7 @@
           const cell = week[i];
           if (!cell) {
             const empty = document.createElement('div');
-            empty.className = 'day';
+            empty.className = 'horaire-day horaire-day-empty';
             empty.innerHTML = '';
             calendar.appendChild(empty);
           } else {

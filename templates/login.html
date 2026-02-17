@@ -63,8 +63,8 @@
       {% endif %}
 
       {% if not admin_exists %}
-      <hr style="margin:18px 0;border:none;border-top:1px solid #e5e7eb;">
-      <h2 style="margin:0 0 10px;font-size:1.2rem;">Créer le compte administrateur</h2>
+      <hr class="section-divider">
+      <h2 class="section-title">Créer le compte administrateur</h2>
       <form method="post" action="{{ url_for('login') }}" class="form-grid" novalidate>
         <input type="hidden" name="form_action" value="create_admin">
         <label class="full-width">

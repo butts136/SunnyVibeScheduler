@@ -468,6 +468,27 @@ body > * {
 
 .full-width { grid-column: 1 / -1; }
 
+.section-divider {
+  margin: 14px 0 10px;
+  border: 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+.section-title {
+  margin: 0 0 8px;
+  font-size: 1.04rem;
+  color: #111827;
+  text-align: left;
+}
+
+.section-spaced-xs {
+  margin-top: 4px;
+}
+
+.section-spaced-sm {
+  margin-top: 12px;
+}
+
 .alert {
   text-align: left;
   border-radius: 10px;
@@ -1035,6 +1056,271 @@ body.calendar-body {
   .day-cell .holiday-name,
   .day-cell .holiday-alert {
     line-height: 1.25;
+  }
+}
+
+/* Opening hours page */
+body.horaire-body {
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 14px;
+}
+
+.horaire-main {
+  width: 100%;
+  min-height: calc(100vh - 28px);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.horaire-page-head {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+
+.horaire-title {
+  margin: 0;
+  text-align: center;
+  color: #0f172a;
+  letter-spacing: 0.01em;
+  font-size: 1.28rem;
+  font-weight: 900;
+}
+
+.horaire-top-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.horaire-calendar-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  border: 1px solid #d8e5f1;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.1);
+  padding: 1px;
+}
+
+.horaire-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 1px;
+  background: #dbe4ef;
+}
+
+.horaire-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: linear-gradient(90deg, #1f4f7b 0%, #28736c 100%);
+  color: #ffffff;
+  text-align: center;
+  padding: 8px 0;
+  font-weight: 800;
+  font-size: 0.74rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  min-width: 0;
+}
+
+.horaire-day {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #e0e8f2;
+  padding: 8px 7px;
+  min-height: 112px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+  transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease;
+  min-width: 0;
+}
+
+.horaire-day:hover {
+  transform: translateY(-1px);
+  border-color: #c7d8ea;
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.08);
+}
+
+.horaire-day.horaire-day-empty {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.horaire-day.is-today {
+  border: 3px solid #fb923c;
+  background: linear-gradient(180deg, #fff1dd 0%, #fff8ef 100%);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.98), 0 0 0 4px rgba(251, 146, 60, 0.24);
+}
+
+.horaire-day.is-today::before {
+  content: "Auj.";
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  border-radius: 999px;
+  padding: 1px 6px;
+  background: #fb923c;
+  color: #ffffff;
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+}
+
+.horaire-day.is-holiday {
+  background: linear-gradient(180deg, #fff7f2 0%, #fffefe 100%);
+  border-left: 4px solid #fb923c;
+}
+
+.horaire-date-label {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  line-height: 1.1;
+  font-weight: 900;
+  color: #0f3c61;
+  text-transform: capitalize;
+  max-width: 100%;
+}
+
+.horaire-day-number {
+  font-size: 0.92rem;
+}
+
+.horaire-day-meta {
+  font-size: 0.62rem;
+  font-weight: 800;
+  color: #4b5563;
+  text-transform: uppercase;
+}
+
+.horaire-hours-label {
+  display: inline-block;
+  margin: 2px auto 0;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #eef6ff;
+  border: 1px solid #d4e4f7;
+  color: #1d4f7a;
+  font-size: 0.82rem;
+  font-weight: 800;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.horaire-holiday-name {
+  margin-top: 2px;
+  font-size: 0.72rem;
+  color: #c2410c;
+  font-weight: 800;
+  line-height: 1.22;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.horaire-alert {
+  margin-top: 1px;
+  font-size: 0.68rem;
+  color: #b45309;
+  font-weight: 700;
+  line-height: 1.22;
+}
+
+@media (max-width: 980px) {
+  body.horaire-body {
+    padding: 6px;
+  }
+
+  .horaire-main {
+    min-height: auto;
+  }
+
+  .horaire-calendar-wrapper {
+    border-radius: 12px;
+  }
+
+  .horaire-header {
+    font-size: 0.56rem;
+    padding: 4px 0;
+    letter-spacing: 0.01em;
+  }
+
+  .horaire-day {
+    min-height: 62px;
+    padding: 2px 1px;
+    gap: 1px;
+  }
+
+  .horaire-day.is-today {
+    border-width: 2px;
+  }
+
+  .horaire-day.is-today::before {
+    display: none;
+  }
+
+  .horaire-day-number {
+    font-size: 0.68rem;
+    line-height: 1;
+  }
+
+  .horaire-day-meta {
+    display: none;
+  }
+
+  .horaire-hours-label {
+    font-size: 0.52rem;
+    padding: 1px 3px;
+    border-width: 1px;
+  }
+
+  .horaire-holiday-name {
+    font-size: 0.52rem;
+    line-height: 1.1;
+  }
+
+  .horaire-alert {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .horaire-title {
+    font-size: 0.94rem;
+  }
+
+  .horaire-header {
+    font-size: 0.5rem;
+    padding: 3px 0;
+  }
+
+  .horaire-day {
+    min-height: 54px;
+    padding: 1px;
+  }
+
+  .horaire-day-number {
+    font-size: 0.6rem;
+  }
+
+  .horaire-hours-label {
+    font-size: 0.46rem;
+    padding: 1px 2px;
+  }
+
+  .horaire-holiday-name {
+    font-size: 0.46rem;
   }
 }
 
@@ -2291,28 +2577,28 @@ body.calendar-body {
 }
 
 .booking-modal .user-modal-head {
-  padding: 18px 20px;
+  padding: 14px 16px;
   border-bottom: 1px solid #e8edf4;
   background: linear-gradient(90deg, #f8fbff 0%, #f7fffa 100%);
 }
 
 .booking-modal .user-modal-head h3 {
-  font-size: 1.2rem;
+  font-size: 1.05rem;
   font-weight: 800;
   color: #0f172a;
 }
 
 .booking-modal .user-modal-content {
-  padding: 18px 20px 20px;
+  padding: 14px 16px 16px;
 }
 
 .booking-modal .reservation-config-form {
-  gap: 14px;
+  gap: 10px;
 }
 
 .booking-rules {
-  margin-bottom: 14px;
-  padding: 12px 14px;
+  margin-bottom: 10px;
+  padding: 10px 12px;
   border: 1px solid #d9e4f1;
   border-radius: 12px;
   background: linear-gradient(180deg, #f8fbff 0%, #f4fff9 100%);
@@ -2322,7 +2608,7 @@ body.calendar-body {
   margin: 0;
   color: #0f172a;
   font-weight: 700;
-  font-size: 0.93rem;
+  font-size: 0.85rem;
 }
 
 .booking-rules p + p {
@@ -2334,7 +2620,7 @@ body.calendar-body {
 }
 
 .booking-modal .config-row label {
-  font-size: 0.95rem;
+  font-size: 0.86rem;
   font-weight: 800;
   color: #0f172a;
 }
@@ -2344,22 +2630,22 @@ body.calendar-body {
 .booking-modal input[type="number"],
 .booking-modal input[type="text"] {
   width: 100%;
-  min-height: 46px;
+  min-height: 40px;
   border: 1px solid #d0d9e6;
-  border-radius: 12px;
-  padding: 10px 12px;
-  font-size: 0.98rem;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 0.9rem;
   color: #0f172a;
   background: #ffffff;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .booking-modal input[type="time"] {
-  min-height: 64px;
-  font-size: 1.55rem;
+  min-height: 48px;
+  font-size: 1.2rem;
   font-weight: 800;
   letter-spacing: 0.02em;
-  padding: 10px 14px;
+  padding: 8px 10px;
 }
 
 .booking-modal input[type="date"]:focus,
@@ -2372,8 +2658,8 @@ body.calendar-body {
 
 .time-input-wrap {
   display: grid;
-  grid-template-columns: 1fr 66px;
-  gap: 10px;
+  grid-template-columns: 1fr 54px;
+  gap: 8px;
   align-items: stretch;
 }
 
@@ -2383,12 +2669,12 @@ body.calendar-body {
 }
 
 .time-arrow-btn {
-  min-height: 52px;
+  min-height: 40px;
   border: 1px solid #c8d5e6;
-  border-radius: 12px;
+  border-radius: 10px;
   background: linear-gradient(180deg, #ffffff 0%, #eef4fb 100%);
   color: #0f172a;
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: 900;
   line-height: 1;
   cursor: pointer;
@@ -2499,18 +2785,18 @@ body.calendar-body {
   }
 
   .time-input-wrap {
-    grid-template-columns: 1fr 58px;
+    grid-template-columns: 1fr 52px;
     gap: 8px;
   }
 
   .time-arrow-btn {
-    min-height: 46px;
-    font-size: 1.1rem;
+    min-height: 36px;
+    font-size: 0.94rem;
   }
 
   .booking-modal input[type="time"] {
-    min-height: 56px;
-    font-size: 1.28rem;
+    min-height: 44px;
+    font-size: 1.04rem;
   }
 }
 
@@ -3288,4 +3574,68 @@ body.calendar-body .day-cell .day-state-pill {
   .bookings-table td {
     font-size: 0.72rem;
   }
+}
+
+/* Admin bookings calendar: compact to prevent overlap */
+.admin-body #bookings-panel .calendar-panel {
+  padding: 12px;
+}
+
+.admin-body #bookings-panel .calendar-nav {
+  grid-template-columns: 34px 1fr 34px;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.admin-body #bookings-panel .month-label {
+  font-size: 0.9rem;
+}
+
+.admin-body #bookings-panel .nav-btn {
+  height: 34px;
+  font-size: 1rem;
+}
+
+.admin-body #bookings-panel .weekdays span {
+  padding: 5px 0;
+  font-size: 0.64rem;
+}
+
+.admin-body #bookings-panel .day-cell,
+.admin-body #bookings-panel .day-cell.outside {
+  min-height: 74px;
+  padding: 4px 3px;
+  gap: 2px;
+}
+
+.admin-body #bookings-panel .day-cell .date-label {
+  font-size: 0.7rem;
+  line-height: 1.15;
+}
+
+.admin-body #bookings-panel .day-cell.today .date-label::after {
+  margin-left: 3px;
+  font-size: 0.52rem;
+  padding: 1px 4px;
+}
+
+.admin-body #bookings-panel .day-cell .hours-label {
+  display: none;
+}
+
+.admin-body #bookings-panel .day-cell .day-state-pill {
+  font-size: 0.62rem;
+  padding: 1px 6px;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-body #bookings-panel .day-cell .holiday-name {
+  font-size: 0.54rem;
+}
+
+.admin-body #bookings-panel .day-cell .holiday-alert {
+  display: none;
 }

@@ -597,7 +597,7 @@
       const dayStateText = isClosedDay
         ? 'Fermé'
         : (isAdminMode
-          ? `${bookingCount} réservation${bookingCount !== 1 ? 's' : ''}`
+          ? `${bookingCount} rés.`
           : (dayData.hasPartialReservations ? 'Partiel' : (dayData.hasAvailability ? 'Disponible' : 'Complet')));
       cellBtn.innerHTML = `
         <div class="date-label">${dateLabel}</div>
