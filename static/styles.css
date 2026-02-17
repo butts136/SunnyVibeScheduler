@@ -245,6 +245,22 @@ body > * {
   margin-right: auto;
 }
 
+body.register-body {
+  align-items: flex-start;
+  justify-content: flex-start;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.register-body .page {
+  max-width: 980px;
+  align-items: flex-start;
+}
+
+.register-body .form-card {
+  max-width: 920px;
+}
+
 .home-main {
   width: 100%;
   max-width: 1100px;
@@ -623,7 +639,7 @@ body > * {
   }
 
   .app-layout > :not(.left-nav):not(.left-nav-toggle):not(.left-nav-backdrop):not(.left-nav-mobile-bar) {
-    padding-bottom: 56px;
+    padding-bottom: calc(var(--mobile-nav-bar-height) + env(safe-area-inset-bottom) + 12px);
   }
 }
 
@@ -3296,6 +3312,29 @@ body.calendar-body .day-cell .day-state-pill {
     gap: 10px;
   }
 
+  body.register-body {
+    padding: 8px;
+  }
+
+  .register-body .page {
+    display: block;
+  }
+
+  .register-body .card.form-card {
+    max-width: none;
+    width: 100%;
+  }
+
+  .register-body .actions {
+    width: 100%;
+  }
+
+  .register-body .actions .btn {
+    flex: 1 1 0;
+    min-width: 0;
+    text-align: center;
+  }
+
   .card {
     padding: 14px;
     border-radius: 10px;
@@ -3658,6 +3697,14 @@ body.calendar-body .day-cell .day-state-pill {
   .bookings-table th,
   .bookings-table td {
     font-size: 0.72rem;
+  }
+
+  body.register-body {
+    padding: 6px;
+  }
+
+  .register-body .card.form-card {
+    padding: 10px;
   }
 }
 
