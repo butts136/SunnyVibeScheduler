@@ -903,6 +903,13 @@
       return 0;
     };
 
+    const getLocalDateKey = (dateObj = new Date()) => {
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const day = String(dateObj.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
     const renderBookingsDetailListForDate = (dateKey) => {
       if (!adminBookingsDetailsList) {
         return;
@@ -922,7 +929,7 @@
         return;
       }
 
-      const currentDayKey = '{{ current_day_key }}';
+      const currentDayKey = getLocalDateKey(new Date());
       const isTodaySelected = dateKey === currentDayKey;
       const now = new Date();
       const nowMinutes = (now.getHours() * 60) + now.getMinutes();
@@ -931,7 +938,7 @@
       const pastRows = [];
       rows.forEach((booking) => {
         const endMinutes = parseTimeToMinutes(booking.end_time);
-        const isPastForToday = isTodaySelected && endMinutes !== null && endMinutes <= nowMinutes;
+        const isPastForToday = isTodaySelected && endMinutes !== null && endMinutes < nowMinutes;
         if (isPastForToday) {
           pastRows.push(booking);
         } else {
@@ -1073,7 +1080,7 @@
       selectBookingInAdminView(bookingId, 'details');
     });
 
-    renderBookingsDetailListForDate('{{ current_day_key }}');
+    renderBookingsDetailListForDate(getLocalDateKey(new Date()));
 
     if (closeUserModalBtn && userModal) {
       closeUserModalBtn.addEventListener('click', () => {

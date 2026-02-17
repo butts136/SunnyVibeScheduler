@@ -241,6 +241,12 @@
           while (weekRow.length < 7) {
             weekRow.push(null);
           }
+          const hasVisibleDayInWeek = weekRow.some((entry) => Boolean(entry));
+          if (!hasVisibleDayInWeek) {
+            weekRow = [];
+            col = 0;
+            continue;
+          }
           weekRow.forEach((entry) => {
             if (!entry) {
               const empty = document.createElement('div');
