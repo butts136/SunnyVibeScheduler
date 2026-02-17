@@ -39,10 +39,12 @@
   const HOUR_HEIGHT = 56;
   const today = startOfDay(new Date());
   const minimumMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const isAdminMode = Boolean(window.SUNNYVIBE_ADMIN_MODE);
   const state = {
     viewMonth: new Date(today.getFullYear(), today.getMonth(), 1),
-    selectedDate: new Date(today),
+    selectedDate: isAdminMode ? new Date(today) : null,
   };
+  const dayPanelEl = document.getElementById('dayPanel') || document.querySelector('.day-panel');
 
   const availabilityCache = new Map();
   const configuredOpeningHours = sanitizeOpeningHours(window.SUNNYVIBE_OPENING_HOURS || {});
@@ -52,7 +54,6 @@
   const configuredBookings = sanitizeBookings(window.SUNNYVIBE_BOOKINGS || {});
   const configuredBlockedRules = sanitizeBlockedRules(window.SUNNYVIBE_BLOCKED_RULES || []);
   const userCanBook = Boolean(window.SUNNYVIBE_USER_CAN_BOOK);
-  const isAdminMode = Boolean(window.SUNNYVIBE_ADMIN_MODE);
   const timeInputDirection = new WeakMap();
   const previousTimeValue = new WeakMap();
 
@@ -63,7 +64,7 @@
 
     state.viewMonth = new Date(state.viewMonth.getFullYear(), state.viewMonth.getMonth() - 1, 1);
 
-    if (!isInMonth(state.selectedDate, state.viewMonth)) {
+    if (state.selectedDate && !isInMonth(state.selectedDate, state.viewMonth)) {
       state.selectedDate = getDefaultSelectionForMonth(state.viewMonth, today);
     }
 
@@ -73,7 +74,7 @@
   nextMonthBtn.addEventListener('click', () => {
     state.viewMonth = new Date(state.viewMonth.getFullYear(), state.viewMonth.getMonth() + 1, 1);
 
-    if (!isInMonth(state.selectedDate, state.viewMonth)) {
+    if (state.selectedDate && !isInMonth(state.selectedDate, state.viewMonth)) {
       state.selectedDate = getDefaultSelectionForMonth(state.viewMonth, today);
     }
 
@@ -85,6 +86,10 @@
     registerForwardRolloverFix(bookingEndInput);
 
     addBookingBtn.addEventListener('click', () => {
+      if (!state.selectedDate) {
+        return;
+      }
+
       const selectedDateKey = toDateKey(state.selectedDate);
       const dayData = getDayData(state.selectedDate);
 
@@ -744,6 +749,33 @@
   }
 
   function renderSelectedDayPanel() {
+    if (!state.selectedDate) {
+      if (dayPanelEl) {
+        dayPanelEl.hidden = true;
+      }
+
+      if (selectedDateLabelEl) {
+        selectedDateLabelEl.textContent = 'Jour sélectionné';
+      }
+      if (selectedDateSubtextEl) {
+        selectedDateSubtextEl.textContent = 'Sélectionnez une date dans le calendrier.';
+      }
+      if (daySummaryEl) {
+        daySummaryEl.innerHTML = '';
+      }
+      if (timelineContainerEl) {
+        timelineContainerEl.innerHTML = '';
+      }
+      if (addBookingBtn) {
+        addBookingBtn.disabled = true;
+      }
+      return;
+    }
+
+    if (dayPanelEl) {
+      dayPanelEl.hidden = false;
+    }
+
     const data = getDayData(state.selectedDate);
     const windowsLabel = data.windows.map((window) => `${formatHour(window.start)} - ${formatHour(window.end)}`).join(' | ');
     const selectedDateKey = toDateKey(state.selectedDate);
@@ -1589,6 +1621,9 @@
   }
 
   function isSameDay(a, b) {
+    if (!a || !b) {
+      return false;
+    }
     return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
   }
 
@@ -1597,6 +1632,9 @@
   }
 
   function isInMonth(date, monthDate) {
+    if (!date || !monthDate) {
+      return false;
+    }
     return date.getFullYear() === monthDate.getFullYear() && date.getMonth() === monthDate.getMonth();
   }
 

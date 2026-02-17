@@ -4584,3 +4584,28 @@ body.calendar-body .day-cell .day-state-pill {
     font-size: 0.68rem;
   }
 }
+
+@media (max-width: 980px) {
+  body.calendar-body .day-panel {
+    padding-bottom: calc(var(--mobile-nav-bar-height) + env(safe-area-inset-bottom) + 66px);
+  }
+
+  body.calendar-body .calendar-sticky-booking-actions {
+    position: fixed;
+    left: 10px;
+    right: 10px;
+    bottom: calc(var(--mobile-nav-bar-height) + env(safe-area-inset-bottom) + 8px);
+    margin: 0;
+    z-index: 1206;
+  }
+
+  body.calendar-body .calendar-sticky-booking-actions .btn {
+    width: 100%;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.16);
+  }
+
+  body.calendar-body.nav-open .calendar-sticky-booking-actions {
+    opacity: 0;
+    pointer-events: none;
+  }
+}

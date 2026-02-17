@@ -49,7 +49,7 @@
       </div>
         </section>
 
-        <section class="day-panel">
+        <section id="dayPanel" class="day-panel" hidden>
       <div class="day-panel-head">
         <h2 id="selectedDateLabel">Jour sélectionné</h2>
         <p id="selectedDateSubtext" class="subtitle">Sélectionnez une date dans le calendrier.</p>
@@ -60,7 +60,7 @@
       <div id="timelineContainer" class="timeline-container"></div>
 
       {% if user_can_book %}
-      <div class="actions booking-actions">
+      <div class="actions booking-actions calendar-sticky-booking-actions">
         <button id="addBookingBtn" class="btn primary" type="button">Ajouter une réservation</button>
       </div>
       {% else %}
