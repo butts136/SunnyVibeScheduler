@@ -16,37 +16,22 @@
         <p class="home-lead">Accédez rapidement aux sections principales du site.</p>
 
         <div class="home-links">
-          <a class="home-link" href="{{ url_for('calendar') }}">
-            <strong>Réserver la salle</strong>
-            <span>Voir le calendrier et les plages disponibles</span>
+          <a class="home-link" href="{{ url_for('login') }}">
+            <strong>Connexion</strong>
+            <span>Accéder à votre compte</span>
+          </a>
+          <a class="home-link" href="{{ url_for('register') }}">
+            <strong>Créer un compte</strong>
+            <span>Démarrer avec un nouveau profil</span>
           </a>
           <a class="home-link" href="{{ url_for('horaire') }}">
             <strong>Heures d'ouverture</strong>
             <span>Consulter les horaires officiels</span>
           </a>
-          {% if is_user_authenticated or is_admin_authenticated %}
-          <a class="home-link" href="{{ url_for('logout') }}">
-            <strong>Déconnexion</strong>
-            <span>Fermer la session actuelle</span>
+          <a class="home-link" href="{{ url_for('calendar') }}">
+            <strong>Calendrier de réservation</strong>
+            <span>Voir les plages disponibles de la salle</span>
           </a>
-          {% else %}
-          <a class="home-link" href="{{ url_for('login') }}">
-            <strong>Connexion</strong>
-            <span>Accéder à votre compte</span>
-          </a>
-          {% endif %}
-          {% if not is_user_authenticated and not is_admin_authenticated %}
-          <a class="home-link" href="{{ url_for('register') }}">
-            <strong>Créer un compte</strong>
-            <span>Démarrer avec un nouveau profil</span>
-          </a>
-          {% endif %}
-          {% if is_admin_authenticated %}
-          <a class="home-link" href="{{ url_for('admin_dashboard') }}">
-            <strong>Tableau de bord</strong>
-            <span>Gérer réservations, horaires et utilisateurs</span>
-          </a>
-          {% endif %}
         </div>
       </section>
     </main>
