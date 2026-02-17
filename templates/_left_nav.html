@@ -27,34 +27,18 @@
 
   {% if admin_nav_mode and is_admin_authenticated %}
   <nav class="admin-tabs" aria-label="Sections administrateur">
-    <section class="admin-nav-section">
-      <h3 class="admin-nav-title">Réservations</h3>
-      <div class="admin-nav-subtabs">
-        <button class="admin-tab {% if active_tab == 'bookings-panel' %}is-active{% endif %}" type="button" data-tab-target="bookings-panel">Gérer les réservations</button>
-        <button class="admin-tab {% if active_tab == 'blocked-slots-panel' %}is-active{% endif %}" type="button" data-tab-target="blocked-slots-panel">Blocages horaires</button>
-        <button class="admin-tab {% if active_tab == 'configuration-panel' %}is-active{% endif %}" type="button" data-tab-target="configuration-panel">Règles de réservation</button>
-      </div>
-    </section>
-
-    <section class="admin-nav-section">
-      <h3 class="admin-nav-title">Disponibilités</h3>
-      <div class="admin-nav-subtabs">
-        <button class="admin-tab {% if active_tab == 'opening-hours-panel' %}is-active{% endif %}" type="button" data-tab-target="opening-hours-panel">Heures d'ouverture</button>
-        <button class="admin-tab {% if active_tab == 'invitation-codes-panel' %}is-active{% endif %}" type="button" data-tab-target="invitation-codes-panel">Invitations</button>
-      </div>
-    </section>
-
-    <section class="admin-nav-section">
-      <h3 class="admin-nav-title">Utilisateurs</h3>
-      <div class="admin-nav-subtabs">
-        <button class="admin-tab {% if active_tab == 'users-panel' %}is-active{% endif %}" type="button" data-tab-target="users-panel">Gestion des comptes</button>
-      </div>
-    </section>
+    <div class="admin-nav-subtabs">
+      <button class="admin-tab {% if active_tab == 'bookings-panel' %}is-active{% endif %}" type="button" data-tab-target="bookings-panel">Gérer les réservations</button>
+      <button class="admin-tab {% if active_tab == 'blocked-slots-panel' %}is-active{% endif %}" type="button" data-tab-target="blocked-slots-panel">Blocages horaires</button>
+      <button class="admin-tab {% if active_tab == 'configuration-panel' %}is-active{% endif %}" type="button" data-tab-target="configuration-panel">Règles de réservation</button>
+      <button class="admin-tab {% if active_tab == 'opening-hours-panel' %}is-active{% endif %}" type="button" data-tab-target="opening-hours-panel">Heures d'ouverture</button>
+      <button class="admin-tab {% if active_tab == 'invitation-codes-panel' %}is-active{% endif %}" type="button" data-tab-target="invitation-codes-panel">Invitations</button>
+      <button class="admin-tab {% if active_tab == 'users-panel' %}is-active{% endif %}" type="button" data-tab-target="users-panel">Gestion des comptes</button>
+    </div>
   </nav>
   {% endif %}
 
   <section class="left-nav-auth" aria-label="Compte et connexion">
-    <h3 class="left-nav-section-title">Compte et Connexion</h3>
     {% if is_user_authenticated %}
     <p class="left-nav-help"><strong>Connecté en tant que {{ connection_display_name }}</strong></p>
     {% elif is_admin_authenticated %}
@@ -64,9 +48,9 @@
     {% endif %}
     <div class="left-nav-links">
     {% if is_user_authenticated or is_admin_authenticated %}
-      <a class="btn danger" href="{{ url_for('logout') }}">Déconnexion</a>
+      <a class="btn" href="{{ url_for('logout') }}">Déconnexion</a>
     {% else %}
-      <a class="btn primary" href="{{ url_for('login') }}">Connexion</a>
+      <a class="btn" href="{{ url_for('login') }}">Connexion</a>
       <a class="btn" href="{{ url_for('register') }}">Créer un compte</a>
     {% endif %}
     </div>

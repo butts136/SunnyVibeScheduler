@@ -198,9 +198,35 @@ body > * {
   color: #4b5563;
 }
 
-.left-nav-links .btn {
+.left-nav-links .btn,
+.left-nav .admin-tab {
   width: 100%;
+  justify-content: flex-start;
   text-align: left;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #1f2937;
+  padding: 9px 11px;
+  min-height: var(--min-tap-size);
+  font-weight: 700;
+  box-shadow: none;
+}
+
+.left-nav-links .btn.primary,
+.left-nav-links .btn.danger {
+  border-color: #d1d5db;
+  background: #ffffff;
+  color: #1f2937;
+}
+
+.left-nav-links .btn:hover,
+.left-nav .admin-tab:hover {
+  border-color: #9cb7d7;
+  background: #f8fbff;
+  color: #1f2937;
+  transform: none;
+  box-shadow: none;
 }
 
 .left-nav-toggle {
@@ -2031,7 +2057,7 @@ body.horaire-body {
 
 .admin-tabs {
   display: grid;
-  gap: 12px;
+  gap: 6px;
   margin-bottom: 14px;
 }
 
@@ -2055,18 +2081,10 @@ body.horaire-body {
 }
 
 .admin-tab {
-  width: 100%;
-  text-align: left;
-  border: 1px solid #d1d5db;
-  border-radius: 10px;
-  background: #fff;
-  color: #1f2937;
-  padding: 9px 11px;
-  min-height: var(--min-tap-size);
-  font-weight: 700;
+  font: inherit;
   font-size: inherit;
   cursor: pointer;
-  transition: border-color var(--transition-fast), background var(--transition-fast), transform 0.1s ease;
+  transition: border-color var(--transition-fast), background var(--transition-fast), color var(--transition-fast);
 }
 
 .admin-tab.is-active {
@@ -4221,9 +4239,10 @@ body.calendar-body .day-cell .day-state-pill {
   }
 
   .admin-tab {
-    padding: 6px 8px;
-    font-size: 0.76rem;
+    padding: 8px 12px;
+    font-size: 0.84rem;
     border-radius: 8px;
+    min-height: 38px;
   }
 
   .admin-section {
@@ -4368,8 +4387,9 @@ body.calendar-body .day-cell .day-state-pill {
   }
 
   .admin-tab {
-    font-size: 0.72rem;
-    padding: 5px 7px;
+    font-size: 0.78rem;
+    padding: 7px 10px;
+    min-height: 36px;
   }
 
   .bookings-table th,
