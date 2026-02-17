@@ -577,6 +577,54 @@
           <h2>Utilisateurs</h2>
           <p class="subtitle">Recherchez un utilisateur et cliquez sur sa carte pour voir tous les détails.</p>
 
+          <details class="admin-create-account" {% if admin_account_creation_form.identifier %}open{% endif %}>
+            <summary>Créer un compte administrateur</summary>
+            <form method="post" class="reservation-config-form admin-create-account-form" novalidate>
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <input type="hidden" name="admin_action" value="create_admin_account">
+
+              <div class="config-row">
+                <label for="new_admin_identifier">Courriel administrateur</label>
+                <input
+                  id="new_admin_identifier"
+                  type="email"
+                  name="new_admin_identifier"
+                  required
+                  value="{{ admin_account_creation_form.identifier }}"
+                  autocomplete="email"
+                >
+              </div>
+
+              <div class="config-row">
+                <label for="new_admin_password">Mot de passe</label>
+                <input
+                  id="new_admin_password"
+                  type="password"
+                  name="new_admin_password"
+                  minlength="8"
+                  required
+                  autocomplete="new-password"
+                >
+              </div>
+
+              <div class="config-row">
+                <label for="new_admin_password_confirm">Confirmer le mot de passe</label>
+                <input
+                  id="new_admin_password_confirm"
+                  type="password"
+                  name="new_admin_password_confirm"
+                  minlength="8"
+                  required
+                  autocomplete="new-password"
+                >
+              </div>
+
+              <div class="actions">
+                <button class="btn primary" type="submit">Créer le compte administrateur</button>
+              </div>
+            </form>
+          </details>
+
           {% if temporary_password_notice %}
           <div class="alert success">{{ temporary_password_notice }}</div>
           {% endif %}

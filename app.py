@@ -1759,43 +1759,137 @@ def _split_full_name(full_name):
     return first_name, last_name
 
 
-def _load_admin_account():
-    if not ADMIN_STORE_PATH.exists():
+def _normalize_admin_identifier(identifier):
+    return str(identifier or '').strip().lower()
+
+
+def _sanitize_admin_account_record(raw_record):
+    if not isinstance(raw_record, dict):
         return None
+
+    identifier = _normalize_admin_identifier(raw_record.get('identifier', ''))
+    password_salt = str(raw_record.get('password_salt', '')).strip()
+    password_hash = str(raw_record.get('password_hash', '')).strip()
+    created_at = str(raw_record.get('created_at', '')).strip() or datetime.now(timezone.utc).isoformat()
+
+    if not identifier or not password_salt or not password_hash:
+        return None
+
+    return {
+        'identifier': identifier,
+        'password_salt': password_salt,
+        'password_hash': password_hash,
+        'created_at': created_at,
+    }
+
+
+def _load_admin_accounts():
+    if not ADMIN_STORE_PATH.exists():
+        return []
 
     try:
         encrypted_container = json.loads(ADMIN_STORE_PATH.read_text(encoding='utf-8'))
         encrypted_payload = encrypted_container.get('encrypted_payload', '')
         if not encrypted_payload:
-            return None
+            return []
 
         cipher = _get_admin_cipher()
         payload_json = cipher.decrypt(encrypted_payload.encode('utf-8')).decode('utf-8')
-        return json.loads(payload_json)
+        payload = json.loads(payload_json)
     except (json.JSONDecodeError, InvalidToken, OSError, ValueError):
-        return None
+        return []
+
+    raw_accounts = []
+    if isinstance(payload, dict) and isinstance(payload.get('accounts'), list):
+        raw_accounts = payload.get('accounts', [])
+    elif isinstance(payload, list):
+        raw_accounts = payload
+    elif isinstance(payload, dict):
+        # Compatibilité avec l'ancien format (un seul compte admin).
+        raw_accounts = [payload]
+
+    accounts = []
+    seen_identifiers = set()
+    for raw_account in raw_accounts:
+        account = _sanitize_admin_account_record(raw_account)
+        if not account:
+            continue
+        if account['identifier'] in seen_identifiers:
+            continue
+        seen_identifiers.add(account['identifier'])
+        accounts.append(account)
+
+    return accounts
 
 
-def _save_admin_account(identifier, password):
-    password_data = _hash_password(password)
+def _save_admin_accounts(accounts):
+    cleaned_accounts = []
+    seen_identifiers = set()
+    for raw_account in accounts:
+        account = _sanitize_admin_account_record(raw_account)
+        if not account:
+            continue
+        if account['identifier'] in seen_identifiers:
+            continue
+        seen_identifiers.add(account['identifier'])
+        cleaned_accounts.append(account)
+
     payload = {
-        'identifier': identifier.lower(),
-        'password_salt': password_data['salt'],
-        'password_hash': password_data['hash'],
-        'created_at': datetime.now(timezone.utc).isoformat(),
+        'accounts': cleaned_accounts,
+        'updated_at': datetime.now(timezone.utc).isoformat(),
     }
 
     cipher = _get_admin_cipher()
     encrypted_payload = cipher.encrypt(json.dumps(payload).encode('utf-8')).decode('utf-8')
     container = {
-        'version': 1,
+        'version': 2,
         'encrypted_payload': encrypted_payload,
     }
     ADMIN_STORE_PATH.write_text(json.dumps(container, indent=2), encoding='utf-8')
 
 
+def _find_admin_account(identifier):
+    normalized_identifier = _normalize_admin_identifier(identifier)
+    if not normalized_identifier:
+        return None
+
+    for account in _load_admin_accounts():
+        if account['identifier'] == normalized_identifier:
+            return account
+
+    return None
+
+
+def _load_admin_account():
+    accounts = _load_admin_accounts()
+    if not accounts:
+        return None
+    return accounts[0]
+
+
+def _save_admin_account(identifier, password):
+    normalized_identifier = _normalize_admin_identifier(identifier)
+    if not normalized_identifier:
+        raise ValueError("Le courriel administrateur est requis.")
+
+    existing_account = _find_admin_account(normalized_identifier)
+    if existing_account:
+        raise ValueError("Un compte administrateur avec cet identifiant existe déjà.")
+
+    password_data = _hash_password(password)
+    new_account = {
+        'identifier': normalized_identifier,
+        'password_salt': password_data['salt'],
+        'password_hash': password_data['hash'],
+        'created_at': datetime.now(timezone.utc).isoformat(),
+    }
+    accounts = _load_admin_accounts()
+    accounts.append(new_account)
+    _save_admin_accounts(accounts)
+
+
 def _admin_account_exists():
-    return _load_admin_account() is not None
+    return len(_load_admin_accounts()) > 0
 
 
 def _any_user_account_exists():
@@ -2216,9 +2310,12 @@ def login():
                 errors.append("La confirmation du mot de passe ne correspond pas.")
 
             if not errors:
-                _save_admin_account(form_data['admin_identifier'], admin_password)
-                admin_exists = True
-                success_message = "Compte administrateur créé. Vous pouvez maintenant vous connecter."
+                try:
+                    _save_admin_account(form_data['admin_identifier'], admin_password)
+                    admin_exists = True
+                    success_message = "Compte administrateur créé. Vous pouvez maintenant vous connecter."
+                except ValueError as exc:
+                    errors.append(str(exc))
 
         if form_action == 'login':
             if not admin_exists:
@@ -2241,9 +2338,8 @@ def login():
                 errors.append("Le mot de passe est requis.")
 
             if not errors:
-                admin_account = _load_admin_account()
-                identifier_lower = form_data['identifier'].lower()
-                if admin_account and identifier_lower == admin_account['identifier']:
+                admin_account = _find_admin_account(form_data['identifier'])
+                if admin_account:
                     password_ok = _verify_password(
                         password,
                         admin_account['password_salt'],
@@ -2755,6 +2851,9 @@ def admin_dashboard():
     temporary_password_notice = None
     generated_invitation_code_notice = None
     invitation_mode_default = 'unique'
+    admin_account_creation_form = {
+        'identifier': '',
+    }
     active_tab = request.args.get('tab', 'bookings-panel')
     if active_tab not in {
         'opening-hours-panel',
@@ -3065,6 +3164,28 @@ def admin_dashboard():
                 finally:
                     conn.close()
 
+        if admin_action == 'create_admin_account':
+            active_tab = 'users-panel'
+            admin_identifier_text = request.form.get('new_admin_identifier', '').strip()
+            admin_password = request.form.get('new_admin_password', '')
+            admin_password_confirm = request.form.get('new_admin_password_confirm', '')
+            admin_account_creation_form['identifier'] = admin_identifier_text
+
+            if not admin_identifier_text:
+                errors.append("Le courriel administrateur est requis.")
+            if len(admin_password) < 8:
+                errors.append("Le mot de passe administrateur doit contenir au moins 8 caractères.")
+            if admin_password != admin_password_confirm:
+                errors.append("La confirmation du mot de passe administrateur ne correspond pas.")
+
+            if not errors:
+                try:
+                    _save_admin_account(admin_identifier_text, admin_password)
+                    success_message = "Nouveau compte administrateur créé."
+                    admin_account_creation_form = {'identifier': ''}
+                except ValueError as exc:
+                    errors.append(str(exc))
+
         if admin_action in {'create_blocked_slot', 'delete_blocked_slot'}:
             active_tab = 'blocked-slots-panel'
 
@@ -3293,6 +3414,7 @@ def admin_dashboard():
         blocked_slots_json=blocked_slot_rules,
         blocked_slot_form=blocked_slot_form,
         blocked_slot_repeat_options=BLOCKED_SLOT_REPEAT_OPTIONS,
+        admin_account_creation_form=admin_account_creation_form,
         generated_invitation_code_notice=generated_invitation_code_notice,
         invitation_mode_default=invitation_mode_default,
         temporary_password_notice=temporary_password_notice,

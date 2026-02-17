@@ -2947,6 +2947,32 @@ body.horaire-body {
   color: #4b5563;
 }
 
+.admin-create-account {
+  margin: 0 0 12px;
+  border: 1px solid #dbe5f4;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  overflow: hidden;
+}
+
+.admin-create-account summary {
+  cursor: pointer;
+  list-style: none;
+  font-weight: 800;
+  color: #0f172a;
+  padding: 11px 12px;
+  background: #f3f9ff;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-create-account summary::-webkit-details-marker {
+  display: none;
+}
+
+.admin-create-account-form {
+  padding: 10px 12px 12px;
+}
+
 .users-search-wrap {
   display: grid;
   gap: 6px;
@@ -4455,8 +4481,11 @@ body.calendar-body .calendar-shell.calendar-shell-single {
   max-height: 100dvh;
   margin: 0;
   border-radius: 0;
-  overflow: auto;
-  padding: 14px 14px calc(16px + env(safe-area-inset-bottom));
+  overflow: hidden;
+  padding: 14px 14px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .calendar-day-modal-head {
@@ -4474,16 +4503,27 @@ body.calendar-body .calendar-shell.calendar-shell-single {
 }
 
 .calendar-day-modal .timeline-container {
-  min-height: calc(100dvh - 260px);
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  margin-bottom: 0;
+}
+
+.calendar-day-modal .day-summary {
+  margin: 0;
 }
 
 .timeline-place-headers {
+  --timeline-axis-width: 58px;
+  --timeline-grid-pad: 8px;
   --capacity: 1;
-  margin: 0 0 8px 58px;
-  width: calc(100% - 58px);
+  margin: 0 0 0 calc(var(--timeline-axis-width) + var(--timeline-grid-pad));
+  width: calc(100% - var(--timeline-axis-width) - (var(--timeline-grid-pad) * 2));
   display: grid;
   grid-template-columns: repeat(var(--capacity), minmax(0, 1fr));
   gap: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #dbe4ef;
 }
 
 .timeline-place-chip {
@@ -4498,6 +4538,20 @@ body.calendar-body .calendar-shell.calendar-shell-single {
   font-weight: 800;
   line-height: 1.2;
   padding: 4px 6px;
+  white-space: nowrap;
+}
+
+.calendar-day-modal .booking-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  margin: 0;
+  padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, rgba(252, 252, 253, 0.3) 0%, rgba(252, 252, 253, 0.95) 28%, #fcfcfd 100%);
+}
+
+.calendar-day-modal .booking-actions .btn {
+  width: 100%;
 }
 
 /* Calendar page mobile list: same visual language as Horaires, with smaller cells */
@@ -4631,16 +4685,18 @@ body.calendar-body .calendar-shell.calendar-shell-single {
   }
 
   body.calendar-body .calendar-day-modal-panel {
-    padding: 10px 10px calc(14px + env(safe-area-inset-bottom));
+    padding: 10px 10px 0;
   }
 
   body.calendar-body .calendar-day-modal .timeline-container {
-    min-height: calc(100dvh - 220px);
+    flex: 1 1 auto;
+    min-height: 0;
   }
 
   body.calendar-body .timeline-place-headers {
-    margin-left: 44px;
-    width: calc(100% - 44px);
+    --timeline-axis-width: 44px;
+    margin-left: calc(var(--timeline-axis-width) + var(--timeline-grid-pad));
+    width: calc(100% - var(--timeline-axis-width) - (var(--timeline-grid-pad) * 2));
     gap: 4px;
   }
 
@@ -4694,12 +4750,13 @@ body.calendar-body .calendar-shell.calendar-shell-single {
   }
 
   body.calendar-body .calendar-day-modal .timeline-container {
-    min-height: calc(100dvh - 200px);
+    flex: 1 1 auto;
+    min-height: 0;
   }
 }
 
 @media (max-width: 980px) {
-  body.calendar-body .day-panel {
+  body.calendar-body .day-panel:not(.calendar-day-modal-panel) {
     padding-bottom: calc(var(--mobile-nav-bar-height) + env(safe-area-inset-bottom) + 66px);
   }
 
