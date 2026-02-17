@@ -109,7 +109,7 @@
           let classes = 'horaire-day';
           if (holidayData) classes += ' is-holiday';
           if (dateObj.toDateString() === today.toDateString()) classes += ' is-today';
-          const inner = `<div class="horaire-date-label"><span class="horaire-day-number">${d}</span><span class="horaire-day-meta">${dateObj.toLocaleDateString('fr-CA', {month: 'short', year: '2-digit'})}</span></div>
+          const inner = `<div class="horaire-date-label"><span class="horaire-day-number">${d}</span><span class="horaire-day-meta horaire-day-meta-full">${dateObj.toLocaleDateString('fr-CA', {month: 'long', year: 'numeric'})}</span><span class="horaire-day-meta horaire-day-meta-short">${dateObj.toLocaleDateString('fr-CA', {month: 'short', year: '2-digit'})}</span></div>
             <div class="horaire-hours-label">${heure}</div>
             ${holidayData ? `<div class="horaire-holiday-name">${holidayData.name}</div><div class="horaire-alert">${holidayData.alert}</div>` : ''}`;
           weekRow.push({ classes, inner });
@@ -149,9 +149,17 @@
 
     addMonth();
     addMonth();
-    document.getElementById('calendar-wrapper').onscroll = () => {
-      if (calendar.getBoundingClientRect().bottom < window.innerHeight + 200) addMonth();
+
+    const calendarWrapper = document.getElementById('calendar-wrapper');
+    const maybeLoadMoreMonths = () => {
+      if (calendar.getBoundingClientRect().bottom < window.innerHeight + 200) {
+        addMonth();
+      }
     };
+
+    calendarWrapper.addEventListener('scroll', maybeLoadMoreMonths, { passive: true });
+    window.addEventListener('scroll', maybeLoadMoreMonths, { passive: true });
+    window.addEventListener('resize', maybeLoadMoreMonths);
   </script>
 </body>
 </html>

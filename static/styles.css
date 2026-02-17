@@ -1188,6 +1188,7 @@ body.horaire-body {
   color: #0f3c61;
   text-transform: capitalize;
   max-width: 100%;
+  min-height: 2.15em;
 }
 
 .horaire-day-number {
@@ -1195,9 +1196,23 @@ body.horaire-body {
 }
 
 .horaire-day-meta {
-  font-size: 0.62rem;
   font-weight: 800;
   color: #4b5563;
+  line-height: 1.1;
+  white-space: normal;
+  word-break: break-word;
+  text-align: center;
+}
+
+.horaire-day-meta-full {
+  display: block;
+  font-size: 0.62rem;
+  text-transform: none;
+}
+
+.horaire-day-meta-short {
+  display: none;
+  font-size: 0.58rem;
   text-transform: uppercase;
 }
 
@@ -1243,11 +1258,14 @@ body.horaire-body {
   }
 
   .horaire-main {
-    min-height: auto;
+    min-height: calc(100dvh - 72px);
   }
 
   .horaire-calendar-wrapper {
     border-radius: 12px;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    overscroll-behavior-y: contain;
   }
 
   .horaire-header {
@@ -1275,8 +1293,17 @@ body.horaire-body {
     line-height: 1;
   }
 
-  .horaire-day-meta {
+  .horaire-date-label {
+    min-height: 2.05em;
+  }
+
+  .horaire-day-meta-full {
     display: none;
+  }
+
+  .horaire-day-meta-short {
+    display: block;
+    font-size: 0.46rem;
   }
 
   .horaire-hours-label {
@@ -1300,6 +1327,10 @@ body.horaire-body {
     font-size: 0.94rem;
   }
 
+  .horaire-main {
+    min-height: calc(100dvh - 68px);
+  }
+
   .horaire-header {
     font-size: 0.5rem;
     padding: 3px 0;
@@ -1312,6 +1343,10 @@ body.horaire-body {
 
   .horaire-day-number {
     font-size: 0.6rem;
+  }
+
+  .horaire-day-meta-short {
+    font-size: 0.42rem;
   }
 
   .horaire-hours-label {
