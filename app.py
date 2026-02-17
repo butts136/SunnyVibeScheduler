@@ -1863,6 +1863,24 @@ def _auth_status_context():
 
 
 @app.before_request
+def _require_initial_admin_setup():
+    if request.endpoint == 'static':
+        return None
+
+    if _admin_account_exists():
+        return None
+
+    allowed_endpoints = {'login', 'admin_setup'}
+    if request.endpoint in allowed_endpoints:
+        return None
+
+    session.clear()
+    if request.path.startswith('/api/'):
+        return jsonify({'ok': False, 'error': 'Configuration initiale requise: créez le compte administrateur.'}), 403
+    return redirect(url_for('login', first_admin_setup='1'))
+
+
+@app.before_request
 def _enforce_session_idle_timeout():
     if request.endpoint == 'static':
         return None
@@ -2116,14 +2134,17 @@ def login():
     errors = []
     success_message = None
 
-    if session.get('is_admin_authenticated'):
-        return redirect(url_for('admin_dashboard'))
-    if session.get('user_id'):
-        if session.get('must_change_password'):
-            return redirect(url_for('force_password_change'))
-        return redirect(url_for('calendar'))
-
     admin_exists = _admin_account_exists()
+    if not admin_exists:
+        session.clear()
+    else:
+        if session.get('is_admin_authenticated'):
+            return redirect(url_for('admin_dashboard'))
+        if session.get('user_id'):
+            if session.get('must_change_password'):
+                return redirect(url_for('force_password_change'))
+            return redirect(url_for('calendar'))
+
     user_exists = _any_user_account_exists()
     form_data = {
         'identifier': '',
@@ -2153,6 +2174,17 @@ def login():
                 success_message = "Compte administrateur créé. Vous pouvez maintenant vous connecter."
 
         if form_action == 'login':
+            if not admin_exists:
+                errors.append("Créez d'abord le compte administrateur.")
+                return render_template(
+                    'login.html',
+                    errors=errors,
+                    success_message=success_message,
+                    form_data=form_data,
+                    admin_exists=admin_exists,
+                    user_exists=user_exists,
+                )
+
             form_data['identifier'] = request.form.get('identifier', '').strip()
             password = request.form.get('password', '')
 

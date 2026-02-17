@@ -20,7 +20,7 @@
       </div>
       {% endif %}
 
-      {% if not user_exists %}
+      {% if admin_exists and not user_exists %}
       <div class="alert success">
         Aucun compte utilisateur détecté. Créez-en un via <a href="{{ url_for('register') }}">Créer un compte</a>.
       </div>
@@ -40,6 +40,7 @@
       </div>
       {% endif %}
 
+      {% if admin_exists %}
       <form method="post" action="{{ url_for('login') }}" class="form-grid" novalidate>
         <input type="hidden" name="form_action" value="login">
 
@@ -59,6 +60,7 @@
           <a class="btn" href="{{ url_for('index') }}">Retour</a>
         </div>
       </form>
+      {% endif %}
 
       {% if not admin_exists %}
       <hr style="margin:18px 0;border:none;border-top:1px solid #e5e7eb;">
