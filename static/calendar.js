@@ -9,6 +9,7 @@
 
   const monthLabelEl = document.getElementById('monthLabel');
   const calendarGridEl = document.getElementById('calendarGrid');
+  const calendarMobileListEl = document.getElementById('calendarMobileList');
   const prevMonthBtn = document.getElementById('prevMonthBtn');
   const nextMonthBtn = document.getElementById('nextMonthBtn');
   const selectedDateLabelEl = document.getElementById('selectedDateLabel');
@@ -549,6 +550,7 @@
   function render() {
     renderMonthHeader();
     renderCalendarGrid();
+    renderCalendarMobileList();
     renderSelectedDayPanel();
   }
 
@@ -649,6 +651,95 @@
       }
 
       calendarGridEl.appendChild(cellBtn);
+    }
+  }
+
+  function renderCalendarMobileList() {
+    if (!calendarMobileListEl) {
+      return;
+    }
+
+    calendarMobileListEl.innerHTML = '';
+
+    const year = state.viewMonth.getFullYear();
+    const month = state.viewMonth.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const monthTitle = new Intl.DateTimeFormat('fr-CA', {
+      month: 'long',
+      year: 'numeric',
+    }).format(state.viewMonth);
+
+    const divider = document.createElement('div');
+    divider.className = 'calendar-mobile-month-divider';
+    divider.textContent = monthTitle;
+    calendarMobileListEl.appendChild(divider);
+
+    for (let dayNumber = 1; dayNumber <= daysInMonth; dayNumber += 1) {
+      const cellDate = new Date(year, month, dayNumber);
+      const dayData = getDayData(cellDate);
+      const isToday = isSameDay(cellDate, today);
+      const isSelected = isSameDay(cellDate, state.selectedDate);
+      const isPast = cellDate < today;
+      const holidayData = getHolidayForDate(cellDate);
+      const isClosedDay = dayData.totalMinutes === 0;
+      const bookingCount = getBookingCountForDate(cellDate);
+      const dayStateText = isClosedDay
+        ? 'Fermé'
+        : (isAdminMode
+          ? `${bookingCount} rés.`
+          : (dayData.hasPartialReservations ? 'Partiel' : (dayData.hasAvailability ? 'Disponible' : 'Complet')));
+
+      const dateWeekday = new Intl.DateTimeFormat('fr-CA', { weekday: 'long' }).format(cellDate);
+      const dateLong = new Intl.DateTimeFormat('fr-CA', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      }).format(cellDate);
+      const hoursLabel = formatWindowsLabel(dayData.windows);
+
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'calendar-mobile-day-card';
+      if (isClosedDay) {
+        card.classList.add('full');
+      } else if (!dayData.hasAvailability) {
+        card.classList.add('full');
+      } else if (dayData.hasPartialReservations) {
+        card.classList.add('partial');
+      } else {
+        card.classList.add('available');
+      }
+      if (isToday) {
+        card.classList.add('today');
+      }
+      if (isSelected) {
+        card.classList.add('selected');
+      }
+      if (isPast) {
+        card.classList.add('past');
+      }
+      if (holidayData) {
+        card.classList.add('holiday');
+      }
+
+      card.innerHTML = `
+        <p class="calendar-mobile-weekday">${escapeHtml(dateWeekday)}</p>
+        <p class="calendar-mobile-date">${escapeHtml(dateLong)}</p>
+        <p class="calendar-mobile-hours">${escapeHtml(hoursLabel)}</p>
+        <p class="calendar-mobile-state">${escapeHtml(dayStateText)}</p>
+        ${holidayData ? `<p class="calendar-mobile-holiday">${escapeHtml(holidayData.name)}</p>` : ''}
+      `;
+
+      if (isPast) {
+        card.disabled = true;
+      } else {
+        card.addEventListener('click', () => {
+          state.selectedDate = cellDate;
+          render();
+        });
+      }
+
+      calendarMobileListEl.appendChild(card);
     }
   }
 

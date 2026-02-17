@@ -4429,3 +4429,158 @@ body.calendar-body .day-cell .day-state-pill {
 .admin-body #bookings-panel .day-cell .holiday-alert {
   display: none;
 }
+
+/* Calendar page mobile list: same visual language as Horaires, with smaller cells */
+.calendar-mobile-list {
+  display: none;
+}
+
+.calendar-mobile-month-divider {
+  border: 1px solid #d3deec;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #edf5ff 0%, #f2fbff 100%);
+  color: #0f3c61;
+  font-weight: 900;
+  text-transform: capitalize;
+  text-align: center;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  padding: 6px 10px;
+}
+
+.calendar-mobile-day-card {
+  width: 100%;
+  border: 1px solid #d9e4f1;
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 9px 10px;
+  display: grid;
+  gap: 3px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.calendar-mobile-day-card.available {
+  border-color: #95d5b2;
+  background: linear-gradient(180deg, #ffffff 0%, #f3fff8 100%);
+}
+
+.calendar-mobile-day-card.partial {
+  border-color: #c4b5fd;
+  background: linear-gradient(180deg, #ffffff 0%, #f6f3ff 100%);
+}
+
+.calendar-mobile-day-card.full {
+  border-color: #f0b7b7;
+  background: linear-gradient(180deg, #ffffff 0%, #fff5f5 100%);
+}
+
+.calendar-mobile-day-card.today {
+  box-shadow: inset 0 0 0 2px #fb923c;
+}
+
+.calendar-mobile-day-card.selected {
+  box-shadow: inset 0 0 0 2px #3b82f6;
+}
+
+.calendar-mobile-day-card.past {
+  opacity: 0.68;
+}
+
+.calendar-mobile-day-card:disabled {
+  cursor: not-allowed;
+}
+
+.calendar-mobile-day-card p {
+  margin: 0;
+  line-height: 1.22;
+}
+
+.calendar-mobile-weekday {
+  font-size: 0.84rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.calendar-mobile-date {
+  font-size: 0.87rem;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.calendar-mobile-hours {
+  display: inline-block;
+  justify-self: start;
+  font-size: 0.81rem;
+  color: #1d4f7a;
+  font-weight: 800;
+  background: #eef6ff;
+  border: 1px solid #d4e4f7;
+  border-radius: 999px;
+  padding: 2px 7px;
+}
+
+.calendar-mobile-state {
+  display: inline-block;
+  justify-self: start;
+  font-size: 0.79rem;
+  font-weight: 900;
+  color: #1f2937;
+  border-radius: 999px;
+  background: #f1f5f9;
+  padding: 2px 7px;
+}
+
+.calendar-mobile-holiday {
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: #b45309;
+}
+
+@media (max-width: 760px) {
+  body.calendar-body .weekdays,
+  body.calendar-body .day-grid {
+    display: none;
+  }
+
+  body.calendar-body .calendar-mobile-list {
+    display: grid;
+    gap: 8px;
+    padding: 8px;
+  }
+}
+
+@media (max-width: 420px) {
+  body.calendar-body .calendar-mobile-list {
+    gap: 6px;
+    padding: 6px;
+  }
+
+  body.calendar-body .calendar-mobile-month-divider {
+    font-size: 0.76rem;
+    padding: 5px 8px;
+  }
+
+  body.calendar-body .calendar-mobile-day-card {
+    border-radius: 9px;
+    padding: 7px 8px;
+    gap: 2px;
+  }
+
+  body.calendar-body .calendar-mobile-weekday {
+    font-size: 0.76rem;
+  }
+
+  body.calendar-body .calendar-mobile-date {
+    font-size: 0.8rem;
+  }
+
+  body.calendar-body .calendar-mobile-hours,
+  body.calendar-body .calendar-mobile-state {
+    font-size: 0.72rem;
+  }
+
+  body.calendar-body .calendar-mobile-holiday {
+    font-size: 0.68rem;
+  }
+}
