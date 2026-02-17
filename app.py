@@ -13,8 +13,10 @@ from pathlib import Path
 
 from cryptography.fernet import Fernet, InvalidToken
 from flask import Flask, jsonify, redirect, render_template, request, session, url_for
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
 _fallback_key = secrets.token_hex(32)
 app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY', _fallback_key)
