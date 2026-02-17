@@ -1255,17 +1255,19 @@ body.horaire-body {
 @media (max-width: 980px) {
   body.horaire-body {
     padding: 6px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .horaire-main {
-    min-height: calc(100dvh - 72px);
+    min-height: auto;
   }
 
   .horaire-calendar-wrapper {
     border-radius: 12px;
-    -webkit-overflow-scrolling: touch;
-    touch-action: pan-y;
-    overscroll-behavior-y: contain;
+    overflow: visible;
+    touch-action: auto;
+    overscroll-behavior: auto;
   }
 
   .horaire-header {
@@ -1325,10 +1327,6 @@ body.horaire-body {
 @media (max-width: 560px) {
   .horaire-title {
     font-size: 0.94rem;
-  }
-
-  .horaire-main {
-    min-height: calc(100dvh - 68px);
   }
 
   .horaire-header {

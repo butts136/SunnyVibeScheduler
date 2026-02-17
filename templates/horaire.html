@@ -151,12 +151,19 @@
     addMonth();
 
     const calendarWrapper = document.getElementById('calendar-wrapper');
-    const maybeLoadMoreMonths = () => {
-      if (calendar.getBoundingClientRect().bottom < window.innerHeight + 200) {
+    const ensureMonthsFillViewport = () => {
+      let safety = 0;
+      while (calendar.getBoundingClientRect().bottom < window.innerHeight + 220 && safety < 18) {
         addMonth();
+        safety += 1;
       }
     };
 
+    const maybeLoadMoreMonths = () => {
+      ensureMonthsFillViewport();
+    };
+
+    ensureMonthsFillViewport();
     calendarWrapper.addEventListener('scroll', maybeLoadMoreMonths, { passive: true });
     window.addEventListener('scroll', maybeLoadMoreMonths, { passive: true });
     window.addEventListener('resize', maybeLoadMoreMonths);
