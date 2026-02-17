@@ -10,11 +10,14 @@
   const monthLabelEl = document.getElementById('monthLabel');
   const calendarGridEl = document.getElementById('calendarGrid');
   const calendarMobileListEl = document.getElementById('calendarMobileList');
+  const dayPanelModalEl = document.getElementById('dayPanelModal');
+  const closeDayPanelModalBtn = document.getElementById('closeDayPanelModalBtn');
   const prevMonthBtn = document.getElementById('prevMonthBtn');
   const nextMonthBtn = document.getElementById('nextMonthBtn');
   const selectedDateLabelEl = document.getElementById('selectedDateLabel');
   const selectedDateSubtextEl = document.getElementById('selectedDateSubtext');
   const daySummaryEl = document.getElementById('daySummary');
+  const timelinePlaceHeadersEl = document.getElementById('timelinePlaceHeaders');
   const timelineContainerEl = document.getElementById('timelineContainer');
   const addBookingBtn = document.getElementById('addBookingBtn');
   const bookingModal = document.getElementById('bookingModal');
@@ -39,10 +42,11 @@
   const HOUR_HEIGHT = 56;
   const today = startOfDay(new Date());
   const minimumMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const usesDayPanelModal = Boolean(dayPanelModalEl);
   const isAdminMode = Boolean(window.SUNNYVIBE_ADMIN_MODE);
   const state = {
     viewMonth: new Date(today.getFullYear(), today.getMonth(), 1),
-    selectedDate: isAdminMode ? new Date(today) : null,
+    selectedDate: usesDayPanelModal ? null : new Date(today),
   };
   const dayPanelEl = document.getElementById('dayPanel') || document.querySelector('.day-panel');
 
@@ -80,6 +84,20 @@
 
     render();
   });
+
+  if (usesDayPanelModal && dayPanelModalEl) {
+    if (closeDayPanelModalBtn) {
+      closeDayPanelModalBtn.addEventListener('click', closeDayPanelModal);
+    }
+    dayPanelModalEl.addEventListener('click', (event) => {
+      if (event.target === dayPanelModalEl) {
+        closeDayPanelModal();
+      }
+    });
+    dayPanelModalEl.addEventListener('close', () => {
+      document.body.classList.remove('calendar-day-modal-open');
+    });
+  }
 
   if (userCanBook && addBookingBtn && bookingModal && bookingForm) {
     registerForwardRolloverFix(bookingStartInput);
@@ -132,6 +150,9 @@
       setBookingFormMessage('', '');
       previousTimeValue.set(bookingStartInput, bookingStartInput.value);
       previousTimeValue.set(bookingEndInput, bookingEndInput.value);
+      if (usesDayPanelModal && dayPanelModalEl && dayPanelModalEl.open) {
+        closeDayPanelModal();
+      }
       bookingModal.showModal();
     });
 
@@ -650,13 +671,7 @@
         cellBtn.disabled = true;
       } else {
         cellBtn.addEventListener('click', () => {
-          state.selectedDate = cellDate;
-          if (dayPanelEl) {
-            dayPanelEl.hidden = false;
-            dayPanelEl.removeAttribute('hidden');
-          }
-          render();
-          scrollToDayPanelIfMobile();
+          selectDate(cellDate);
         });
       }
 
@@ -748,13 +763,7 @@
         card.disabled = true;
       } else {
         card.addEventListener('click', () => {
-          state.selectedDate = cellDate;
-          if (dayPanelEl) {
-            dayPanelEl.hidden = false;
-            dayPanelEl.removeAttribute('hidden');
-          }
-          render();
-          scrollToDayPanelIfMobile();
+          selectDate(cellDate);
         });
       }
 
@@ -772,7 +781,7 @@
 
   function renderSelectedDayPanel() {
     if (!state.selectedDate) {
-      if (dayPanelEl) {
+      if (dayPanelEl && !usesDayPanelModal) {
         dayPanelEl.hidden = true;
         dayPanelEl.setAttribute('hidden', 'hidden');
       }
@@ -785,6 +794,10 @@
       }
       if (daySummaryEl) {
         daySummaryEl.innerHTML = '';
+      }
+      if (timelinePlaceHeadersEl) {
+        timelinePlaceHeadersEl.innerHTML = '';
+        timelinePlaceHeadersEl.hidden = true;
       }
       if (timelineContainerEl) {
         timelineContainerEl.innerHTML = '';
@@ -830,6 +843,8 @@
     if (addBookingBtn) {
       addBookingBtn.disabled = !data.hasAvailability;
     }
+
+    renderTimelinePlaceHeaders(data.capacity, data.windows.length > 0);
 
     if (data.windows.length === 0) {
       timelineContainerEl.innerHTML = '<div class="empty-state">Aucune plage horaire n\'est disponible pour ce jour.</div>';
@@ -897,6 +912,28 @@
 
     timelineContainerEl.innerHTML = '';
     timelineContainerEl.appendChild(timelineTrackEl);
+  }
+
+  function renderTimelinePlaceHeaders(capacity, visible) {
+    if (!timelinePlaceHeadersEl) {
+      return;
+    }
+
+    timelinePlaceHeadersEl.innerHTML = '';
+    if (!visible) {
+      timelinePlaceHeadersEl.hidden = true;
+      return;
+    }
+
+    const totalPlaces = Math.max(1, Number(capacity) || 1);
+    timelinePlaceHeadersEl.hidden = false;
+    timelinePlaceHeadersEl.style.setProperty('--capacity', String(totalPlaces));
+    for (let index = 1; index <= totalPlaces; index += 1) {
+      const chip = document.createElement('span');
+      chip.className = 'timeline-place-chip';
+      chip.textContent = `Place ${index}`;
+      timelinePlaceHeadersEl.appendChild(chip);
+    }
   }
 
   function summaryChip(label, value) {
@@ -1666,20 +1703,45 @@
     return (jsDay + 6) % 7;
   }
 
-  function scrollToDayPanelIfMobile() {
-    if (!dayPanelEl) {
+  function selectDate(date) {
+    state.selectedDate = startOfDay(date);
+    render();
+    if (usesDayPanelModal) {
+      openDayPanelModal();
+    }
+  }
+
+  function openDayPanelModal() {
+    if (!dayPanelModalEl || !dayPanelEl || !usesDayPanelModal) {
       return;
     }
 
-    if (!window.matchMedia('(max-width: 980px)').matches) {
+    dayPanelEl.hidden = false;
+    dayPanelEl.removeAttribute('hidden');
+
+    if (typeof dayPanelModalEl.showModal === 'function') {
+      if (!dayPanelModalEl.open) {
+        dayPanelModalEl.showModal();
+      }
+    } else {
+      dayPanelModalEl.setAttribute('open', 'open');
+    }
+    document.body.classList.add('calendar-day-modal-open');
+  }
+
+  function closeDayPanelModal() {
+    if (!dayPanelModalEl || !usesDayPanelModal) {
       return;
     }
 
-    try {
-      dayPanelEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } catch (error) {
-      dayPanelEl.scrollIntoView(true);
+    if (typeof dayPanelModalEl.close === 'function') {
+      if (dayPanelModalEl.open) {
+        dayPanelModalEl.close();
+      }
+    } else {
+      dayPanelModalEl.removeAttribute('open');
     }
+    document.body.classList.remove('calendar-day-modal-open');
   }
 
   function getDefaultSelectionForMonth(monthDate, currentDate) {

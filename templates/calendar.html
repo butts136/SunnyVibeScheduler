@@ -10,7 +10,7 @@
   <div class="app-layout">
     {% include '_left_nav.html' %}
     <div class="calendar-main">
-      <div class="calendar-shell">
+      <div class="calendar-shell calendar-shell-single">
         <section class="calendar-panel">
       <div class="calendar-panel-head">
         <h1>Calendrier de réservation</h1>
@@ -49,27 +49,34 @@
       </div>
         </section>
 
-        <section id="dayPanel" class="day-panel" hidden>
+      </div>
+    </div>
+  </div>
+
+  <dialog id="dayPanelModal" class="calendar-day-modal">
+    <section id="dayPanel" class="day-panel calendar-day-modal-panel" hidden>
+      <div class="calendar-day-modal-head">
+        <button id="closeDayPanelModalBtn" class="btn" type="button">Fermer</button>
+      </div>
+
       <div class="day-panel-head">
         <h2 id="selectedDateLabel">Jour sélectionné</h2>
         <p id="selectedDateSubtext" class="subtitle">Sélectionnez une date dans le calendrier.</p>
       </div>
 
       <div id="daySummary" class="day-summary"></div>
-
+      <div id="timelinePlaceHeaders" class="timeline-place-headers" hidden></div>
       <div id="timelineContainer" class="timeline-container"></div>
 
       {% if user_can_book %}
-      <div class="actions booking-actions calendar-sticky-booking-actions">
+      <div class="actions booking-actions">
         <button id="addBookingBtn" class="btn primary" type="button">Ajouter une réservation</button>
       </div>
       {% else %}
       <p class="subtitle">Connectez-vous avec un compte utilisateur pour ajouter une réservation.</p>
       {% endif %}
-        </section>
-      </div>
-    </div>
-  </div>
+    </section>
+  </dialog>
 
   <dialog id="bookingModal" class="user-modal booking-modal">
     <div class="user-modal-head">
