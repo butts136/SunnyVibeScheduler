@@ -572,7 +572,8 @@
                   button.classList.add('disabled');
                   button.disabled = true;
                 } else {
-                  button.addEventListener('click', () => {
+                  button.addEventListener('click', (event) => {
+                    event.stopPropagation();
                     tempSelectedDate = new Date(date);
                     renderCalendar();
                   });
@@ -642,7 +643,9 @@
               if (popup.hidden) {
                 return;
               }
-              if (!event.target.closest('[data-calendar-field]')) {
+              const eventPath = typeof event.composedPath === 'function' ? event.composedPath() : [];
+              const clickedInsideField = eventPath.includes(field) || field.contains(event.target);
+              if (!clickedInsideField) {
                 tempSelectedDate = confirmedDate ? new Date(confirmedDate) : new Date(today);
                 currentMonth = new Date(tempSelectedDate.getFullYear(), tempSelectedDate.getMonth(), 1);
                 closePopup();
@@ -745,7 +748,8 @@
                 if (state.temp.hour === Number(hourText)) {
                   button.classList.add('selected');
                 }
-                button.addEventListener('click', () => {
+                button.addEventListener('click', (event) => {
+                  event.stopPropagation();
                   state.temp = { ...state.temp, hour: Number(hourText) };
                   renderField(field);
                 });
@@ -760,7 +764,8 @@
                 if (state.temp.minute === Number(minuteText)) {
                   button.classList.add('selected');
                 }
-                button.addEventListener('click', () => {
+                button.addEventListener('click', (event) => {
+                  event.stopPropagation();
                   state.temp = { ...state.temp, minute: Number(minuteText) };
                   renderField(field);
                 });
@@ -829,7 +834,9 @@
               if (!openField) {
                 return;
               }
-              if (!event.target.closest('[data-time-field]')) {
+              const eventPath = typeof event.composedPath === 'function' ? event.composedPath() : [];
+              const clickedInsideField = eventPath.includes(openField) || openField.contains(event.target);
+              if (!clickedInsideField) {
                 closeField(openField, false);
               }
             });
