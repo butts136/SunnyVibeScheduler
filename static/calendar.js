@@ -101,15 +101,6 @@
     calendarPanelEl.classList.toggle('cards-mode', isSunnygymCardsMode);
   }
 
-  const bookingsManagerResizeObserver =
-    window.ResizeObserver && bookingManagerGridEl
-      ? new ResizeObserver(() => {
-          if (isBookingsDashboardPage && bookingsDashboardMode === 'manager') {
-            scheduleBookingsManagerRerender();
-          }
-        })
-      : null;
-
   prevMonthBtn.addEventListener('click', () => {
     if (isSameMonth(state.viewMonth, minimumMonth)) {
       return;
@@ -2417,9 +2408,6 @@
 
   render();
   renderBookingRules();
-  if (bookingsManagerResizeObserver && bookingManagerGridEl) {
-    bookingsManagerResizeObserver.observe(bookingManagerGridEl);
-  }
   window.addEventListener('resize', () => {
     if (isBookingsDashboardPage && bookingsDashboardMode === 'manager') {
       syncBookingsManagerViewportHeight();

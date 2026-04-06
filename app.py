@@ -5093,4 +5093,15 @@ app.add_url_rule('/admin/dashboard/configuration', endpoint='admin_dashboard_con
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=39048, debug=True)
+    flask_debug_enabled = os.environ.get('FLASK_DEBUG', '').strip().lower() in {'1', 'true', 'yes', 'on'}
+    try:
+        flask_port = int(os.environ.get('PORT', os.environ.get('FLASK_RUN_PORT', '39048')))
+    except ValueError:
+        flask_port = 39048
+
+    app.run(
+        host=os.environ.get('FLASK_RUN_HOST', '0.0.0.0'),
+        port=flask_port,
+        debug=flask_debug_enabled,
+        use_reloader=flask_debug_enabled,
+    )
