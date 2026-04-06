@@ -123,8 +123,10 @@
     if (specialClosedInput && specialStartInput && specialEndInput) {
       const syncSpecialInputs = () => {
         const disabled = specialClosedInput.checked;
-        specialStartInput.disabled = disabled;
-        specialEndInput.disabled = disabled;
+        [specialStartInput, specialEndInput].forEach((input) => {
+          input.disabled = disabled;
+          input.closest('.opening-special-time-row')?.classList.toggle('is-disabled', disabled);
+        });
       };
       specialClosedInput.addEventListener('change', syncSpecialInputs);
       syncSpecialInputs();

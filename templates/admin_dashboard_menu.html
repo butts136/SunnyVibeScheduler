@@ -517,6 +517,14 @@
             });
 
             tabs.forEach((tab) => {
+              tab.addEventListener('selectstart', (event) => {
+                event.preventDefault();
+              });
+
+              tab.addEventListener('dragstart', (event) => {
+                event.preventDefault();
+              });
+
               tab.addEventListener('mouseenter', () => {
                 if (!tab.classList.contains('active')) {
                   setIndicatorPosition(tab, hoverIndicator);
@@ -861,6 +869,14 @@
             };
 
             productCards.forEach((card) => {
+              card.addEventListener('selectstart', (event) => {
+                event.preventDefault();
+              });
+
+              card.addEventListener('dragstart', (event) => {
+                event.preventDefault();
+              });
+
               card.addEventListener('contextmenu', (event) => {
                 event.preventDefault();
                 contextProduct = productFromCard(card);

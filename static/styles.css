@@ -7585,7 +7585,7 @@ input[type="number"].number-input {
   }
 
   .layout.app-layout > :not(.left-nav):not(.left-nav-toggle):not(.left-nav-backdrop):not(.left-nav-mobile-bar) {
-    padding: calc(3.35rem + env(safe-area-inset-top)) 1rem 1.35rem;
+    padding: calc(4.15rem + env(safe-area-inset-top)) 1rem 1.35rem;
     overflow: visible;
   }
 
@@ -8230,6 +8230,17 @@ input[type="number"].number-input {
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(10, 16, 30, 0.98);
   box-shadow: 0 20px 44px rgba(0, 0, 0, 0.32);
+}
+
+#menuTabs .settings-tab-btn[data-menu-tab],
+#menuTabs .settings-tab-btn[data-menu-tab] *,
+.menu-admin-item--product,
+.menu-admin-item--product *,
+.menu-tab-context-menu,
+.menu-tab-context-menu * {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .menu-tab-context-menu[hidden] {
@@ -8911,6 +8922,14 @@ input[type="number"].number-input {
   gap: 0.48rem;
 }
 
+.opening-special-time-row.is-disabled {
+  opacity: 0.5;
+}
+
+.opening-special-time-row.is-disabled input {
+  pointer-events: none;
+}
+
 .segmented-choice {
   display: inline-grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -9213,12 +9232,12 @@ input[type="number"].number-input {
 
 @media (max-width: 640px) {
   .time-picker-row {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) 48px;
   }
 
   .time-picker-toggle {
-    width: 100%;
-    justify-self: stretch;
+    width: 48px;
+    justify-self: end;
   }
 }
 
@@ -11792,6 +11811,74 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .opening-hours-head.row-grid {
+    display: none;
+  }
+
+  .opening-hours-row.row-grid {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "day switch"
+      "times times";
+    align-items: center;
+  }
+
+  .opening-hours-row .day-label {
+    grid-area: day;
+  }
+
+  .opening-hours-row .opening-switch {
+    grid-area: switch;
+    justify-self: end;
+  }
+
+  .opening-switch > span {
+    display: none;
+  }
+
+  .opening-switch .toggle-switch {
+    --toggle-width: 106px;
+    --toggle-height: 34px;
+    --toggle-knob: 24px;
+    --toggle-gap: 4px;
+  }
+
+  .opening-switch .toggle-switch__status {
+    font-size: 0.54rem;
+    letter-spacing: 0;
+  }
+
+  .opening-hours-row .opening-hours-time-range {
+    grid-area: times;
+  }
+
+  .active-slot-form-grid,
+  .active-slot-form-grid--blocked {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .active-slot-title-row {
+    grid-column: auto;
+  }
+
+  .active-slot-form .config-row {
+    min-width: 0;
+  }
+
+  .active-slot-card__head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+  }
+
+  .active-slot-card__badge {
+    justify-self: start;
+  }
+
+  .active-slot-card__meta {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .special-date-item {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -11833,6 +11920,100 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
 @media (max-width: 560px) {
   .hours-calendar-main {
     gap: 0.8rem;
+  }
+
+  .menu-flavor-filter-modal {
+    width: calc(100vw - 1rem);
+    padding: 1rem;
+  }
+
+  .public-menu-filterbar {
+    gap: 0.45rem;
+  }
+
+  .menu-body .settings-tabs-wrap,
+  .menu-admin-shell .settings-tabs-wrap,
+  .public-menu-shell .settings-tabs-wrap {
+    overflow-x: visible;
+    overflow-y: visible;
+  }
+
+  .menu-body .settings-tabs,
+  .menu-admin-shell .settings-tabs,
+  .public-menu-shell .settings-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    overflow: visible;
+  }
+
+  .menu-body .settings-tabs-indicator,
+  .menu-body .settings-tabs-hover-indicator,
+  .menu-admin-shell .settings-tabs-indicator,
+  .menu-admin-shell .settings-tabs-hover-indicator,
+  .public-menu-shell .settings-tabs-indicator,
+  .public-menu-shell .settings-tabs-hover-indicator {
+    display: none;
+  }
+
+  .menu-body .settings-tab-btn,
+  .menu-admin-shell .settings-tab-btn,
+  .public-menu-shell .settings-tab-btn {
+    flex: 1 1 auto;
+    min-height: 38px;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    font-size: 0.82rem;
+  }
+
+  .menu-body .settings-tab-btn.active,
+  .menu-admin-shell .settings-tab-btn.active,
+  .public-menu-shell .settings-tab-btn.active {
+    background: linear-gradient(135deg, rgba(91, 167, 255, 0.28), rgba(127, 92, 255, 0.28));
+    border-color: rgba(91, 167, 255, 0.42);
+  }
+
+  .public-menu-filter-btn {
+    min-height: 38px;
+    padding: 0 0.72rem;
+    font-size: 0.82rem;
+  }
+
+  .public-menu-filter-status {
+    min-height: 30px;
+    padding: 0.2rem 0.55rem;
+    font-size: 0.74rem;
+  }
+
+  .menu-flavor-filter-list {
+    gap: 0.45rem;
+    max-height: min(62vh, 480px);
+  }
+
+  .menu-flavor-filter-row {
+    gap: 0.55rem;
+    padding: 0.55rem 0.62rem;
+    border-radius: 13px;
+  }
+
+  .menu-flavor-filter-name {
+    font-size: 0.84rem;
+    line-height: 1.15;
+  }
+
+  .menu-flavor-filter-row .toggle-switch {
+    --toggle-width: 98px;
+    --toggle-height: 32px;
+    --toggle-knob: 22px;
+    --toggle-gap: 4px;
+  }
+
+  .menu-flavor-filter-row .toggle-switch__status {
+    font-size: 0.5rem;
+    letter-spacing: 0;
   }
 
   .hours-weekly-panel,
@@ -11960,7 +12141,7 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
 
 .toggle-switch__status {
   position: absolute;
-  inset: 0 0 0 42px;
+  inset: 0 0 0 calc(var(--toggle-knob) + var(--toggle-gap) + 5px);
   z-index: 2;
   display: flex;
   align-items: center;
@@ -12011,7 +12192,7 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
 }
 
 .toggle-switch__input:checked ~ .toggle-switch__status {
-  inset: 0 42px 0 0;
+  inset: 0 calc(var(--toggle-knob) + var(--toggle-gap) + 5px) 0 0;
   padding-right: 0;
   padding-left: 0.52rem;
   color: rgba(255, 255, 255, 0.96);
