@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ page_title|default('Tableau de bord') }} | Sunny Vibe Nutrition</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v=styles_version) }}">
+</head>
+<body data-ui-mode="dark" data-theme="modern-gradient" class="admin-body with-left-nav">
+  <div class="layout app-layout">
+    {% include '_left_nav.html' %}
+
+    <main class="admin-main">
+      <div class="card form-card admin-card">
+        <h1>{{ page_title|default('Tableau de bord') }}</h1>
+
+        {% if errors %}
+        <div class="alert error">
+          <ul>
+            {% for error in errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+
+        {% if success_message %}
+        <div class="alert success">{{ success_message }}</div>
+        {% endif %}
+
+        {% block admin_panel %}{% endblock %}
+      </div>
+    </main>
+  </div>
+
+  <dialog id="userDetailsModal" class="user-modal">
+    <div class="user-modal-head">
+      <h3 id="modalUserTitle">Détails utilisateur</h3>
+      <button id="closeUserModalBtn" class="btn" type="button">Fermer</button>
+    </div>
+    <div id="modalUserContent" class="user-modal-content"></div>
+  </dialog>
+
+  <dialog id="superAdminPasswordModal" class="user-modal">
+    <div class="user-modal-head">
+      <h3>Modifier le mot de passe</h3>
+      <button id="closeSuperAdminPasswordModalBtn" class="btn" type="button">Fermer</button>
+    </div>
+    <div class="user-modal-content">
+      <form method="post" class="super-admin-password-form full-width" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <input type="hidden" name="admin_action" value="update_super_admin_password">
+        <label>
+          Mot de passe actuel
+          <input
+            type="password"
+            name="super_admin_current_password"
+            autocomplete="current-password"
+            required
+          >
+        </label>
+        <label>
+          Nouveau mot de passe
+          <input
+            type="password"
+            name="super_admin_new_password"
+            minlength="8"
+            autocomplete="new-password"
+            required
+          >
+        </label>
+        <label>
+          Confirmer
+          <input
+            type="password"
+            name="super_admin_new_password_confirm"
+            minlength="8"
+            autocomplete="new-password"
+            required
+          >
+        </label>
+        <div class="modal-actions">
+          <button id="cancelSuperAdminPasswordModalBtn" class="btn" type="button">Annuler</button>
+          <button class="btn primary" type="submit">Modifier le mot de passe</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <dialog id="bookingDeleteModal" class="booking-modal booking-delete-modal">
+    <div class="user-modal-head booking-delete-modal-head">
+      <h3 id="bookingDeleteModalTitle">Supprimer le rendez-vous</h3>
+      <button id="closeBookingDeleteModalBtn" class="btn" type="button">Fermer</button>
+    </div>
+    <div class="user-modal-content booking-delete-modal-content">
+      <div class="booking-delete-modal-icon">!</div>
+      <p id="bookingDeleteModalMessage">Voulez-vous vraiment supprimer ce rendez-vous ?</p>
+      <div class="modal-actions booking-delete-modal-actions">
+        <button id="cancelBookingDeleteBtn" class="btn" type="button">Annuler</button>
+        <button id="confirmBookingDeleteBtn" class="btn danger" type="button">Supprimer</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    document.querySelectorAll('.opening-hours-row').forEach((row) => {
+      const checkbox = row.querySelector('input[type="checkbox"]');
+      const timeInputs = row.querySelectorAll('input[type="time"]');
+
+      const sync = () => {
+        timeInputs.forEach((input) => {
+          input.disabled = checkbox.checked;
+        });
+      };
+
+      checkbox.addEventListener('change', sync);
+      sync();
+    });
+
+    const specialClosedInput = document.getElementById('special_closed');
+    const specialStartInput = document.getElementById('special_start');
+    const specialEndInput = document.getElementById('special_end');
+    if (specialClosedInput && specialStartInput && specialEndInput) {
+      const syncSpecialInputs = () => {
+        const disabled = specialClosedInput.checked;
+        specialStartInput.disabled = disabled;
+        specialEndInput.disabled = disabled;
+      };
+      specialClosedInput.addEventListener('change', syncSpecialInputs);
+      syncSpecialInputs();
+    }
+
+    const frequencyLimitEnabledInput = document.getElementById('frequency_limit_enabled');
+    const frequencyLimitFields = document.querySelectorAll(
+      '#frequency_limit_value, #frequency_limit_metric, #frequency_limit_period_value, #frequency_limit_period_unit'
+    );
+    if (frequencyLimitEnabledInput && frequencyLimitFields.length) {
+      const syncFrequencyLimitFields = () => {
+        const disabled = !frequencyLimitEnabledInput.checked;
+        frequencyLimitFields.forEach((field) => {
+          field.disabled = disabled;
+        });
+      };
+      frequencyLimitEnabledInput.addEventListener('change', syncFrequencyLimitFields);
+      syncFrequencyLimitFields();
+    }
+
+    const availabilityModeInput = document.getElementById('availability_mode');
+    const activeSlotsOnlyBlocks = document.querySelectorAll('[data-active-slots-only]');
+    if (availabilityModeInput && activeSlotsOnlyBlocks.length) {
+      const syncActiveSlotsOnlyBlocks = () => {
+        const isActiveSlotsMode = availabilityModeInput.value === 'active_slots';
+        activeSlotsOnlyBlocks.forEach((block) => {
+          block.hidden = !isActiveSlotsMode;
+          block
+            .querySelectorAll('input, select, textarea')
+            .forEach((field) => {
+              field.disabled = !isActiveSlotsMode;
+            });
+        });
+      };
+      availabilityModeInput.addEventListener('change', syncActiveSlotsOnlyBlocks);
+      syncActiveSlotsOnlyBlocks();
+    }
+
+    const invitationModeButtons = document.querySelectorAll('.invitation-mode-btn[data-invitation-mode]');
+    const invitationModePanels = document.querySelectorAll('.invitation-mode-panel[data-invitation-panel]');
+    const setInvitationMode = (mode) => {
+      invitationModeButtons.forEach((btn) => {
+        btn.classList.toggle('is-active', btn.dataset.invitationMode === mode);
+      });
+      invitationModePanels.forEach((panel) => {
+        const isActive = panel.dataset.invitationPanel === mode;
+        panel.classList.toggle('is-active', isActive);
+        panel.hidden = !isActive;
+      });
+    };
+    invitationModeButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        setInvitationMode(button.dataset.invitationMode);
+      });
+    });
+    setInvitationMode({{ invitation_mode_default|tojson }});
+
+    const usersData = {{ users|tojson }};
+    const adminBookingsData = {{ bookings|tojson }};
+    const usersSearchInput = document.getElementById('usersSearchInput');
+    const userCards = document.querySelectorAll('.user-card-btn');
+    const userModal = document.getElementById('userDetailsModal');
+    const modalUserTitle = document.getElementById('modalUserTitle');
+    const modalUserContent = document.getElementById('modalUserContent');
+    const closeUserModalBtn = document.getElementById('closeUserModalBtn');
+    const superAdminPasswordModal = document.getElementById('superAdminPasswordModal');
+    const closeSuperAdminPasswordModalBtn = document.getElementById('closeSuperAdminPasswordModalBtn');
+    const cancelSuperAdminPasswordModalBtn = document.getElementById('cancelSuperAdminPasswordModalBtn');
+    const bookingDeleteModal = document.getElementById('bookingDeleteModal');
+    const bookingDeleteModalTitle = document.getElementById('bookingDeleteModalTitle');
+    const bookingDeleteModalMessage = document.getElementById('bookingDeleteModalMessage');
+    const closeBookingDeleteModalBtn = document.getElementById('closeBookingDeleteModalBtn');
+    const cancelBookingDeleteBtn = document.getElementById('cancelBookingDeleteBtn');
+    const confirmBookingDeleteBtn = document.getElementById('confirmBookingDeleteBtn');
+    const adminBookingsDetailsList = document.getElementById('adminBookingsDetailsList');
+    const adminBookingsDetailsDateLabel = document.getElementById('adminBookingsDetailsDateLabel');
+    let pendingBookingDeleteForm = null;
+
+    const escapeHtml = (value) => {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    };
+
+    const renderUserModal = (user) => {
+      const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.full_name || 'Utilisateur';
+      modalUserTitle.textContent = fullName;
+
+      const isProtectedSuperAdminUser = Boolean(user.is_super_admin_user);
+      const statusText = user.is_blocked ? 'Bloqué' : 'Actif';
+      const statusClass = user.is_blocked ? 'blocked' : 'active';
+      const limitValue = user.reservation_limit === null ? '' : user.reservation_limit;
+      const historyList = (user.recent_bookings || [])
+        .map((item) => `<li>${escapeHtml(item.start_display)} - ${escapeHtml(item.end_display)}${item.title ? ` (${escapeHtml(item.title)})` : ''}</li>`)
+        .join('');
+      const protectedActions = isProtectedSuperAdminUser
+        ? `
+          <div class="alert success full-width">Compte utilisateur SuperAdmin protégé. Utilisé pour les réservations de test.</div>
+          {% if current_admin_is_super_admin %}
+          <button class="btn primary full-width" type="button" data-open-super-admin-password-modal>
+            Modifier le mot de passe
+          </button>
+          {% endif %}
+        `
+        : `
+          <form method="post" class="inline-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <input type="hidden" name="admin_action" value="toggle_user_block">
+            <input type="hidden" name="user_id" value="${escapeHtml(user.id)}">
+            <input type="hidden" name="blocked_value" value="${user.is_blocked ? '0' : '1'}">
+            <button class="btn" type="submit">${user.is_blocked ? 'Débloquer' : 'Bloquer'}</button>
+          </form>
+
+          <form method="post" class="inline-form user-limit-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <input type="hidden" name="admin_action" value="set_user_limit">
+            <input type="hidden" name="user_id" value="${escapeHtml(user.id)}">
+            <input type="number" min="0" name="reservation_limit" value="${escapeHtml(limitValue)}" placeholder="Limite">
+            <button class="btn" type="submit">Appliquer limite</button>
+          </form>
+
+          <form method="post" class="inline-form" onsubmit="return confirm('G\u00e9n\u00e9rer un mot de passe temporaire \u00e0 6 chiffres ?');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <input type="hidden" name="admin_action" value="reset_user_password">
+            <input type="hidden" name="user_id" value="${escapeHtml(user.id)}">
+            <button class="btn primary" type="submit">Réinitialiser mot de passe</button>
+          </form>
+
+          <form method="post" class="inline-form" onsubmit="return confirm('Supprimer ce compte utilisateur et ses r\u00e9servations ?');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <input type="hidden" name="admin_action" value="delete_user">
+            <input type="hidden" name="user_id" value="${escapeHtml(user.id)}">
+            <button class="btn danger" type="submit">Supprimer le compte</button>
+          </form>
+        `;
+
+      modalUserContent.innerHTML = `
+        <div class="user-details-grid">
+          <div><strong>ID</strong><span>${escapeHtml(user.id)}</span></div>
+          <div><strong>Prénom</strong><span>${escapeHtml(user.first_name || '-')}</span></div>
+          <div><strong>Nom</strong><span>${escapeHtml(user.last_name || '-')}</span></div>
+          <div><strong>Nom d'utilisateur</strong><span>${escapeHtml(user.username || '-')}</span></div>
+          <div><strong>Nom complet</strong><span>${escapeHtml(user.full_name || '-')}</span></div>
+          <div><strong>Courriel</strong><span>${escapeHtml(user.email || '-')}</span></div>
+          <div><strong>Téléphone</strong><span>${escapeHtml(user.phone || '-')}</span></div>
+          <div><strong>Créé le</strong><span>${escapeHtml(user.created_at || '-')}</span></div>
+          <div><strong>Statut</strong><span class="status-pill ${statusClass}">${statusText}</span></div>
+          <div><strong>Limite réservations</strong><span>${user.reservation_limit === null ? 'Aucune' : escapeHtml(user.reservation_limit)}</span></div>
+          <div><strong>Total réservations</strong><span>${escapeHtml(user.booking_count || 0)}</span></div>
+          <div><strong>Dernière réservation</strong><span>${escapeHtml(user.last_booking_start || '-')}</span></div>
+          <div><strong>Prochaine réservation</strong><span>${escapeHtml(user.next_booking_start || 'Aucune')}</span></div>
+          <div class="full-width"><strong>Historique récent</strong>${historyList ? `<ul>${historyList}</ul>` : '<span>Aucune réservation.</span>'}</div>
+        </div>
+
+        <div class="modal-actions">
+          ${protectedActions}
+        </div>
+      `;
+    };
+
+    const parseTimeToMinutes = (timeText) => {
+      if (!/^\d{2}:\d{2}$/.test(String(timeText || ''))) {
+        return null;
+      }
+      const [h, m] = String(timeText).split(':').map((v) => Number(v));
+      if (h < 0 || h > 23 || m < 0 || m > 59) {
+        return null;
+      }
+      return (h * 60) + m;
+    };
+
+    const formatLongDate = (dateKey) => {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(String(dateKey || ''))) {
+        return dateKey || '-';
+      }
+      const [y, m, d] = String(dateKey).split('-').map((v) => Number(v));
+      const dateObj = new Date(y, m - 1, d);
+      return new Intl.DateTimeFormat('fr-CA', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      }).format(dateObj);
+    };
+
+    const closeBookingActionMenus = () => {
+      document.querySelectorAll('#bookings-panel .booking-item-action-menu').forEach((menu) => {
+        menu.hidden = true;
+      });
+      document.querySelectorAll('#bookings-panel .booking-item-action-toggle').forEach((button) => {
+        button.setAttribute('aria-expanded', 'false');
+      });
+    };
+
+    const openBookingDeleteModal = (form) => {
+      if (!bookingDeleteModal || !form) {
+        return;
+      }
+
+      pendingBookingDeleteForm = form;
+      if (bookingDeleteModalMessage) {
+        const bookingLabel = form.dataset.bookingLabel || 'ce rendez-vous';
+        bookingDeleteModalMessage.textContent = `Voulez-vous vraiment supprimer ${bookingLabel} ?`;
+      }
+      bookingDeleteModal.showModal();
+    };
+
+    const closeBookingDeleteModal = () => {
+      pendingBookingDeleteForm = null;
+      if (bookingDeleteModal && bookingDeleteModal.open) {
+        bookingDeleteModal.close();
+      }
+    };
+
+    const compareByStartTime = (a, b) => {
+      const aStart = parseTimeToMinutes(a.start_time) ?? 0;
+      const bStart = parseTimeToMinutes(b.start_time) ?? 0;
+      if (aStart !== bStart) {
+        return aStart - bStart;
+      }
+      const aEnd = parseTimeToMinutes(a.end_time) ?? 0;
+      const bEnd = parseTimeToMinutes(b.end_time) ?? 0;
+      if (aEnd !== bEnd) {
+        return aEnd - bEnd;
+      }
+      return String(a.created_at || '').localeCompare(String(b.created_at || ''));
+    };
+
+    const createdAtToTimestamp = (value) => {
+      const text = String(value || '').trim();
+      if (!text) {
+        return null;
+      }
+      const normalized = text.includes('T') ? text : text.replace(' ', 'T');
+      const ts = Date.parse(normalized);
+      return Number.isNaN(ts) ? null : ts;
+    };
+
+    const compareByArrival = (a, b) => {
+      const byStart = compareByStartTime(a, b);
+      if (byStart !== 0) {
+        return byStart;
+      }
+
+      const aTs = createdAtToTimestamp(a.created_at);
+      const bTs = createdAtToTimestamp(b.created_at);
+      if (aTs !== null && bTs !== null && aTs !== bTs) {
+        return aTs - bTs;
+      }
+
+      const aId = Number(a.id) || 0;
+      const bId = Number(b.id) || 0;
+      if (aId && bId && aId !== bId) {
+        return aId - bId;
+      }
+
+      return 0;
+    };
+
+    const renderBookingsDetailListForDate = (dateKey) => {
+      if (!adminBookingsDetailsList) {
+        return;
+      }
+
+      const managerVisible = document.body.classList.contains('bookings-manager-open');
+      if (adminBookingsDetailsDateLabel) {
+        adminBookingsDetailsDateLabel.hidden = managerVisible;
+        adminBookingsDetailsDateLabel.textContent = managerVisible
+          ? ''
+          : `Date sélectionnée: ${formatLongDate(dateKey)}`;
+      }
+
+      const rows = adminBookingsData
+        .filter((booking) => booking.date_key === dateKey)
+        .slice()
+        .sort(compareByArrival);
+
+      if (!rows.length) {
+        adminBookingsDetailsList.innerHTML = '<div class="empty-state">Aucune réservation pour cette date.</div>';
+        return;
+      }
+
+      const isTodaySelected = dateKey === {{ current_day_key|tojson }};
+      const nowMinutes = Number({{ current_time_minutes|tojson }});
+
+      const upcomingRows = [];
+      const pastRows = [];
+      rows.forEach((booking) => {
+        const endMinutes = parseTimeToMinutes(booking.end_time);
+        const isPastForToday = isTodaySelected && endMinutes !== null && endMinutes < nowMinutes;
+        if (isPastForToday) {
+          pastRows.push(booking);
+        } else {
+          upcomingRows.push(booking);
+        }
+      });
+
+      const renderBookingCard = (booking, isPast = false) => {
+          const fullName = booking.user_name || 'Inconnu';
+          const bookingStatus = String(booking.booking_status || 'upcoming');
+          const userAction = booking.user_id
+            ? `<button type="button" class="user-link-btn open-user-modal-btn" data-user-id="${escapeHtml(booking.user_id)}">${escapeHtml(fullName)}</button>`
+            : escapeHtml(fullName);
+          const privacyBadge = booking.is_private
+            ? '<span class="booking-item-badge booking-item-badge--private">Privée</span>'
+            : '';
+          const stateBadge = isPast
+            ? '<span class="booking-item-badge booking-item-badge--past">Passée</span>'
+            : '<span class="booking-item-badge booking-item-badge--upcoming">À venir</span>';
+          const statusBadge = bookingStatus === 'present'
+            ? '<span class="booking-item-badge booking-item-badge--present">Présent</span>'
+            : bookingStatus === 'no_show'
+              ? '<span class="booking-item-badge booking-item-badge--no-show">Pas venue</span>'
+              : '';
+          const deleteFormId = `booking-delete-form-${booking.id}`;
+          const bookingLabel = `${fullName} (${booking.start_time || '-'} à ${booking.end_time || '-'})`;
+
+          return `
+            <article class="booking-item booking-item-simple ${isPast ? 'is-past' : ''}" data-booking-id="${escapeHtml(booking.id)}">
+              <div class="booking-item-main booking-item-main--compact">
+                <div class="booking-item-head">
+                  <div class="booking-item-time">
+                    <span class="booking-item-label">Heure</span>
+                    <strong>${escapeHtml(booking.start_time || '-')} à ${escapeHtml(booking.end_time || '-')}</strong>
+                  </div>
+                  <div class="booking-item-head-actions">
+                    <div class="booking-item-badges">
+                      ${stateBadge}
+                      ${privacyBadge}
+                      ${statusBadge}
+                    </div>
+                    <div class="booking-item-actions">
+                      <button type="button" class="btn booking-item-action-toggle" data-booking-action-toggle aria-expanded="false">
+                        Action <span class="booking-item-action-caret" aria-hidden="true">⌄</span>
+                      </button>
+                      <div class="booking-item-action-menu" hidden>
+                        <form method="post" class="inline-form booking-item-action-form">
+                          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                          <input type="hidden" name="admin_action" value="mark_booking_present">
+                          <input type="hidden" name="booking_id" value="${escapeHtml(booking.id)}">
+                          <button class="booking-item-action-option" type="submit">Présent</button>
+                        </form>
+                        <form method="post" class="inline-form booking-item-action-form">
+                          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                          <input type="hidden" name="admin_action" value="mark_booking_no_show">
+                          <input type="hidden" name="booking_id" value="${escapeHtml(booking.id)}">
+                          <button class="booking-item-action-option" type="submit">Pas venue</button>
+                        </form>
+                        <button
+                          type="button"
+                          class="booking-item-action-option booking-item-action-option--danger"
+                          data-booking-delete-trigger
+                          data-booking-delete-form-id="${escapeHtml(deleteFormId)}"
+                        >
+                          Supprimer le rendez-vous
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="booking-item-meta booking-item-meta--single">
+                  <span class="booking-item-meta-name"><strong>Nom complet</strong><span class="booking-item-value">${userAction}</span></span>
+                </div>
+                <form method="post" class="inline-form booking-item-delete-form" id="${escapeHtml(deleteFormId)}" data-booking-label="${escapeHtml(bookingLabel)}" hidden>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <input type="hidden" name="admin_action" value="delete_booking">
+                    <input type="hidden" name="booking_id" value="${escapeHtml(booking.id)}">
+                  </form>
+              </div>
+            </article>
+          `;
+      };
+
+      const upcomingHtml = upcomingRows.map((booking) => renderBookingCard(booking, false)).join('');
+      const pastHtml = pastRows.map((booking) => renderBookingCard(booking, true)).join('');
+      const pastSectionHtml = pastRows.length
+        ? `
+          <details class="past-bookings-details">
+            <summary><span class="caret">&#9662;</span> Voir les réservations passées (${pastRows.length})</summary>
+            <div class="past-bookings-list">${pastHtml}</div>
+          </details>
+        `
+        : '';
+
+      const upcomingEmptyHtml = (!upcomingRows.length)
+        ? '<div class="empty-state booking-day-note">Aucune réservation à venir pour cette journée.</div>'
+        : '';
+
+      const detailsHtml = `${pastSectionHtml}${upcomingEmptyHtml}${upcomingHtml}`;
+
+      adminBookingsDetailsList.innerHTML = detailsHtml;
+    };
+
+    const selectBookingInAdminView = (bookingId, scrollTarget = '') => {
+      if (!bookingId) {
+        return;
+      }
+
+      document
+        .querySelectorAll('#bookings-panel .timeline-reservation.is-selected, #bookings-panel .booking-item.is-selected')
+        .forEach((el) => el.classList.remove('is-selected'));
+
+      const timelineMatches = document.querySelectorAll(
+        `#bookings-panel .timeline-reservation[data-booking-id="${bookingId}"]`
+      );
+      timelineMatches.forEach((el) => el.classList.add('is-selected'));
+      if (scrollTarget === 'timeline' && timelineMatches.length) {
+        timelineMatches[0].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+      }
+
+      const detailsMatch = document.querySelector(
+        `#bookings-panel .booking-item[data-booking-id="${bookingId}"]`
+      );
+      if (detailsMatch) {
+        detailsMatch.classList.add('is-selected');
+        if (scrollTarget === 'details') {
+          detailsMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+    };
+
+    const openUserDetailsById = (rawUserId) => {
+      const userId = Number(rawUserId);
+      const user = usersData.find((item) => Number(item.id) === userId);
+      if (!user || !userModal) {
+        return;
+      }
+
+      renderUserModal(user);
+      userModal.showModal();
+    };
+
+    userCards.forEach((card) => {
+      card.addEventListener('click', () => {
+        openUserDetailsById(card.dataset.userId);
+      });
+    });
+
+    document.addEventListener('click', (event) => {
+      const passwordModalTrigger = event.target.closest('[data-open-super-admin-password-modal]');
+      if (passwordModalTrigger && superAdminPasswordModal) {
+        superAdminPasswordModal.showModal();
+        return;
+      }
+
+      const actionToggle = event.target.closest('[data-booking-action-toggle]');
+      if (actionToggle) {
+        const actionWrap = actionToggle.closest('.booking-item-actions');
+        const actionMenu = actionWrap ? actionWrap.querySelector('.booking-item-action-menu') : null;
+        const wasOpen = actionMenu ? !actionMenu.hidden : false;
+        closeBookingActionMenus();
+        if (actionMenu && !wasOpen) {
+          actionMenu.hidden = false;
+          actionToggle.setAttribute('aria-expanded', 'true');
+        }
+        return;
+      }
+
+      const deleteTrigger = event.target.closest('[data-booking-delete-trigger]');
+      if (deleteTrigger) {
+        closeBookingActionMenus();
+        const formId = deleteTrigger.dataset.bookingDeleteFormId || '';
+        const form = formId ? document.getElementById(formId) : null;
+        openBookingDeleteModal(form);
+        return;
+      }
+
+      if (bookingDeleteModal && event.target === bookingDeleteModal) {
+        closeBookingDeleteModal();
+        return;
+      }
+
+      if (!event.target.closest('.booking-item-actions')) {
+        closeBookingActionMenus();
+      }
+
+      const trigger = event.target.closest('.open-user-modal-btn');
+      if (!trigger) {
+        const bookingCard = event.target.closest('#bookings-panel .booking-item[data-booking-id]');
+        if (!bookingCard) {
+          return;
+        }
+        if (event.target.closest('button, a, form, input, select, textarea')) {
+          return;
+        }
+        const bookingId = Number(bookingCard.dataset.bookingId || '0');
+        if (!bookingId) {
+          return;
+        }
+        selectBookingInAdminView(bookingId, 'timeline');
+        return;
+      }
+      openUserDetailsById(trigger.dataset.userId);
+    });
+
+    window.addEventListener('sunnyvibe:calendar-date-change', (event) => {
+      const selectedDateKey = event && event.detail ? event.detail.dateKey : '';
+      if (!selectedDateKey) {
+        return;
+      }
+      renderBookingsDetailListForDate(selectedDateKey);
+    });
+
+    window.addEventListener('sunnyvibe:calendar-booking-click', (event) => {
+      const bookingId = event && event.detail ? Number(event.detail.bookingId) : 0;
+      if (!bookingId) {
+        return;
+      }
+      selectBookingInAdminView(bookingId, 'details');
+    });
+
+    {% if active_tab != 'bookings-panel' %}
+    renderBookingsDetailListForDate({{ current_day_key|tojson }});
+    {% endif %}
+
+    if (closeUserModalBtn && userModal) {
+      closeUserModalBtn.addEventListener('click', () => {
+        userModal.close();
+      });
+    }
+
+    const closeSuperAdminPasswordModal = () => {
+      if (superAdminPasswordModal) {
+        superAdminPasswordModal.close();
+      }
+    };
+
+    closeSuperAdminPasswordModalBtn?.addEventListener('click', closeSuperAdminPasswordModal);
+    cancelSuperAdminPasswordModalBtn?.addEventListener('click', closeSuperAdminPasswordModal);
+
+    if (closeBookingDeleteModalBtn) {
+      closeBookingDeleteModalBtn.addEventListener('click', closeBookingDeleteModal);
+    }
+
+    if (cancelBookingDeleteBtn) {
+      cancelBookingDeleteBtn.addEventListener('click', closeBookingDeleteModal);
+    }
+
+    if (confirmBookingDeleteBtn) {
+      confirmBookingDeleteBtn.addEventListener('click', () => {
+        if (pendingBookingDeleteForm) {
+          pendingBookingDeleteForm.submit();
+        }
+      });
+    }
+
+    if (bookingDeleteModal) {
+      bookingDeleteModal.addEventListener('cancel', (event) => {
+        event.preventDefault();
+        closeBookingDeleteModal();
+      });
+    }
+
+    if (usersSearchInput) {
+      usersSearchInput.addEventListener('input', () => {
+        const term = usersSearchInput.value.trim().toLowerCase();
+        userCards.forEach((card) => {
+          const haystack = (card.dataset.search || '').toLowerCase();
+          card.style.display = haystack.includes(term) ? '' : 'none';
+        });
+      });
+    }
+  </script>
+  <script>
+    window.SUNNYVIBE_OPENING_HOURS = {{ opening_hours_json|tojson }};
+    window.SUNNYVIBE_HOLIDAYS = {{ holidays_json|tojson }};
+    window.SUNNYVIBE_SPECIAL_DATES = {{ special_dates_json|tojson }};
+    window.SUNNYVIBE_RESERVATION_CONFIG = {{ reservation_config_json|tojson }};
+    window.SUNNYVIBE_BOOKINGS = {{ bookings_json|tojson }};
+    window.SUNNYVIBE_BLOCKED_RULES = {{ blocked_slots_json|tojson }};
+    window.SUNNYVIBE_ACTIVE_SLOTS = {{ active_slots_json|tojson }};
+    window.SUNNYVIBE_USER_CAN_BOOK = {{ user_can_book|tojson }};
+    window.SUNNYVIBE_API_BOOKINGS_URL = {{ url_for('create_booking')|tojson }};
+    window.SUNNYVIBE_TODAY_KEY = {{ current_day_key|tojson }};
+    window.SUNNYVIBE_TIMEZONE = {{ reservation_config.timezone|tojson }};
+    window.SUNNYVIBE_ADMIN_MODE = true;
+  </script>
+  <script src="{{ url_for('static', filename='calendar.js', v=calendar_js_version) }}"></script>
+</body>
+</html>

@@ -19,6 +19,16 @@
   const daySummaryEl = document.getElementById('daySummary');
   const timelinePlaceHeadersEl = document.getElementById('timelinePlaceHeaders');
   const timelineContainerEl = document.getElementById('timelineContainer');
+  const bookingsOverviewPanelEl = document.getElementById('bookingsOverviewPanel');
+  const bookingManagerPanelEl = document.getElementById('bookingManagerPanel');
+  const bookingManagerGridEl = document.querySelector('#bookingManagerPanel .booking-manager-grid');
+  const bookingManagerPrevDateBtn = document.getElementById('bookingManagerPrevDateBtn');
+  const bookingManagerNextDateBtn = document.getElementById('bookingManagerNextDateBtn');
+  const bookingManagerDateBtn = document.getElementById('bookingManagerDateBtn');
+  const bookingManagerDateLabelEl = document.getElementById('bookingManagerDateLabel');
+  const adminCardTitleEl = document.querySelector('.admin-card > h1');
+  const bookingsDayPanelHeadEl = document.querySelector('#bookings-panel .day-panel-head');
+  const adminBookingsDetailsDateLabelEl = document.getElementById('adminBookingsDetailsDateLabel');
   const addBookingBtn = document.getElementById('addBookingBtn');
   const bookingModal = document.getElementById('bookingModal');
   const closeBookingModalBtn = document.getElementById('closeBookingModalBtn');
@@ -34,19 +44,33 @@
   const bookingFormMessage = document.getElementById('bookingFormMessage');
   const bookingRules = document.getElementById('bookingRules');
   const timeArrowButtons = document.querySelectorAll('.time-arrow-btn');
+  const isBookingsDashboardPage = Boolean(
+    bookingsOverviewPanelEl
+    && bookingManagerPanelEl
+    && bookingManagerPrevDateBtn
+    && bookingManagerNextDateBtn
+    && bookingManagerDateBtn
+    && bookingManagerDateLabelEl
+  );
+  let bookingsManagerRerenderFrame = 0;
 
   if (!monthLabelEl || !calendarGridEl || !prevMonthBtn || !nextMonthBtn) {
     return;
   }
 
-  const HOUR_HEIGHT = 56;
-  const today = startOfDay(new Date());
+  const configuredToday = typeof window.SUNNYVIBE_TODAY_KEY === 'string'
+    ? parseDateKey(window.SUNNYVIBE_TODAY_KEY)
+    : null;
+  const today = startOfDay(configuredToday || new Date());
   const minimumMonth = new Date(today.getFullYear(), today.getMonth(), 1);
   const usesDayPanelModal = Boolean(dayPanelModalEl);
   const isAdminMode = Boolean(window.SUNNYVIBE_ADMIN_MODE);
+  const HOUR_HEIGHT = isAdminMode ? 32 : 42;
+  const isCalendarPage = document.body.classList.contains('calendar-body');
+  const calendarPanelEl = document.querySelector('.calendar-panel');
   const state = {
     viewMonth: new Date(today.getFullYear(), today.getMonth(), 1),
-    selectedDate: usesDayPanelModal ? null : new Date(today),
+    selectedDate: usesDayPanelModal ? null : (isBookingsDashboardPage ? null : new Date(today)),
   };
   const dayPanelEl = document.getElementById('dayPanel') || document.querySelector('.day-panel');
 
@@ -57,10 +81,34 @@
   const configuredReservationConfig = sanitizeReservationConfig(window.SUNNYVIBE_RESERVATION_CONFIG || {});
   const configuredBookings = sanitizeBookings(window.SUNNYVIBE_BOOKINGS || {});
   const configuredBlockedRules = sanitizeBlockedRules(window.SUNNYVIBE_BLOCKED_RULES || []);
+  const configuredActiveSlots = sanitizeActiveSlots(window.SUNNYVIBE_ACTIVE_SLOTS || []);
   const userCanBook = Boolean(window.SUNNYVIBE_USER_CAN_BOOK);
   const createBookingApiUrl = resolveApiUrl(window.SUNNYVIBE_API_BOOKINGS_URL || 'api/bookings');
   const timeInputDirection = new WeakMap();
   const previousTimeValue = new WeakMap();
+  const isCardsAvailabilityMode = (
+    configuredReservationConfig.availability_mode === 'active_slots'
+    && configuredReservationConfig.sunnygym_display_mode === 'cards'
+  );
+  const isSunnygymCardsMode = (
+    Boolean(calendarMobileListEl)
+    && (isCardsAvailabilityMode || isBookingsDashboardPage)
+    && (isCalendarPage || isAdminMode || isBookingsDashboardPage)
+  );
+  let bookingsDashboardMode = isBookingsDashboardPage ? 'overview' : '';
+
+  if (calendarPanelEl) {
+    calendarPanelEl.classList.toggle('cards-mode', isSunnygymCardsMode);
+  }
+
+  const bookingsManagerResizeObserver =
+    window.ResizeObserver && bookingManagerGridEl
+      ? new ResizeObserver(() => {
+          if (isBookingsDashboardPage && bookingsDashboardMode === 'manager') {
+            scheduleBookingsManagerRerender();
+          }
+        })
+      : null;
 
   prevMonthBtn.addEventListener('click', () => {
     if (isSameMonth(state.viewMonth, minimumMonth)) {
@@ -215,7 +263,10 @@
       const endHour = timeTextToHour(payload.end_time);
       const insideWindow = dayWindows.some((window) => startHour >= window.start && endHour <= window.end);
       if (!insideWindow) {
-        setBookingFormMessage("Plage hors heures d'ouverture.", 'error');
+        const modeLabel = configuredReservationConfig.availability_mode === 'active_slots'
+          ? 'Plage hors créneaux activés.'
+          : "Plage hors heures d'ouverture.";
+        setBookingFormMessage(modeLabel, 'error');
         return;
       }
 
@@ -306,7 +357,7 @@
       autoAdjustEndTime();
     });
 
-    if (bookingCompanionCountInput) {
+  if (bookingCompanionCountInput) {
       const clampCompanionCount = () => {
         const rawValue = bookingCompanionCountInput.value.trim();
         const maxAllowed = configuredReservationConfig.allow_companion_booking
@@ -329,6 +380,22 @@
       bookingCompanionCountInput.addEventListener('input', clampCompanionCount);
       bookingCompanionCountInput.addEventListener('change', clampCompanionCount);
     }
+  }
+
+  if (isBookingsDashboardPage) {
+    bookingManagerPrevDateBtn.addEventListener('click', () => {
+      shiftBookingsSelectedDate(-1);
+    });
+
+    bookingManagerNextDateBtn.addEventListener('click', () => {
+      shiftBookingsSelectedDate(1);
+    });
+
+    bookingManagerDateBtn.addEventListener('click', () => {
+      showBookingsOverview();
+    });
+
+    syncBookingsDashboardVisibility();
   }
 
   function registerForwardRolloverFix(inputEl) {
@@ -591,6 +658,11 @@
   }
 
   function renderCalendarGrid() {
+    if (isSunnygymCardsMode) {
+      calendarGridEl.innerHTML = '';
+      return;
+    }
+
     calendarGridEl.innerHTML = '';
 
     const year = state.viewMonth.getFullYear();
@@ -619,6 +691,7 @@
       const isToday = isSameDay(cellDate, today);
       const isSelected = isSameDay(cellDate, state.selectedDate);
       const isPast = cellDate < today;
+      const showFinishedBadge = isPast && isCalendarPage;
       const holidayData = getHolidayForDate(cellDate);
 
       cellBtn.dataset.dateKey = toDateKey(cellDate);
@@ -629,11 +702,13 @@
       const hoursLabel = formatWindowsLabel(dayData.windows);
       const isClosedDay = dayData.totalMinutes === 0;
       const bookingCount = getBookingCountForDate(cellDate);
-      const dayStateText = isClosedDay
-        ? 'Fermé'
-        : (isAdminMode
-          ? `${bookingCount} rés.`
-          : (dayData.hasPartialReservations ? 'Partiel' : (dayData.hasAvailability ? 'Disponible' : 'Complet')));
+      const dayStateText = showFinishedBadge
+        ? 'Terminé'
+        : (isClosedDay
+          ? 'Fermé'
+          : (isAdminMode
+            ? `${bookingCount} rés.`
+            : (dayData.hasPartialReservations ? 'Partiel' : (dayData.hasAvailability ? 'Disponible' : 'Complet'))));
       cellBtn.innerHTML = `
         <div class="date-label">${escapeHtml(dateLabel)}</div>
         <div class="hours-label">${escapeHtml(hoursLabel)}</div>
@@ -685,6 +760,12 @@
       return;
     }
 
+    if (isSunnygymCardsMode) {
+      renderSunnygymCardsModeList();
+      return;
+    }
+
+    calendarMobileListEl.classList.remove('is-desktop-cards');
     calendarMobileListEl.innerHTML = '';
 
     const year = state.viewMonth.getFullYear();
@@ -780,6 +861,132 @@
     }
   }
 
+  function renderSunnygymCardsModeList() {
+    if (isBookingsDashboardPage && bookingsDashboardMode !== 'overview') {
+      calendarMobileListEl.innerHTML = '';
+      calendarMobileListEl.classList.remove('is-desktop-cards');
+      return;
+    }
+
+    if (isBookingsDashboardPage) {
+      renderBookingsOverviewList();
+      return;
+    }
+
+    calendarMobileListEl.innerHTML = '';
+    calendarMobileListEl.classList.add('is-desktop-cards');
+
+    const introCard = document.createElement('section');
+    introCard.className = 'sunnygym-cards-intro';
+    introCard.innerHTML = `
+      <p class="sunnygym-cards-kicker">Plages activées</p>
+      <h3>Réservez parmi les prochaines ouvertures disponibles</h3>
+    `;
+    calendarMobileListEl.appendChild(introCard);
+
+    const activeSlotsByDate = new Map();
+    configuredActiveSlots.forEach((slot) => {
+      const slotDate = parseDateKey(slot.date);
+      if (!slotDate || startOfDay(slotDate) < today) {
+        return;
+      }
+
+      if (!activeSlotsByDate.has(slot.date)) {
+        activeSlotsByDate.set(slot.date, []);
+      }
+      activeSlotsByDate.get(slot.date).push(slot);
+    });
+
+    const uniqueFutureDateKeys = Array.from(activeSlotsByDate.keys()).sort((a, b) => a.localeCompare(b));
+
+    let renderedCards = 0;
+    uniqueFutureDateKeys.forEach((dateKey) => {
+      const dateObj = parseDateKey(dateKey);
+      if (!dateObj) {
+        return;
+      }
+
+      const dateSlots = activeSlotsByDate.get(dateKey) || [];
+      if (!dateSlots.length) {
+        return;
+      }
+
+      const activeWindows = mergeTimeWindows(
+        dateSlots.map((slot) => ({
+          start: timeTextToHour(slot.start),
+          end: timeTextToHour(slot.end),
+        }))
+      );
+      const displayIntervals = activeWindows.length
+        ? activeWindows
+        : dateSlots.map((slot) => ({
+          start: timeTextToHour(slot.start),
+          end: timeTextToHour(slot.end),
+        }));
+
+      const dateWeekday = new Intl.DateTimeFormat('fr-CA', { weekday: 'long' }).format(dateObj);
+      const dateLong = new Intl.DateTimeFormat('fr-CA', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      }).format(dateObj);
+      const availableIntervalsLabel = displayIntervals
+        .map((interval) => `${formatHour(interval.start)} - ${formatHour(interval.end)}`)
+        .join(' | ');
+      const slotTitles = Array.from(new Set(dateSlots.map((slot) => slot.title).filter(Boolean)));
+      const slotTitleLabel = slotTitles.length ? slotTitles.join(' · ') : 'Plage activée';
+      const holidayData = getHolidayForDate(dateObj);
+
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'calendar-mobile-day-card sunnygym-slot-card available';
+      if (isSameDay(dateObj, today)) {
+        card.classList.add('today');
+      }
+      if (isSameDay(dateObj, state.selectedDate)) {
+        card.classList.add('selected');
+      }
+      if (holidayData) {
+        card.classList.add('holiday');
+      }
+
+      card.innerHTML = `
+        <div class="sunnygym-slot-card__head">
+          <div>
+            <p class="calendar-mobile-weekday">${escapeHtml(dateWeekday)}</p>
+            <p class="calendar-mobile-date">${escapeHtml(dateLong)}</p>
+          </div>
+          <span class="sunnygym-slot-card__badge">${isSameDay(dateObj, today) ? 'Aujourd’hui' : 'À venir'}</span>
+        </div>
+        <div class="sunnygym-slot-card__schedule">
+          <p class="sunnygym-slot-card__label">Créneaux actifs</p>
+          <p class="calendar-mobile-hours">${escapeHtml(availableIntervalsLabel)}</p>
+        </div>
+        <div class="sunnygym-slot-card__meta">
+          <p class="sunnygym-slot-card__label">Titre</p>
+          <p class="sunnygym-slot-card__meta-value">${escapeHtml(slotTitleLabel)}</p>
+        </div>
+        <div class="sunnygym-slot-card__footer">
+          <span class="sunnygym-slot-card__cta">Voir le détail</span>
+        </div>
+        ${holidayData ? `<p class="calendar-mobile-holiday">${escapeHtml(holidayData.name)}</p>` : ''}
+      `;
+      card.addEventListener('click', () => {
+        selectDate(dateObj);
+      });
+
+      calendarMobileListEl.appendChild(card);
+      renderedCards += 1;
+    });
+
+    if (!renderedCards) {
+      const emptyState = document.createElement('div');
+      emptyState.className = 'calendar-mobile-empty-month';
+      emptyState.textContent = 'Aucune plage horaire disponible à venir.';
+      calendarMobileListEl.appendChild(emptyState);
+    }
+  }
+
   function renderSelectedDayPanel() {
     if (!state.selectedDate) {
       if (dayPanelEl && !usesDayPanelModal) {
@@ -852,27 +1059,56 @@
       return;
     }
 
-    const startHour = Math.min(...data.windows.map((window) => window.start));
-    const endHour = Math.max(...data.windows.map((window) => window.end));
-    const trackHeight = (endHour - startHour) * HOUR_HEIGHT;
+    const startMinutes = Math.round(Math.min(...data.windows.map((window) => window.start * 60)));
+    const endMinutes = Math.round(Math.max(...data.windows.map((window) => window.end * 60)));
+    const spanMinutes = Math.max(endMinutes - startMinutes, 1);
+    let timelineScale = 1;
+    let availableHeight = 0;
+    if (isBookingsDashboardPage && bookingsDashboardMode === 'manager' && timelineContainerEl) {
+      const timelineStyles = window.getComputedStyle(timelineContainerEl);
+      const verticalPadding = (parseFloat(timelineStyles.paddingTop) || 0) + (parseFloat(timelineStyles.paddingBottom) || 0);
+      availableHeight = Math.max(timelineContainerEl.clientHeight - verticalPadding, 0);
+      const baseHeight = (spanMinutes * HOUR_HEIGHT) / 60;
+      if (availableHeight > 0 && baseHeight > 0) {
+        timelineScale = availableHeight / baseHeight;
+      }
+    }
+    const timelineMinuteHeight = (HOUR_HEIGHT * timelineScale) / 60;
+    const trackHeight = spanMinutes * timelineMinuteHeight;
+    const tickStepMinutes = chooseTimelineStepMinutes(spanMinutes, availableHeight);
 
     const timelineTrackEl = document.createElement('div');
     timelineTrackEl.className = 'timeline-track';
     timelineTrackEl.style.height = `${trackHeight}px`;
+    timelineTrackEl.style.setProperty('--capacity', String(Math.max(data.capacity, 1)));
 
-    for (let hour = startHour; hour <= endHour; hour += 1) {
+    let lastRenderedMinute = startMinutes - tickStepMinutes;
+    for (let minute = startMinutes; minute <= endMinutes; minute += tickStepMinutes) {
+      lastRenderedMinute = minute;
+      const offsetMinutes = minute - startMinutes;
+      const isHourTick = minute % 60 === 0;
       const markerEl = document.createElement('div');
-      markerEl.className = 'time-marker';
-      markerEl.style.top = `${(hour - startHour) * HOUR_HEIGHT}px`;
-      markerEl.textContent = formatHour(hour);
+      markerEl.className = `time-marker ${isHourTick ? 'is-hour' : 'is-subtick'}`;
+      markerEl.style.top = `${offsetMinutes * timelineMinuteHeight}px`;
+      markerEl.textContent = formatHour(minute / 60);
       timelineTrackEl.appendChild(markerEl);
 
-      if (hour < endHour) {
+      if (minute < endMinutes) {
         const dividerEl = document.createElement('div');
-        dividerEl.className = 'time-divider';
-        dividerEl.style.top = `${(hour - startHour) * HOUR_HEIGHT}px`;
+        dividerEl.className = `time-divider ${isHourTick ? 'is-hour' : 'is-subtick'}`;
+        dividerEl.style.top = `${offsetMinutes * timelineMinuteHeight}px`;
         timelineTrackEl.appendChild(dividerEl);
       }
+    }
+
+    if (lastRenderedMinute !== endMinutes) {
+      const offsetMinutes = endMinutes - startMinutes;
+      const isHourTick = endMinutes % 60 === 0;
+      const markerEl = document.createElement('div');
+      markerEl.className = `time-marker ${isHourTick ? 'is-hour' : 'is-subtick'}`;
+      markerEl.style.top = `${offsetMinutes * timelineMinuteHeight}px`;
+      markerEl.textContent = formatHour(endMinutes / 60);
+      timelineTrackEl.appendChild(markerEl);
     }
 
     const reservationsLayerEl = document.createElement('div');
@@ -886,8 +1122,8 @@
     placements.forEach((placement) => {
       const itemEl = document.createElement('article');
       itemEl.className = `timeline-reservation ${placement.kind}`;
-      itemEl.style.top = `${((placement.startMinutes / 60) - startHour) * HOUR_HEIGHT}px`;
-      itemEl.style.height = `${((placement.endMinutes - placement.startMinutes) / 60) * HOUR_HEIGHT}px`;
+      itemEl.style.top = `${(placement.startMinutes - startMinutes) * timelineMinuteHeight}px`;
+      itemEl.style.height = `${(placement.endMinutes - placement.startMinutes) * timelineMinuteHeight}px`;
       itemEl.style.left = `${((placement.columnStart - 1) / data.capacity) * 100}%`;
       itemEl.style.width = `${(placement.columnSpan / data.capacity) * 100}%`;
       if (placement.bookingId) {
@@ -913,6 +1149,26 @@
 
     timelineContainerEl.innerHTML = '';
     timelineContainerEl.appendChild(timelineTrackEl);
+  }
+
+  function chooseTimelineStepMinutes(spanMinutes, availableHeight) {
+    const candidates = [15, 30, 60];
+    const targetSpacing = 76;
+    const safeHeight = Math.max(Number(availableHeight) || 0, 0);
+    let bestStep = candidates[candidates.length - 1];
+    let bestScore = Number.POSITIVE_INFINITY;
+
+    candidates.forEach((candidate) => {
+      const ticks = Math.max(1, Math.ceil(spanMinutes / candidate));
+      const spacing = safeHeight > 0 ? safeHeight / ticks : 0;
+      const score = Math.abs(spacing - targetSpacing);
+      if (score < bestScore) {
+        bestScore = score;
+        bestStep = candidate;
+      }
+    });
+
+    return bestStep;
   }
 
   function renderTimelinePlaceHeaders(capacity, visible) {
@@ -1006,6 +1262,68 @@
     const dateKey = toDateKey(date);
     const rows = configuredBookings[dateKey] || [];
     return rows.length;
+  }
+
+  function getMaxConcurrentPeopleForDate(date) {
+    const dateKey = toDateKey(date);
+    const dateBookings = [
+      ...(configuredBookings[dateKey] || []),
+      ...getBlockedBookingsForDate(date),
+    ];
+
+    if (!dateBookings.length) {
+      return 0;
+    }
+
+    const points = new Set();
+    dateBookings.forEach((booking) => {
+      const bookingStart = timeTextToMinutes(booking.start);
+      const bookingEnd = timeTextToMinutes(booking.end);
+      if (bookingStart === null || bookingEnd === null || bookingEnd <= bookingStart) {
+        return;
+      }
+      points.add(bookingStart);
+      points.add(bookingEnd);
+    });
+
+    const sortedPoints = [...points].sort((a, b) => a - b);
+    if (sortedPoints.length < 2) {
+      return 0;
+    }
+
+    const safeCapacity = Math.max(Number(configuredReservationConfig.max_simultaneous_bookings) || 1, 1);
+    let maxOccupied = 0;
+
+    for (let i = 0; i < sortedPoints.length - 1; i += 1) {
+      const segmentStart = sortedPoints[i];
+      const segmentEnd = sortedPoints[i + 1];
+      if (segmentEnd <= segmentStart) {
+        continue;
+      }
+
+      let occupied = 0;
+      let privateLock = false;
+
+      dateBookings.forEach((booking) => {
+        const bookingStart = timeTextToMinutes(booking.start);
+        const bookingEnd = timeTextToMinutes(booking.end);
+        if (bookingStart === null || bookingEnd === null || bookingEnd <= bookingStart) {
+          return;
+        }
+
+        if (bookingStart < segmentEnd && bookingEnd > segmentStart) {
+          if (booking.is_private) {
+            privateLock = true;
+          } else {
+            occupied += Math.max(Number(booking.people_count) || 1, 1);
+          }
+        }
+      });
+
+      maxOccupied = Math.max(maxOccupied, privateLock ? safeCapacity : occupied);
+    }
+
+    return Math.min(maxOccupied, safeCapacity);
   }
 
   function buildCapacitySegments(date, windowsMinutes, capacity) {
@@ -1241,6 +1559,16 @@
 
   function getWindowsForDay(date) {
     const dateKey = toDateKey(date);
+    if (configuredReservationConfig.availability_mode === 'active_slots') {
+      const windows = configuredActiveSlots
+        .filter((item) => item.date === dateKey)
+        .map((item) => ({
+          start: timeTextToHour(item.start),
+          end: timeTextToHour(item.end),
+        }));
+      return mergeTimeWindows(windows);
+    }
+
     const specialDay = configuredSpecialDates.find((item) => item.date === dateKey);
     if (specialDay) {
       if (specialDay.closed) {
@@ -1262,6 +1590,33 @@
       start: timeTextToHour(window.start),
       end: timeTextToHour(window.end),
     }));
+  }
+
+  function mergeTimeWindows(windows) {
+    if (!Array.isArray(windows) || windows.length === 0) {
+      return [];
+    }
+
+    const sorted = windows
+      .filter((window) => window && Number.isFinite(window.start) && Number.isFinite(window.end) && window.end > window.start)
+      .map((window) => ({ start: window.start, end: window.end }))
+      .sort((a, b) => (a.start - b.start) || (a.end - b.end));
+
+    if (!sorted.length) {
+      return [];
+    }
+
+    const merged = [sorted[0]];
+    for (let i = 1; i < sorted.length; i += 1) {
+      const current = sorted[i];
+      const last = merged[merged.length - 1];
+      if (current.start <= last.end) {
+        last.end = Math.max(last.end, current.end);
+        continue;
+      }
+      merged.push(current);
+    }
+    return merged;
   }
 
   function sanitizeSpecialDates(rawSpecialDates) {
@@ -1319,8 +1674,43 @@
     return safe;
   }
 
+  function sanitizeActiveSlots(rawSlots) {
+    if (!Array.isArray(rawSlots)) {
+      return [];
+    }
+
+    return rawSlots
+      .filter((item) => item && typeof item === 'object')
+      .map((item) => ({
+        id: Number(item.id) || 0,
+        date: typeof item.date === 'string' ? item.date.trim() : '',
+        start: typeof item.start_time === 'string'
+          ? item.start_time.trim()
+          : (typeof item.start === 'string' ? item.start.trim() : ''),
+        end: typeof item.end_time === 'string'
+          ? item.end_time.trim()
+          : (typeof item.end === 'string' ? item.end.trim() : ''),
+        title: typeof item.title === 'string' ? item.title.trim() : '',
+      }))
+      .filter((item) => /^\d{4}-\d{2}-\d{2}$/.test(item.date))
+      .filter((item) => isValidTimeText(item.start) && isValidTimeText(item.end))
+      .filter((item) => timeTextToMinutes(item.end) > timeTextToMinutes(item.start))
+      .sort((a, b) => {
+        if (a.date !== b.date) {
+          return a.date.localeCompare(b.date);
+        }
+        const startDiff = timeTextToMinutes(a.start) - timeTextToMinutes(b.start);
+        if (startDiff !== 0) {
+          return startDiff;
+        }
+        return timeTextToMinutes(a.end) - timeTextToMinutes(b.end);
+      });
+  }
+
   function sanitizeReservationConfig(rawConfig) {
     const defaults = {
+      availability_mode: 'opening_hours',
+      sunnygym_display_mode: 'calendar',
       max_simultaneous_bookings: 3,
       min_duration_minutes: 30,
       max_duration_minutes: 120,
@@ -1348,6 +1738,8 @@
     const fixedInterval = Number(rawConfig.fixed_time_interval_minutes);
     const frequencyLimitValue = Number(rawConfig.frequency_limit_value);
     const frequencyLimitPeriodValue = Number(rawConfig.frequency_limit_period_value);
+    const availabilityMode = String(rawConfig.availability_mode || rawConfig.booking_availability_mode || '').toLowerCase();
+    const sunnygymDisplayMode = String(rawConfig.sunnygym_display_mode || '').toLowerCase();
     const boolOrDefault = (value, defaultValue) => {
       if (value === undefined || value === null) {
         return defaultValue;
@@ -1356,6 +1748,12 @@
     };
 
     return {
+      availability_mode: ['opening_hours', 'active_slots'].includes(availabilityMode)
+        ? availabilityMode
+        : defaults.availability_mode,
+      sunnygym_display_mode: ['calendar', 'cards'].includes(sunnygymDisplayMode)
+        ? sunnygymDisplayMode
+        : defaults.sunnygym_display_mode,
       max_simultaneous_bookings: Number(rawConfig.max_simultaneous_bookings) || defaults.max_simultaneous_bookings,
       min_duration_minutes: Number(rawConfig.min_duration_minutes) || defaults.min_duration_minutes,
       max_duration_minutes: Number(rawConfig.max_duration_minutes) || defaults.max_duration_minutes,
@@ -1436,6 +1834,11 @@
     if (configuredReservationConfig.latest_start_before_close_minutes > 0) {
       lines.push(`Début au plus tard ${configuredReservationConfig.latest_start_before_close_minutes} minutes avant la fermeture`);
     }
+    if (configuredReservationConfig.availability_mode === 'active_slots') {
+      lines.push('Disponibilités basées sur les plages activées par l’administrateur');
+    } else {
+      lines.push('Disponibilités basées sur les heures d’ouverture');
+    }
 
     if (configuredReservationConfig.fixed_time_only) {
       lines.push(`Heures fixes par blocs de ${configuredReservationConfig.fixed_time_interval_minutes} minutes`);
@@ -1491,6 +1894,245 @@
         bookingPrivateWrap.hidden = true;
       }
     }
+  }
+
+  function formatBookingsDashboardDateLabel(date) {
+    if (!date) {
+      return 'Choisissez une date';
+    }
+
+    return new Intl.DateTimeFormat('fr-CA', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }).format(date);
+  }
+
+  function syncBookingsDashboardVisibility() {
+    if (!isBookingsDashboardPage) {
+      return;
+    }
+
+    const managerVisible = bookingsDashboardMode === 'manager';
+    document.body.classList.toggle('bookings-manager-open', managerVisible);
+    if (adminCardTitleEl) {
+      adminCardTitleEl.hidden = managerVisible;
+    }
+    if (bookingsDayPanelHeadEl) {
+      bookingsDayPanelHeadEl.hidden = managerVisible;
+    }
+    if (adminBookingsDetailsDateLabelEl) {
+      adminBookingsDetailsDateLabelEl.hidden = managerVisible;
+    }
+    if (bookingsOverviewPanelEl) {
+      bookingsOverviewPanelEl.hidden = managerVisible;
+    }
+    if (bookingManagerPanelEl) {
+      bookingManagerPanelEl.hidden = !managerVisible;
+    }
+    if (bookingManagerDateLabelEl) {
+      bookingManagerDateLabelEl.textContent = state.selectedDate
+        ? formatBookingsDashboardDateLabel(state.selectedDate)
+        : 'Choisissez une date';
+    }
+    if (bookingManagerDateBtn) {
+      bookingManagerDateBtn.classList.toggle('is-active', managerVisible);
+    }
+
+    if (managerVisible) {
+      syncBookingsManagerViewportHeight();
+      scheduleBookingsManagerRerender();
+    } else if (bookingManagerGridEl) {
+      bookingManagerGridEl.style.height = '';
+      bookingManagerGridEl.style.minHeight = '';
+      bookingManagerGridEl.style.maxHeight = '';
+    }
+  }
+
+  function scheduleBookingsManagerRerender() {
+    if (!isBookingsDashboardPage || bookingsDashboardMode !== 'manager' || !state.selectedDate) {
+      return;
+    }
+
+    if (bookingsManagerRerenderFrame) {
+      window.cancelAnimationFrame(bookingsManagerRerenderFrame);
+    }
+
+    bookingsManagerRerenderFrame = window.requestAnimationFrame(() => {
+      bookingsManagerRerenderFrame = 0;
+      if (isBookingsDashboardPage && bookingsDashboardMode === 'manager' && state.selectedDate) {
+        syncBookingsManagerViewportHeight();
+        renderSelectedDayPanel();
+      }
+    });
+  }
+
+  function syncBookingsManagerViewportHeight() {
+    if (!isBookingsDashboardPage || bookingsDashboardMode !== 'manager' || !bookingManagerGridEl) {
+      return;
+    }
+    bookingManagerGridEl.style.removeProperty('height');
+    bookingManagerGridEl.style.removeProperty('min-height');
+    bookingManagerGridEl.style.removeProperty('max-height');
+  }
+
+  function showBookingsManager(date = state.selectedDate || today) {
+    if (!isBookingsDashboardPage) {
+      return;
+    }
+
+    bookingsDashboardMode = 'manager';
+    state.selectedDate = date ? startOfDay(date) : null;
+    syncBookingsDashboardVisibility();
+    scheduleBookingsManagerRerender();
+  }
+
+  function showBookingsOverview() {
+    if (!isBookingsDashboardPage) {
+      return;
+    }
+
+    bookingsDashboardMode = 'overview';
+    state.selectedDate = null;
+    syncBookingsDashboardVisibility();
+    render();
+  }
+
+  function shiftBookingsSelectedDate(deltaDays) {
+    if (!isBookingsDashboardPage) {
+      return;
+    }
+
+    const entries = getBookingsOverviewEntries();
+    if (!entries.length) {
+      return;
+    }
+
+    const step = deltaDays >= 0 ? 1 : -1;
+    const currentDate = state.selectedDate ? startOfDay(state.selectedDate) : null;
+    const currentIndex = currentDate
+      ? entries.findIndex((entry) => isSameDay(entry.date, currentDate))
+      : -1;
+
+    let nextIndex = -1;
+    if (currentIndex >= 0) {
+      nextIndex = currentIndex + step;
+    } else if (step > 0) {
+      nextIndex = entries.findIndex((entry) => entry.date >= today);
+      if (nextIndex < 0) {
+        nextIndex = 0;
+      }
+    } else {
+      nextIndex = entries.length - 1;
+    }
+
+    if (nextIndex < 0 || nextIndex >= entries.length) {
+      return;
+    }
+
+    selectDate(entries[nextIndex].date);
+  }
+
+  function getBookingsOverviewEntries() {
+    const entries = [];
+    const horizonDays = 90;
+
+    for (let offset = 0; offset <= horizonDays; offset += 1) {
+      const date = new Date(today);
+      date.setDate(date.getDate() + offset);
+      const dayData = getDayData(date);
+      if (!dayData.hasAvailability || !dayData.availableIntervals.length) {
+        continue;
+      }
+
+      const dateKey = toDateKey(date);
+      const dateBookings = Array.isArray(configuredBookings[dateKey]) ? configuredBookings[dateKey] : [];
+      const bookingCount = dateBookings.length;
+      const participantCount = dateBookings.reduce((sum, booking) => {
+        return sum + Math.max(Number(booking.people_count) || 1, 1);
+      }, 0);
+
+      entries.push({
+        date,
+        bookingCount,
+        participantCount,
+        availableIntervalsLabel: formatWindowsLabel(dayData.availableIntervals),
+      });
+    }
+
+    return entries;
+  }
+
+  function renderBookingsOverviewList() {
+    if (!calendarMobileListEl || !isBookingsDashboardPage) {
+      return;
+    }
+
+    const entries = getBookingsOverviewEntries();
+
+    calendarMobileListEl.innerHTML = '';
+    calendarMobileListEl.classList.add('is-desktop-cards');
+
+    if (!entries.length) {
+      const emptyState = document.createElement('div');
+      emptyState.className = 'calendar-mobile-empty-month';
+      emptyState.textContent = 'Aucune plage disponible à venir.';
+      calendarMobileListEl.appendChild(emptyState);
+      return;
+    }
+
+    entries.forEach((entry) => {
+      const dateObj = entry.date;
+      const dateWeekday = new Intl.DateTimeFormat('fr-CA', { weekday: 'long' }).format(dateObj);
+      const dateLong = new Intl.DateTimeFormat('fr-CA', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      }).format(dateObj);
+
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'calendar-mobile-day-card sunnygym-slot-card bookings-overview-card';
+      card.classList.add('available');
+      if (isSameDay(dateObj, today)) {
+        card.classList.add('today');
+      }
+      if (state.selectedDate && isSameDay(dateObj, state.selectedDate)) {
+        card.classList.add('selected');
+      }
+
+      card.innerHTML = `
+        <div class="sunnygym-slot-card__head">
+          <div>
+            <p class="calendar-mobile-weekday">${escapeHtml(dateWeekday)}</p>
+            <p class="calendar-mobile-date">${escapeHtml(dateLong)}</p>
+          </div>
+        </div>
+        <div class="bookings-overview-card__schedule">
+          <p class="sunnygym-slot-card__label">Plages disponibles</p>
+          <p class="calendar-mobile-hours">${escapeHtml(entry.availableIntervalsLabel)}</p>
+        </div>
+        <div class="bookings-overview-card__meta">
+          <div>
+            <small>Réservations</small>
+            <strong>${escapeHtml(entry.bookingCount)}</strong>
+          </div>
+          <div>
+            <small>Participants</small>
+            <strong>${escapeHtml(entry.participantCount)}</strong>
+          </div>
+        </div>
+        <div class="sunnygym-slot-card__footer">
+          <span class="sunnygym-slot-card__cta">Voir le détail</span>
+        </div>
+      `;
+      card.addEventListener('click', () => {
+        selectDate(dateObj);
+      });
+
+      calendarMobileListEl.appendChild(card);
+    });
   }
 
   function sanitizeBookings(rawBookings) {
@@ -1706,7 +2348,14 @@
 
   function selectDate(date) {
     state.selectedDate = startOfDay(date);
+    if (isBookingsDashboardPage) {
+      showBookingsManager(state.selectedDate);
+    }
     render();
+    if (isBookingsDashboardPage) {
+      syncBookingsDashboardVisibility();
+      scheduleBookingsManagerRerender();
+    }
     if (usesDayPanelModal) {
       openDayPanelModal();
     }
@@ -1768,4 +2417,13 @@
 
   render();
   renderBookingRules();
+  if (bookingsManagerResizeObserver && bookingManagerGridEl) {
+    bookingsManagerResizeObserver.observe(bookingManagerGridEl);
+  }
+  window.addEventListener('resize', () => {
+    if (isBookingsDashboardPage && bookingsDashboardMode === 'manager') {
+      syncBookingsManagerViewportHeight();
+      scheduleBookingsManagerRerender();
+    }
+  });
 })();

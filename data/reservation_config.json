@@ -1,6 +1,10 @@
 {
-  "updated_at": "2026-02-16T02:41:59.989627+00:00",
+  "updated_at": "2026-04-05T21:54:03.779298+00:00",
   "reservation_config": {
+    "timezone": "America/Montreal",
+    "availability_mode": "active_slots",
+    "week_start_day": "monday",
+    "sunnygym_display_mode": "cards",
     "max_simultaneous_bookings": 3,
     "min_duration_minutes": 30,
     "max_duration_minutes": 90,
@@ -11,6 +15,12 @@
     "fixed_time_only": true,
     "fixed_time_interval_minutes": 15,
     "allow_companion_booking": false,
-    "allow_private_room_choice": true
+    "allow_private_room_choice": true,
+    "single_booking_per_day": false,
+    "frequency_limit_enabled": false,
+    "frequency_limit_metric": "bookings",
+    "frequency_limit_value": 3,
+    "frequency_limit_period_value": 1,
+    "frequency_limit_period_unit": "weeks"
   }
 }

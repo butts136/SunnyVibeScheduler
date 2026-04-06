@@ -1,0 +1,127 @@
+{% extends 'admin_dashboard_base.html' %}
+{% from '_form_controls.html' import toggle %}
+
+{% block admin_panel %}
+        <section id="opening-hours-panel" class="admin-section tab-panel opening-hours-panel {% if active_tab == 'opening-hours-panel' %}is-active{% endif %}">
+          <div class="opening-hours-shell">
+            <section class="opening-hours-card">
+              <div class="opening-hours-card-head">
+                <h2>Horaire hebdomadaire</h2>
+                <p>Définissez vos heures standard pour chaque jour.</p>
+              </div>
+
+              <form method="post" class="opening-hours-form" novalidate>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="admin_action" value="save_opening_hours">
+                <div class="opening-hours-head row-grid">
+                  <span>Jour</span>
+                  <span>État</span>
+                  <span>Plage horaire</span>
+                </div>
+
+                {% for day_key, day_label, _ in day_config %}
+                {% set day = opening_hours[day_key] %}
+                <div class="opening-hours-row row-grid">
+                  <label class="day-label" for="closed_{{ day_key }}">{{ day_label }}</label>
+
+                  <div class="switch-wrap opening-switch">
+                    <span>Fermé</span>
+                    {{ toggle('closed_' ~ day_key, 'closed_' ~ day_key, day.closed) }}
+                  </div>
+
+                  <div class="opening-hours-time-range">
+                    <input type="time" name="start_{{ day_key }}" value="{{ day.start }}" {% if day.closed %}disabled{% endif %}>
+                    <span class="time-separator">à</span>
+                    <input type="time" name="end_{{ day_key }}" value="{{ day.end }}" {% if day.closed %}disabled{% endif %}>
+                  </div>
+                </div>
+                {% endfor %}
+
+                <div class="actions">
+                  <button class="btn primary" type="submit">Enregistrer les horaires</button>
+                </div>
+              </form>
+            </section>
+
+            <section class="opening-hours-card">
+              <div class="opening-hours-card-head">
+                <h2>Journée spéciale</h2>
+                <p>Appliquez un horaire différent à une date précise.</p>
+              </div>
+
+              <form method="post" class="reservation-config-form opening-special-form" novalidate>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="admin_action" value="save_special_date">
+
+                <div class="opening-special-grid">
+                  <div class="config-row">
+                    <label for="special_date">Date</label>
+                    <input id="special_date" type="date" name="special_date" required>
+                  </div>
+
+                  <div class="config-row checkbox-row opening-special-checkbox">
+                    <label for="special_closed">Journée fermée</label>
+                    {{ toggle('special_closed', 'special_closed', False) }}
+                  </div>
+
+                  <div class="config-row">
+                    <label for="special_start">Heure de début</label>
+                    <input id="special_start" type="time" name="special_start" value="09:00">
+                  </div>
+
+                  <div class="config-row">
+                    <label for="special_end">Heure de fin</label>
+                    <input id="special_end" type="time" name="special_end" value="17:00">
+                  </div>
+
+                  <div class="config-row opening-special-reason">
+                    <label for="special_reason">Raison (optionnel)</label>
+                    <input id="special_reason" type="text" name="special_reason" maxlength="120" placeholder="Ex: férié, maintenance, événement">
+                  </div>
+                </div>
+
+                <div class="actions">
+                  <button class="btn primary" type="submit">Ajouter / Mettre à jour</button>
+                </div>
+              </form>
+            </section>
+
+            <section class="opening-hours-card">
+              <div class="opening-hours-card-head">
+                <h2>Dates spéciales configurées</h2>
+                <p>{{ special_dates|length }} date(s) active(s).</p>
+              </div>
+
+              {% if special_dates %}
+              <div class="special-dates-list">
+                {% for special_day in special_dates %}
+                <article class="special-date-item">
+                  <div class="special-date-main">
+                    <p class="special-date-date">{{ special_day.date }}</p>
+                    <p class="special-date-reason">{{ special_day.reason if special_day.reason else 'Aucune raison précisée' }}</p>
+                  </div>
+                  <div class="special-date-side">
+                    <span class="special-date-badge {% if special_day.closed %}is-closed{% endif %}">
+                      {% if special_day.closed %}
+                      Fermé
+                      {% else %}
+                      {{ special_day.start }} - {{ special_day.end }}
+                      {% endif %}
+                    </span>
+                    <form method="post" class="inline-form" onsubmit="return confirm('Supprimer cette date spéciale ?');">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                      <input type="hidden" name="admin_action" value="delete_special_date">
+                      <input type="hidden" name="special_date" value="{{ special_day.date }}">
+                      <button class="btn danger" type="submit">Supprimer</button>
+                    </form>
+                  </div>
+                </article>
+                {% endfor %}
+              </div>
+              {% else %}
+              <div class="empty-state">Aucune date spéciale configurée.</div>
+              {% endif %}
+            </section>
+          </div>
+        </section>
+{% endblock %}

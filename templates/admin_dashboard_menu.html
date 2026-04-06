@@ -1,0 +1,916 @@
+{% extends 'admin_dashboard_base.html' %}
+
+{% block admin_panel %}
+        <section id="menu-panel" class="admin-section tab-panel {% if active_tab == 'menu-panel' %}is-active{% endif %}">
+          <div class="settings-shell menu-admin-shell">
+            <div class="settings-tabs-wrap">
+              <div class="settings-tabs" id="menuTabs">
+                <div class="settings-tabs-hover-indicator" id="menuTabsHoverIndicator"></div>
+                <div class="settings-tabs-indicator" id="menuTabsIndicator"></div>
+                {% for category in menu_categories %}
+                <button
+                  class="settings-tab-btn{% if category.key == menu_active_category %} active{% endif %}"
+                  type="button"
+                  data-menu-tab="{{ category.key }}"
+                >
+                  {{ category.label }}
+                </button>
+                {% endfor %}
+                <button
+                  class="settings-tab-btn menu-tab-add-btn"
+                  id="openAddMenuTabBtn"
+                  type="button"
+                  aria-label="Ajouter un onglet"
+                  title="Ajouter un onglet"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <div class="menu-admin-searchbar">
+              <label class="menu-search-field">
+                <span class="menu-search-label">Recherche</span>
+                <input
+                  id="adminMenuSearchInput"
+                  class="menu-glow-input menu-search-input"
+                  type="search"
+                  placeholder="Rechercher un produit"
+                  autocomplete="off"
+                >
+              </label>
+            </div>
+
+            <div class="settings-tab-panels">
+              {% for category in menu_categories %}
+              {% set category_items = menu_items_by_category.get(category.key, []) %}
+              <section
+                class="settings-tab-panel menu-admin-panel{% if category.key == menu_active_category %} is-active{% endif %}"
+                data-menu-panel="{{ category.key }}"
+                {% if category.key != menu_active_category %}hidden{% endif %}
+              >
+                <article class="settings-section-card menu-admin-card">
+                  <div class="settings-section-head menu-admin-panel-head">
+                    <div>
+                      <h2>{{ category.label }}</h2>
+                      <p class="subtitle">
+                        {% if category.key == 'all' %}
+                        Tous les produits du menu.
+                        {% else %}
+                        Produits enregistrés dans {{ category.label }}.
+                        {% endif %}
+                      </p>
+                    </div>
+                    {% if category.key != 'all' %}
+                    <button
+                      class="btn primary menu-add-product-btn"
+                      type="button"
+                      data-open-product-modal
+                      data-product-category="{{ category.key }}"
+                    >
+                      Ajouter un produit
+                    </button>
+                    {% endif %}
+                  </div>
+
+                  <div class="menu-admin-summary">
+                    <div class="menu-admin-stat">
+                      <span class="menu-admin-stat-label">Produits</span>
+                      <strong class="menu-admin-stat-value">{{ category_items|length }}</strong>
+                    </div>
+                    <div class="menu-admin-stat">
+                      <span class="menu-admin-stat-label">Saveurs connues</span>
+                      <strong class="menu-admin-stat-value">{{ menu_ingredients|length }}</strong>
+                    </div>
+                  </div>
+
+                  {% if category_items %}
+                  <div class="menu-admin-items">
+                    {% for item in category_items %}
+                    <article
+                      class="menu-admin-item menu-admin-item--product"
+                      data-menu-product-card
+                      data-product-id="{{ item.id }}"
+                      data-product-name="{{ item.name|e }}"
+                      data-product-category="{{ item.category }}"
+                      data-product-ingredients="{{ item.ingredients|tojson|forceescape }}"
+                    >
+                      <div class="menu-admin-item-body">
+                        <div class="menu-admin-item-head">
+                          <p class="menu-admin-item-title">{{ item.name }}</p>
+                          {% if category.key == 'all' %}
+                          <span class="menu-admin-item-category">
+                            {{ (menu_categories | selectattr('key', 'equalto', item.category) | map(attribute='label') | first) or item.category }}
+                          </span>
+                          {% endif %}
+                        </div>
+                        {% if item.ingredients %}
+                        <div class="menu-admin-ingredient-list">
+                          {% for ingredient in item.ingredients %}
+                          <span class="menu-admin-ingredient-pill">{{ ingredient }}</span>
+                          {% endfor %}
+                        </div>
+                        {% endif %}
+                      </div>
+                    </article>
+                    {% endfor %}
+                  </div>
+                  <div class="empty-state menu-admin-filter-empty" data-menu-admin-filter-empty hidden>Aucun produit trouvé.</div>
+                  {% else %}
+                  <div class="empty-state">Aucun produit dans cette section pour le moment.</div>
+                  {% endif %}
+                </article>
+              </section>
+              {% endfor %}
+            </div>
+          </div>
+        </section>
+
+        <div id="menuTabContextMenu" class="menu-tab-context-menu" hidden>
+          <button type="button" class="menu-tab-context-menu__item" data-menu-context-action="rename">Renommer</button>
+          <button type="button" class="menu-tab-context-menu__item danger" data-menu-context-action="delete">Supprimer</button>
+        </div>
+
+        <div id="menuProductContextMenu" class="menu-tab-context-menu menu-product-context-menu" hidden>
+          <button type="button" class="menu-tab-context-menu__item" data-menu-product-context-action="rename">Renommer</button>
+          <button type="button" class="menu-tab-context-menu__item" data-menu-product-context-action="flavors">Modifier les saveurs</button>
+          <button type="button" class="menu-tab-context-menu__item danger" data-menu-product-context-action="delete">Supprimer</button>
+        </div>
+
+        <dialog id="addMenuTabModal" class="user-modal menu-tab-modal">
+          <div class="user-modal-head">
+            <h3>Ajouter un onglet</h3>
+            <button type="button" class="btn" data-close-menu-modal="add">Fermer</button>
+          </div>
+          <div class="user-modal-content">
+            <form method="post" class="menu-tab-modal-form" id="addMenuTabForm">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <input type="hidden" name="admin_action" value="add_menu_category">
+              <input type="hidden" name="menu_active_category" value="{{ menu_active_category }}" data-menu-active-hidden>
+              <label class="menu-admin-field">
+                <span>Nom de l’onglet</span>
+                <input type="text" class="menu-glow-input" name="menu_category_label" id="addMenuTabNameInput" placeholder="Ex: Smoothies spéciaux" required>
+              </label>
+              <div class="modal-actions">
+                <button type="button" class="btn" data-close-menu-modal="add">Annuler</button>
+                <button type="submit" class="btn primary">Ajouter</button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+
+        <dialog id="renameMenuTabModal" class="user-modal menu-tab-modal">
+          <div class="user-modal-head">
+            <h3>Renommer l’onglet</h3>
+            <button type="button" class="btn" data-close-menu-modal="rename">Fermer</button>
+          </div>
+          <div class="user-modal-content">
+            <form method="post" class="menu-tab-modal-form" id="renameMenuTabForm">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <input type="hidden" name="admin_action" value="rename_menu_category">
+              <input type="hidden" name="menu_active_category" value="{{ menu_active_category }}" data-menu-active-hidden>
+              <input type="hidden" name="menu_category_key" value="{{ menu_active_category }}" id="renameMenuTabKeyInput">
+              <label class="menu-admin-field">
+                <span>Nouveau nom</span>
+                <input type="text" class="menu-glow-input" name="menu_category_rename_label" id="renameMenuTabNameInput" placeholder="Nouveau nom" required>
+              </label>
+              <div class="modal-actions">
+                <button type="button" class="btn" data-close-menu-modal="rename">Annuler</button>
+                <button type="submit" class="btn primary">Renommer</button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+
+        <dialog id="deleteMenuTabModal" class="booking-modal booking-delete-modal menu-tab-delete-modal">
+          <div class="user-modal-head booking-delete-modal-head">
+            <h3>Supprimer l’onglet</h3>
+            <button type="button" class="btn" data-close-menu-modal="delete">Fermer</button>
+          </div>
+          <div class="user-modal-content booking-delete-modal-content">
+            <div class="booking-delete-modal-icon">!</div>
+            <p id="deleteMenuTabMessage">Voulez-vous vraiment supprimer cet onglet&nbsp;?</p>
+            <form method="post" id="deleteMenuTabForm" class="menu-tab-modal-form">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <input type="hidden" name="admin_action" value="delete_menu_category">
+              <input type="hidden" name="menu_active_category" value="{{ menu_active_category }}" data-menu-active-hidden>
+              <input type="hidden" name="menu_category_key" value="{{ menu_active_category }}" id="deleteMenuTabKeyInput">
+              <div class="modal-actions booking-delete-modal-actions">
+                <button type="button" class="btn" data-close-menu-modal="delete">Annuler</button>
+                <button type="submit" class="btn danger">Supprimer</button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+
+        <dialog id="addMenuProductModal" class="user-modal menu-tab-modal menu-product-modal">
+          <div class="user-modal-head">
+            <h3>Ajouter un produit</h3>
+            <button type="button" class="btn" data-close-menu-modal="product">Fermer</button>
+          </div>
+          <div class="user-modal-content">
+            <p class="subtitle">Ajoutez un produit dans l’onglet actif et réutilisez les saveurs déjà connues.</p>
+            <form method="post" class="menu-product-form" id="menuProductForm">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <input type="hidden" name="admin_action" value="add_menu_product">
+              <input type="hidden" name="menu_active_category" value="{{ menu_active_category }}" data-menu-active-hidden>
+              <input type="hidden" name="menu_product_category" value="{{ menu_product_form.category }}" id="menuProductCategoryInput">
+
+              <label class="menu-admin-field">
+                <span>Nom</span>
+                <input type="text" class="menu-glow-input" name="menu_product_name" id="menuProductNameInput" value="{{ menu_product_form.name }}" placeholder="Ex: Blue Blast" required>
+              </label>
+
+              <div class="menu-admin-field">
+                <span>Saveurs</span>
+                <div
+                  class="menu-ingredient-builder"
+                  data-menu-ingredients="{{ menu_ingredients|tojson|forceescape }}"
+                  data-initial-ingredients="{{ menu_product_form.ingredients_text|tojson|forceescape }}"
+                >
+                  <div class="menu-ingredient-tags" data-menu-ingredient-tags></div>
+                  <div class="menu-ingredient-input-row">
+                    <input type="text" class="menu-ingredient-input menu-glow-input" data-menu-ingredient-input placeholder="Tapez une saveur puis Entrée">
+                    <button class="btn" type="button" data-menu-ingredient-add>Ajouter</button>
+                  </div>
+                  <div class="menu-ingredient-suggestions" data-menu-ingredient-suggestions hidden></div>
+                  <input type="hidden" name="menu_product_ingredients" data-menu-ingredient-hidden value="{{ menu_product_form.ingredients_text }}">
+                </div>
+                <p class="field-help">Séparez les saveurs une par une. Les suggestions réutilisent celles déjà enregistrées.</p>
+              </div>
+
+              <div class="modal-actions">
+                <button type="button" class="btn" data-close-menu-modal="product">Annuler</button>
+                <button class="btn primary" type="submit">Ajouter le produit</button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+
+        <dialog id="renameMenuProductModal" class="user-modal menu-tab-modal menu-product-modal">
+          <div class="user-modal-head">
+            <h3>Renommer le produit</h3>
+            <button type="button" class="btn" data-close-menu-modal="product-rename">Fermer</button>
+          </div>
+          <div class="user-modal-content">
+            <form method="post" class="menu-tab-modal-form" id="renameMenuProductForm">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <input type="hidden" name="admin_action" value="rename_menu_product">
+              <input type="hidden" name="menu_active_category" value="{{ menu_active_category }}" data-menu-active-hidden>
+              <input type="hidden" name="menu_product_category" id="renameMenuProductCategoryInput">
+              <input type="hidden" name="menu_product_id" id="renameMenuProductIdInput">
+              <label class="menu-admin-field">
+                <span>Nouveau nom</span>
+                <input type="text" class="menu-glow-input" name="menu_product_name" id="renameMenuProductNameInput" placeholder="Nouveau nom" required>
+              </label>
+              <div class="modal-actions">
+                <button type="button" class="btn" data-close-menu-modal="product-rename">Annuler</button>
+                <button type="submit" class="btn primary">Renommer</button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+
+        <dialog id="editMenuProductFlavorsModal" class="user-modal menu-tab-modal menu-product-modal">
+          <div class="user-modal-head">
+            <h3>Modifier les saveurs</h3>
+            <button type="button" class="btn" data-close-menu-modal="product-flavors">Fermer</button>
+          </div>
+          <div class="user-modal-content">
+            <form method="post" class="menu-product-form" id="editMenuProductFlavorsForm">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <input type="hidden" name="admin_action" value="update_menu_product_flavors">
+              <input type="hidden" name="menu_active_category" value="{{ menu_active_category }}" data-menu-active-hidden>
+              <input type="hidden" name="menu_product_category" id="editMenuProductFlavorsCategoryInput">
+              <input type="hidden" name="menu_product_id" id="editMenuProductFlavorsIdInput">
+
+              <p class="subtitle" id="editMenuProductFlavorsTitle">Produit sélectionné</p>
+              <div class="menu-admin-field">
+                <span>Saveurs</span>
+                <div
+                  class="menu-ingredient-builder"
+                  id="editMenuProductFlavorsBuilder"
+                  data-menu-ingredients="{{ menu_ingredients|tojson|forceescape }}"
+                  data-initial-ingredients='""'
+                >
+                  <div class="menu-ingredient-tags" data-menu-ingredient-tags></div>
+                  <div class="menu-ingredient-input-row">
+                    <input type="text" class="menu-ingredient-input menu-glow-input" data-menu-ingredient-input placeholder="Tapez une saveur puis Entrée">
+                    <button class="btn" type="button" data-menu-ingredient-add>Ajouter</button>
+                  </div>
+                  <div class="menu-ingredient-suggestions" data-menu-ingredient-suggestions hidden></div>
+                  <input type="hidden" name="menu_product_ingredients" data-menu-ingredient-hidden value="">
+                </div>
+                <p class="field-help">Les saveurs retirées seront supprimées du registre si aucun autre produit ne les utilise.</p>
+              </div>
+
+              <div class="modal-actions">
+                <button type="button" class="btn" data-close-menu-modal="product-flavors">Annuler</button>
+                <button type="submit" class="btn primary">Enregistrer</button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+
+        <dialog id="deleteMenuProductModal" class="booking-modal booking-delete-modal menu-tab-delete-modal">
+          <div class="user-modal-head booking-delete-modal-head">
+            <h3>Supprimer le produit</h3>
+            <button type="button" class="btn" data-close-menu-modal="product-delete">Fermer</button>
+          </div>
+          <div class="user-modal-content booking-delete-modal-content">
+            <div class="booking-delete-modal-icon">!</div>
+            <p id="deleteMenuProductMessage">Voulez-vous vraiment supprimer ce produit&nbsp;?</p>
+            <form method="post" id="deleteMenuProductForm" class="menu-tab-modal-form">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <input type="hidden" name="admin_action" value="delete_menu_product">
+              <input type="hidden" name="menu_active_category" value="{{ menu_active_category }}" data-menu-active-hidden>
+              <input type="hidden" name="menu_product_category" id="deleteMenuProductCategoryInput">
+              <input type="hidden" name="menu_product_id" id="deleteMenuProductIdInput">
+              <div class="modal-actions booking-delete-modal-actions">
+                <button type="button" class="btn" data-close-menu-modal="product-delete">Annuler</button>
+                <button type="submit" class="btn danger">Supprimer</button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+
+        <script>
+          (function initMenuTabs() {
+            const tabsContainer = document.getElementById('menuTabs');
+            const indicator = document.getElementById('menuTabsIndicator');
+            const hoverIndicator = document.getElementById('menuTabsHoverIndicator');
+            const tabs = tabsContainer ? tabsContainer.querySelectorAll('.settings-tab-btn[data-menu-tab]') : [];
+            const panels = document.querySelectorAll('.menu-admin-panel[data-menu-panel]');
+            const hiddenFields = document.querySelectorAll('input[name="menu_active_category"]');
+            const productCategoryInput = document.getElementById('menuProductCategoryInput');
+            const categoryLabels = {{ menu_categories|tojson }};
+            const addButton = document.getElementById('openAddMenuTabBtn');
+            const productButtons = document.querySelectorAll('[data-open-product-modal]');
+            const contextMenu = document.getElementById('menuTabContextMenu');
+            const addModal = document.getElementById('addMenuTabModal');
+            const renameModal = document.getElementById('renameMenuTabModal');
+            const deleteModal = document.getElementById('deleteMenuTabModal');
+            const productModal = document.getElementById('addMenuProductModal');
+            const addNameInput = document.getElementById('addMenuTabNameInput');
+            const productNameInput = document.getElementById('menuProductNameInput');
+            const renameNameInput = document.getElementById('renameMenuTabNameInput');
+            const renameKeyInput = document.getElementById('renameMenuTabKeyInput');
+            const deleteKeyInput = document.getElementById('deleteMenuTabKeyInput');
+            const deleteMessage = document.getElementById('deleteMenuTabMessage');
+            const closeMenuModalButtons = document.querySelectorAll('[data-close-menu-modal]');
+
+            if (!tabsContainer || !indicator || !hoverIndicator || !tabs.length || !panels.length) {
+              return;
+            }
+
+            const labelByKey = new Map(categoryLabels.map((item) => [item.key, item.label]));
+            let currentMenuTab = {{ menu_active_category|tojson }};
+            let contextTabKey = null;
+
+            const setIndicatorPosition = (element, targetIndicator) => {
+              const containerRect = tabsContainer.getBoundingClientRect();
+              const elementRect = element.getBoundingClientRect();
+              const left = elementRect.left - containerRect.left;
+              targetIndicator.style.width = `${elementRect.width}px`;
+              targetIndicator.style.transform = `translateX(${left}px)`;
+            };
+
+            const hideHoverIndicator = () => {
+              hoverIndicator.style.opacity = '0';
+            };
+
+            const syncDependentFields = (targetName) => {
+              hiddenFields.forEach((field) => {
+                field.value = targetName;
+              });
+              if (productCategoryInput && targetName !== 'all') {
+                productCategoryInput.value = targetName;
+              }
+              currentMenuTab = targetName;
+            };
+
+            const activateTab = (targetName) => {
+              tabs.forEach((tab) => {
+                const isActive = tab.dataset.menuTab === targetName;
+                tab.classList.toggle('active', isActive);
+                if (isActive) {
+                  setIndicatorPosition(tab, indicator);
+                }
+              });
+
+              panels.forEach((panel) => {
+                const isActive = panel.dataset.menuPanel === targetName;
+                panel.classList.toggle('is-active', isActive);
+                panel.hidden = !isActive;
+              });
+
+              syncDependentFields(targetName);
+              document.dispatchEvent(new CustomEvent('admin-menu-tab-change', {
+                detail: { activeTab: targetName },
+              }));
+            };
+
+            const closeContextMenu = () => {
+              if (contextMenu) {
+                contextMenu.hidden = true;
+              }
+              contextTabKey = null;
+            };
+
+            const openModal = (dialog) => {
+              if (!dialog) {
+                return;
+              }
+              dialog.showModal();
+            };
+
+            const closeModal = (dialog) => {
+              if (!dialog) {
+                return;
+              }
+              dialog.close();
+            };
+
+            const openRenameModal = (tabKey) => {
+              if (!renameModal || !renameNameInput || !renameKeyInput || tabKey === 'all') {
+                return;
+              }
+              renameKeyInput.value = tabKey;
+              renameNameInput.value = labelByKey.get(tabKey) || '';
+              openModal(renameModal);
+              window.requestAnimationFrame(() => {
+                renameNameInput.focus();
+                renameNameInput.select();
+              });
+            };
+
+            const openDeleteModal = (tabKey) => {
+              if (!deleteModal || !deleteKeyInput || tabKey === 'all') {
+                return;
+              }
+              deleteKeyInput.value = tabKey;
+              if (deleteMessage) {
+                deleteMessage.innerHTML = `Voulez-vous vraiment supprimer l’onglet <strong>${labelByKey.get(tabKey) || ''}</strong>&nbsp;?`;
+              }
+              openModal(deleteModal);
+            };
+
+            if (addButton && addModal && addNameInput) {
+              addButton.addEventListener('click', () => {
+                addNameInput.value = '';
+                openModal(addModal);
+                window.requestAnimationFrame(() => {
+                  addNameInput.focus();
+                });
+              });
+            }
+
+            productButtons.forEach((button) => {
+              button.addEventListener('click', () => {
+                const productCategory = button.dataset.productCategory || currentMenuTab;
+                if (productCategory === 'all' || !productModal || !productCategoryInput) {
+                  return;
+                }
+                syncDependentFields(productCategory);
+                productCategoryInput.value = productCategory;
+                openModal(productModal);
+                window.requestAnimationFrame(() => {
+                  productNameInput?.focus();
+                });
+              });
+            });
+
+            if (contextMenu) {
+              contextMenu.addEventListener('click', (event) => {
+                const actionButton = event.target.closest('[data-menu-context-action]');
+                if (!actionButton || !contextTabKey) {
+                  return;
+                }
+                const action = actionButton.dataset.menuContextAction;
+                const targetKey = contextTabKey;
+                closeContextMenu();
+                if (action === 'rename') {
+                  openRenameModal(targetKey);
+                }
+                if (action === 'delete') {
+                  openDeleteModal(targetKey);
+                }
+              });
+            }
+
+            closeMenuModalButtons.forEach((button) => {
+              button.addEventListener('click', () => {
+                const target = button.dataset.closeMenuModal;
+                if (target === 'add') {
+                  closeModal(addModal);
+                }
+                if (target === 'rename') {
+                  closeModal(renameModal);
+                }
+                if (target === 'delete') {
+                  closeModal(deleteModal);
+                }
+                if (target === 'product') {
+                  closeModal(productModal);
+                }
+              });
+            });
+
+            tabs.forEach((tab) => {
+              tab.addEventListener('mouseenter', () => {
+                if (!tab.classList.contains('active')) {
+                  setIndicatorPosition(tab, hoverIndicator);
+                  hoverIndicator.style.opacity = '1';
+                }
+              });
+
+              tab.addEventListener('focus', () => {
+                if (!tab.classList.contains('active')) {
+                  setIndicatorPosition(tab, hoverIndicator);
+                  hoverIndicator.style.opacity = '1';
+                }
+              });
+
+              tab.addEventListener('mouseleave', hideHoverIndicator);
+              tab.addEventListener('blur', hideHoverIndicator);
+
+              tab.addEventListener('click', () => {
+                activateTab(tab.dataset.menuTab);
+                hideHoverIndicator();
+                closeContextMenu();
+              });
+
+              tab.addEventListener('contextmenu', (event) => {
+                event.preventDefault();
+                activateTab(tab.dataset.menuTab);
+                closeContextMenu();
+                contextTabKey = tab.dataset.menuTab;
+                if (contextTabKey === 'all' || !contextMenu) {
+                  return;
+                }
+                contextMenu.hidden = false;
+                contextMenu.style.left = `${Math.min(event.clientX, window.innerWidth - contextMenu.offsetWidth - 12)}px`;
+                contextMenu.style.top = `${Math.min(event.clientY, window.innerHeight - contextMenu.offsetHeight - 12)}px`;
+              });
+            });
+
+            tabsContainer.addEventListener('mouseleave', hideHoverIndicator);
+            document.addEventListener('click', (event) => {
+              if (contextMenu && !contextMenu.hidden && !contextMenu.contains(event.target)) {
+                closeContextMenu();
+              }
+            });
+            window.addEventListener('resize', closeContextMenu);
+            window.addEventListener('scroll', closeContextMenu, true);
+
+            const syncIndicators = () => {
+              const activeTab = tabsContainer.querySelector('.settings-tab-btn.active');
+              if (activeTab) {
+                setIndicatorPosition(activeTab, indicator);
+                syncDependentFields(activeTab.dataset.menuTab);
+              }
+              hideHoverIndicator();
+            };
+
+            window.addEventListener('load', syncIndicators);
+            window.addEventListener('resize', syncIndicators);
+            syncIndicators();
+
+            if (productModal && productCategoryInput && {{ (menu_product_form.name or menu_product_form.ingredients_text)|tojson }}) {
+              const targetCategory = productCategoryInput.value || currentMenuTab;
+              if (targetCategory !== 'all') {
+                activateTab(targetCategory);
+                openModal(productModal);
+                window.requestAnimationFrame(() => {
+                  productNameInput?.focus();
+                });
+              }
+            }
+          }());
+
+          (function initMenuProductSearch() {
+            const searchInput = document.getElementById('adminMenuSearchInput');
+            const panels = document.querySelectorAll('.menu-admin-panel[data-menu-panel]');
+
+            if (!searchInput || !panels.length) {
+              return;
+            }
+
+            const normalize = (value) => String(value || '')
+              .normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '')
+              .trim()
+              .toLocaleLowerCase();
+
+            const updatePanel = (panel) => {
+              const query = normalize(searchInput.value);
+              const cards = panel.querySelectorAll('[data-menu-product-card]');
+              cards.forEach((card) => {
+                const productName = normalize(card.dataset.productName || card.querySelector('.menu-admin-item-title')?.textContent || '');
+                card.classList.toggle('is-filtered-out', Boolean(query) && !productName.includes(query));
+              });
+
+              const emptyState = panel.querySelector('[data-menu-admin-filter-empty]');
+              if (emptyState) {
+                const visibleCount = Array.from(cards).filter((card) => !card.classList.contains('is-filtered-out')).length;
+                emptyState.hidden = !query || visibleCount > 0;
+              }
+            };
+
+            const applySearch = () => {
+              panels.forEach(updatePanel);
+            };
+
+            searchInput.addEventListener('input', applySearch);
+            document.addEventListener('admin-menu-tab-change', applySearch);
+            applySearch();
+          }());
+
+          (function initMenuIngredientBuilder() {
+            const builders = document.querySelectorAll('.menu-ingredient-builder');
+            if (!builders.length) {
+              return;
+            }
+
+            const normalize = (value) => String(value || '').trim().replace(/\s+/g, ' ');
+
+            builders.forEach((builder) => {
+              const tagsWrap = builder.querySelector('[data-menu-ingredient-tags]');
+              const input = builder.querySelector('[data-menu-ingredient-input]');
+              const addBtn = builder.querySelector('[data-menu-ingredient-add]');
+              const hiddenField = builder.querySelector('[data-menu-ingredient-hidden]');
+              const suggestions = builder.querySelector('[data-menu-ingredient-suggestions]');
+              const knownIngredients = JSON.parse(builder.dataset.menuIngredients || '[]');
+              const initialIngredients = String(JSON.parse(builder.dataset.initialIngredients || '""') || '')
+                .split(/[\n,;]+/)
+                .map((item) => item.trim())
+                .filter(Boolean);
+
+              let selectedIngredients = [];
+
+              const syncHiddenField = () => {
+                hiddenField.value = selectedIngredients.join(', ');
+              };
+
+              const renderTags = () => {
+                tagsWrap.innerHTML = '';
+                selectedIngredients.forEach((ingredient, index) => {
+                  const tag = document.createElement('button');
+                  tag.type = 'button';
+                  tag.className = 'menu-admin-ingredient-pill menu-admin-ingredient-pill--removable';
+                  tag.innerHTML = `<span>${ingredient}</span><strong>&times;</strong>`;
+                  tag.addEventListener('click', () => {
+                    selectedIngredients.splice(index, 1);
+                    renderTags();
+                    syncHiddenField();
+                  });
+                  tagsWrap.appendChild(tag);
+                });
+              };
+
+              const closeSuggestions = () => {
+                suggestions.hidden = true;
+                suggestions.innerHTML = '';
+              };
+
+              const addIngredient = (rawValue) => {
+                const normalized = normalize(rawValue);
+                if (!normalized) {
+                  return;
+                }
+                const existingKnown = knownIngredients.find(
+                  (ingredient) => ingredient.toLocaleLowerCase() === normalized.toLocaleLowerCase()
+                );
+                const finalValue = existingKnown || normalized;
+                if (selectedIngredients.some((ingredient) => ingredient.toLocaleLowerCase() === finalValue.toLocaleLowerCase())) {
+                  input.value = '';
+                  closeSuggestions();
+                  return;
+                }
+                selectedIngredients.push(finalValue);
+                input.value = '';
+                renderTags();
+                syncHiddenField();
+                closeSuggestions();
+              };
+
+              const setIngredients = (values) => {
+                selectedIngredients = [];
+                input.value = '';
+                closeSuggestions();
+                values.forEach((ingredient) => addIngredient(ingredient));
+                renderTags();
+                syncHiddenField();
+              };
+
+              const renderSuggestions = () => {
+                const query = normalize(input.value).toLocaleLowerCase();
+                if (!query) {
+                  closeSuggestions();
+                  return;
+                }
+
+                const matches = knownIngredients.filter((ingredient) => {
+                  const lowered = ingredient.toLocaleLowerCase();
+                  return lowered.includes(query) && !selectedIngredients.some((item) => item.toLocaleLowerCase() === lowered);
+                }).slice(0, 8);
+
+                if (!matches.length) {
+                  closeSuggestions();
+                  return;
+                }
+
+                suggestions.innerHTML = '';
+                matches.forEach((ingredient) => {
+                  const button = document.createElement('button');
+                  button.type = 'button';
+                  button.className = 'menu-ingredient-suggestion';
+                  button.textContent = ingredient;
+                  button.addEventListener('mousedown', (event) => {
+                    event.preventDefault();
+                    addIngredient(ingredient);
+                  });
+                  suggestions.appendChild(button);
+                });
+                suggestions.hidden = false;
+              };
+
+              addBtn.addEventListener('click', () => addIngredient(input.value));
+              input.addEventListener('input', renderSuggestions);
+              input.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ',') {
+                  event.preventDefault();
+                  addIngredient(input.value);
+                }
+                if (event.key === 'Backspace' && !input.value && selectedIngredients.length) {
+                  selectedIngredients.pop();
+                  renderTags();
+                  syncHiddenField();
+                }
+              });
+              document.addEventListener('click', (event) => {
+                if (!builder.contains(event.target)) {
+                  closeSuggestions();
+                }
+              });
+
+              builder.menuIngredientBuilderSetValues = setIngredients;
+              setIngredients(initialIngredients);
+            });
+          }());
+
+          (function initMenuProductActions() {
+            const productCards = document.querySelectorAll('[data-menu-product-card]');
+            const contextMenu = document.getElementById('menuProductContextMenu');
+            const renameModal = document.getElementById('renameMenuProductModal');
+            const flavorsModal = document.getElementById('editMenuProductFlavorsModal');
+            const deleteModal = document.getElementById('deleteMenuProductModal');
+            const closeButtons = document.querySelectorAll('[data-close-menu-modal]');
+
+            const renameIdInput = document.getElementById('renameMenuProductIdInput');
+            const renameCategoryInput = document.getElementById('renameMenuProductCategoryInput');
+            const renameNameInput = document.getElementById('renameMenuProductNameInput');
+            const flavorsIdInput = document.getElementById('editMenuProductFlavorsIdInput');
+            const flavorsCategoryInput = document.getElementById('editMenuProductFlavorsCategoryInput');
+            const flavorsTitle = document.getElementById('editMenuProductFlavorsTitle');
+            const flavorsBuilder = document.getElementById('editMenuProductFlavorsBuilder');
+            const deleteIdInput = document.getElementById('deleteMenuProductIdInput');
+            const deleteCategoryInput = document.getElementById('deleteMenuProductCategoryInput');
+            const deleteMessage = document.getElementById('deleteMenuProductMessage');
+
+            if (!productCards.length || !contextMenu) {
+              return;
+            }
+
+            let contextProduct = null;
+
+            const closeContextMenu = () => {
+              contextMenu.hidden = true;
+              contextProduct = null;
+            };
+
+            const productFromCard = (card) => {
+              let ingredients = [];
+              try {
+                ingredients = JSON.parse(card.dataset.productIngredients || '[]');
+              } catch (error) {
+                ingredients = [];
+              }
+              return {
+                id: card.dataset.productId || '',
+                name: card.dataset.productName || '',
+                category: card.dataset.productCategory || '',
+                activeCategory: card.closest('[data-menu-panel]')?.dataset.menuPanel || card.dataset.productCategory || '',
+                ingredients,
+              };
+            };
+
+            const setProductFormFields = (product, idInput, categoryInput) => {
+              document.querySelectorAll('input[name="menu_active_category"]').forEach((field) => {
+                field.value = product.activeCategory;
+              });
+              if (idInput) {
+                idInput.value = product.id;
+              }
+              if (categoryInput) {
+                categoryInput.value = product.category;
+              }
+            };
+
+            const openDialog = (dialog) => {
+              if (dialog) {
+                dialog.showModal();
+              }
+            };
+
+            const closeDialog = (dialog) => {
+              if (dialog) {
+                dialog.close();
+              }
+            };
+
+            const openRenameModal = (product) => {
+              setProductFormFields(product, renameIdInput, renameCategoryInput);
+              if (renameNameInput) {
+                renameNameInput.value = product.name;
+              }
+              openDialog(renameModal);
+              window.requestAnimationFrame(() => {
+                renameNameInput?.focus();
+                renameNameInput?.select();
+              });
+            };
+
+            const openFlavorsModal = (product) => {
+              setProductFormFields(product, flavorsIdInput, flavorsCategoryInput);
+              if (flavorsTitle) {
+                flavorsTitle.textContent = product.name;
+              }
+              if (flavorsBuilder?.menuIngredientBuilderSetValues) {
+                flavorsBuilder.menuIngredientBuilderSetValues(product.ingredients);
+              }
+              openDialog(flavorsModal);
+            };
+
+            const openDeleteModal = (product) => {
+              setProductFormFields(product, deleteIdInput, deleteCategoryInput);
+              if (deleteMessage) {
+                deleteMessage.innerHTML = `Voulez-vous vraiment supprimer <strong>${product.name}</strong>&nbsp;?`;
+              }
+              openDialog(deleteModal);
+            };
+
+            productCards.forEach((card) => {
+              card.addEventListener('contextmenu', (event) => {
+                event.preventDefault();
+                contextProduct = productFromCard(card);
+                contextMenu.hidden = false;
+                contextMenu.style.left = `${Math.min(event.clientX, window.innerWidth - contextMenu.offsetWidth - 12)}px`;
+                contextMenu.style.top = `${Math.min(event.clientY, window.innerHeight - contextMenu.offsetHeight - 12)}px`;
+              });
+            });
+
+            contextMenu.addEventListener('click', (event) => {
+              const actionButton = event.target.closest('[data-menu-product-context-action]');
+              if (!actionButton || !contextProduct) {
+                return;
+              }
+              const product = contextProduct;
+              const action = actionButton.dataset.menuProductContextAction;
+              closeContextMenu();
+              if (action === 'rename') {
+                openRenameModal(product);
+              }
+              if (action === 'flavors') {
+                openFlavorsModal(product);
+              }
+              if (action === 'delete') {
+                openDeleteModal(product);
+              }
+            });
+
+            closeButtons.forEach((button) => {
+              button.addEventListener('click', () => {
+                const target = button.dataset.closeMenuModal;
+                if (target === 'product-rename') {
+                  closeDialog(renameModal);
+                }
+                if (target === 'product-flavors') {
+                  closeDialog(flavorsModal);
+                }
+                if (target === 'product-delete') {
+                  closeDialog(deleteModal);
+                }
+              });
+            });
+
+            document.addEventListener('click', (event) => {
+              if (!contextMenu.hidden && !contextMenu.contains(event.target)) {
+                closeContextMenu();
+              }
+            });
+            window.addEventListener('resize', closeContextMenu);
+            window.addEventListener('scroll', closeContextMenu, true);
+          }());
+        </script>
+{% endblock %}

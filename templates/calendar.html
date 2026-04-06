@@ -1,20 +1,20 @@
+{% from '_form_controls.html' import toggle %}
 <!doctype html>
 <html lang="fr">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Calendrier de réservation | Sunny Vibe Nutrition</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <title>SunnyGym | Sunny Vibe Nutrition</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v=styles_version) }}">
 </head>
-<body class="calendar-body with-left-nav">
-  <div class="app-layout">
+<body data-ui-mode="dark" data-theme="modern-gradient" class="calendar-body with-left-nav">
+  <div class="layout app-layout">
     {% include '_left_nav.html' %}
     <div class="calendar-main">
       <div class="calendar-shell calendar-shell-single">
         <section class="calendar-panel">
       <div class="calendar-panel-head">
-        <h1>Calendrier de réservation</h1>
-        <p class="subtitle">Sélectionnez une journée puis choisissez une plage horaire disponible.</p>
+        <h1>SunnyGym</h1>
       </div>
 
       <div class="calendar-nav" aria-label="Navigation des mois">
@@ -44,9 +44,6 @@
         <span><i class="legend-dot red"></i> Complet ou fermé</span>
       </div>
 
-      <div class="actions">
-        <a class="btn" href="{{ url_for('index') }}">Accueil</a>
-      </div>
         </section>
 
       </div>
@@ -66,6 +63,20 @@
 
       <div id="daySummary" class="day-summary"></div>
       <div id="timelinePlaceHeaders" class="timeline-place-headers" hidden></div>
+      <div class="timeline-legend" aria-label="Légende du planificateur">
+        <span class="timeline-legend__item">
+          <i class="timeline-legend__dot booking"></i>
+          Réservation
+        </span>
+        <span class="timeline-legend__item">
+          <i class="timeline-legend__dot private"></i>
+          Réservation privée
+        </span>
+        <span class="timeline-legend__item">
+          <i class="timeline-legend__dot blocked"></i>
+          Blocage
+        </span>
+      </div>
       <div id="timelineContainer" class="timeline-container"></div>
 
       {% if user_can_book %}
@@ -86,13 +97,13 @@
     <div class="user-modal-content">
       <div id="bookingFormMessage"></div>
       <div id="bookingRules" class="booking-rules" aria-live="polite"></div>
-      <form id="bookingForm" class="reservation-config-form" novalidate>
-        <div class="config-row">
+      <form id="bookingForm" class="reservation-config-form booking-form-grid" novalidate>
+        <div class="config-row booking-field booking-field-date">
           <label for="bookingDateInput">Date</label>
           <input id="bookingDateInput" type="date" name="date" required>
         </div>
 
-        <div class="config-row">
+        <div class="config-row booking-field booking-field-start">
           <label for="bookingStartInput">Heure de début</label>
           <div class="time-input-wrap">
             <input id="bookingStartInput" type="time" name="start_time" required>
@@ -103,7 +114,7 @@
           </div>
         </div>
 
-        <div class="config-row">
+        <div class="config-row booking-field booking-field-end">
           <label for="bookingEndInput">Heure de fin</label>
           <div class="time-input-wrap">
             <input id="bookingEndInput" type="time" name="end_time" required>
@@ -114,25 +125,25 @@
           </div>
         </div>
 
-        <div class="config-row">
+        <div class="config-row booking-field booking-field-title">
           <label for="bookingTitleInput">Titre (optionnel)</label>
           <input id="bookingTitleInput" type="text" name="title" maxlength="120" placeholder="Ex: Entraînement">
         </div>
 
         {% if reservation_config_json.allow_companion_booking %}
-        <div id="bookingCompanionWrap" class="config-row">
+        <div id="bookingCompanionWrap" class="config-row booking-field booking-field-companions">
           <label for="bookingCompanionCountInput">Nombre d’accompagnateurs</label>
           <input id="bookingCompanionCountInput" type="number" min="0" step="1" value="0" name="companion_count">
           <p class="field-help">Le total de personnes = vous + accompagnateurs.</p>
         </div>
         {% endif %}
 
-        <div id="bookingPrivateWrap" class="config-row checkbox-row">
+        <div id="bookingPrivateWrap" class="config-row checkbox-row booking-field booking-field-private">
           <label for="bookingPrivateInput">Réservation privée (salle non partagée)</label>
-          <input id="bookingPrivateInput" type="checkbox" name="is_private">
+          {{ toggle('bookingPrivateInput', 'is_private', False) }}
         </div>
 
-        <div class="actions">
+        <div class="actions booking-form-actions">
           <button class="btn primary" type="submit">Confirmer la réservation</button>
         </div>
       </form>
@@ -146,8 +157,11 @@
     window.SUNNYVIBE_RESERVATION_CONFIG = {{ reservation_config_json|tojson }};
     window.SUNNYVIBE_BOOKINGS = {{ bookings_json|tojson }};
     window.SUNNYVIBE_BLOCKED_RULES = {{ blocked_slots_json|tojson }};
+    window.SUNNYVIBE_ACTIVE_SLOTS = {{ active_slots_json|tojson }};
     window.SUNNYVIBE_USER_CAN_BOOK = {{ user_can_book|tojson }};
     window.SUNNYVIBE_API_BOOKINGS_URL = {{ url_for('create_booking')|tojson }};
+    window.SUNNYVIBE_TODAY_KEY = {{ current_day_key|tojson }};
+    window.SUNNYVIBE_TIMEZONE = {{ reservation_timezone_name|tojson }};
   </script>
   <script src="{{ url_for('static', filename='calendar.js', v=calendar_js_version) }}"></script>
 </body>

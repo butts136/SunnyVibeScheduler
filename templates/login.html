@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Connexion | Sunny Vibe Nutrition</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v=styles_version) }}">
 </head>
-<body class="with-left-nav">
-  <div class="app-layout">
+<body data-ui-mode="dark" data-theme="modern-gradient" class="with-left-nav">
+  <div class="layout app-layout">
     {% include '_left_nav.html' %}
     <div class="page">
       <div class="card form-card">
@@ -41,23 +41,43 @@
       {% endif %}
 
       {% if admin_exists %}
-      <form method="post" action="{{ url_for('login') }}" class="form-grid" novalidate>
+      <form method="post" action="{{ url_for('login') }}" class="form-grid login-form" autocomplete="on" novalidate>
         <input type="hidden" name="form_action" value="login">
         <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
-        <label class="full-width">
-          Adresse courriel ou téléphone
-          <input type="text" name="identifier" value="{{ form_data.identifier }}" required>
+        <label class="full-width" for="loginIdentifierInput">
+          Nom d'utilisateur, courriel ou téléphone
+          <input
+            id="loginIdentifierInput"
+            type="text"
+            name="identifier"
+            value="{{ form_data.identifier }}"
+            list="loginIdentifierSuggestions"
+            autocomplete="username"
+            autocapitalize="none"
+            spellcheck="false"
+            inputmode="text"
+            placeholder="Nom d'utilisateur, courriel ou téléphone"
+            required
+          >
+          <datalist id="loginIdentifierSuggestions"></datalist>
         </label>
 
-        <label class="full-width">
+        <label class="full-width" for="loginPasswordInput">
           Mot de passe
-          <input type="password" name="password" required>
+          <input
+            id="loginPasswordInput"
+            type="password"
+            name="password"
+            autocomplete="current-password"
+            placeholder="Mot de passe"
+            required
+          >
         </label>
 
         <div class="full-width actions">
           <button class="btn primary" type="submit">Connexion</button>
-          <a class="btn" href="{{ url_for('password_reset') }}">Réinitialiser le mot de passe</a>
+          <a class="btn" href="{{ url_for('password_reset') }}">J'ai perdu mon mot de passe</a>
           <a class="btn" href="{{ url_for('index') }}">Retour</a>
         </div>
       </form>
@@ -66,20 +86,30 @@
       {% if not admin_exists %}
       <hr class="section-divider">
       <h2 class="section-title">Créer le compte administrateur</h2>
-      <form method="post" action="{{ url_for('login') }}" class="form-grid" novalidate>
+      <form method="post" action="{{ url_for('login') }}" class="form-grid login-form" autocomplete="on" novalidate>
         <input type="hidden" name="form_action" value="create_admin">
         <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-        <label class="full-width">
-          Courriel administrateur
-          <input type="email" name="admin_identifier" value="{{ form_data.admin_identifier }}" required>
+        <label class="full-width" for="adminIdentifierInput">
+          Identifiant administrateur
+          <input
+            id="adminIdentifierInput"
+            type="text"
+            name="admin_identifier"
+            value="{{ form_data.admin_identifier }}"
+            autocomplete="username"
+            autocapitalize="none"
+            spellcheck="false"
+            placeholder="Nom d'utilisateur ou courriel"
+            required
+          >
         </label>
-        <label>
+        <label for="adminPasswordInput">
           Mot de passe administrateur
-          <input type="password" name="admin_password" minlength="8" required>
+          <input id="adminPasswordInput" type="password" name="admin_password" minlength="8" autocomplete="new-password" required>
         </label>
-        <label>
+        <label for="adminPasswordConfirmInput">
           Confirmation du mot de passe
-          <input type="password" name="admin_password_confirm" minlength="8" required>
+          <input id="adminPasswordConfirmInput" type="password" name="admin_password_confirm" minlength="8" autocomplete="new-password" required>
         </label>
         <div class="full-width actions">
           <button class="btn primary" type="submit">Créer le compte admin</button>
@@ -89,5 +119,54 @@
       </div>
     </div>
   </div>
+  <script>
+    (function initLoginIdentifierHistory() {
+      const form = document.querySelector('.login-form input[name="form_action"][value="login"]')?.closest('form');
+      const identifierInput = document.getElementById('loginIdentifierInput');
+      const suggestionsList = document.getElementById('loginIdentifierSuggestions');
+      const storageKey = 'sunnyvibeLoginIdentifiers';
+
+      if (!form || !identifierInput || !suggestionsList) {
+        return;
+      }
+
+      const readIdentifiers = () => {
+        try {
+          const parsed = JSON.parse(localStorage.getItem(storageKey) || '[]');
+          return Array.isArray(parsed) ? parsed.filter(Boolean).slice(0, 12) : [];
+        } catch (error) {
+          return [];
+        }
+      };
+
+      const writeIdentifiers = (identifiers) => {
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(identifiers.slice(0, 12)));
+        } catch (error) {
+          // Le navigateur peut bloquer localStorage en navigation privée.
+        }
+      };
+
+      const renderSuggestions = () => {
+        suggestionsList.innerHTML = '';
+        readIdentifiers().forEach((identifier) => {
+          const option = document.createElement('option');
+          option.value = identifier;
+          suggestionsList.appendChild(option);
+        });
+      };
+
+      form.addEventListener('submit', () => {
+        const identifier = identifierInput.value.trim();
+        if (!identifier) {
+          return;
+        }
+        const current = readIdentifiers().filter((item) => item.toLowerCase() !== identifier.toLowerCase());
+        writeIdentifiers([identifier, ...current]);
+      });
+
+      renderSuggestions();
+    }());
+  </script>
 </body>
 </html>

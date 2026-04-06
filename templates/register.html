@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Créer un compte | Sunny Vibe Nutrition</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v=styles_version) }}">
 </head>
-<body class="with-left-nav register-body">
-  <div class="app-layout">
+<body data-ui-mode="dark" data-theme="modern-gradient" class="with-left-nav register-body">
+  <div class="layout app-layout">
     {% include '_left_nav.html' %}
     <div class="page">
       <div class="card form-card">
@@ -27,42 +27,63 @@
       <form method="post" class="form-grid" novalidate>
         <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
         <label>
-          Prénom
+          <span class="field-label-inline">Prénom <span class="required-star" aria-hidden="true">*</span></span>
           <input type="text" name="first_name" value="{{ form_data.first_name }}" required>
         </label>
 
         <label>
-          Nom
+          <span class="field-label-inline">Nom <span class="required-star" aria-hidden="true">*</span></span>
           <input type="text" name="last_name" value="{{ form_data.last_name }}" required>
         </label>
 
         <label>
-          Adresse courriel
-          <input type="email" name="email" value="{{ form_data.email }}" placeholder="exemple@domaine.com">
+          <span class="field-label-inline">Nom d'utilisateur <span class="required-star" aria-hidden="true">*</span></span>
+          <input
+            type="text"
+            name="username"
+            value="{{ form_data.username }}"
+            placeholder="ex: SpongeBob123"
+            autocomplete="username"
+            autocapitalize="none"
+            spellcheck="false"
+            required
+          >
         </label>
 
-        <label>
-          Téléphone
-          <input type="tel" name="phone" value="{{ form_data.phone }}" placeholder="514 123-4567">
-        </label>
+        <div class="register-contact-group full-width">
+          <div class="register-contact-title">
+            Courriel et/ou numéro de téléphone <span class="required-star" aria-hidden="true">*</span>
+          </div>
+          <div class="register-contact-fields">
+            <label>
+              Champ 1 - Courriel
+              <input id="registerEmailInput" type="email" name="email" value="{{ form_data.email }}" placeholder="exemple@domaine.com">
+            </label>
+            <label>
+              Champ 2 - Téléphone
+              <input id="registerPhoneInput" type="tel" name="phone" value="{{ form_data.phone }}" placeholder="514 123-4567">
+            </label>
+          </div>
+          <p class="field-help">Remplissez au moins un des deux champs.</p>
+        </div>
 
         <label>
-          Date de naissance
+          <span class="field-label-inline">Date de naissance <span class="required-star" aria-hidden="true">*</span></span>
           <input type="date" name="birth_date" value="{{ form_data.birth_date }}" required>
         </label>
 
         <label class="full-width">
-          Code d'invitation
+          <span class="field-label-inline">Code d'invitation <span class="required-star" aria-hidden="true">*</span></span>
           <input type="text" name="invitation_code" value="{{ form_data.invitation_code }}" required>
         </label>
 
         <label>
-          Mot de passe
+          <span class="field-label-inline">Mot de passe <span class="required-star" aria-hidden="true">*</span></span>
           <input type="password" name="password" minlength="8" required>
         </label>
 
         <label>
-          Confirmation du mot de passe
+          <span class="field-label-inline">Confirmation du mot de passe <span class="required-star" aria-hidden="true">*</span></span>
           <input type="password" name="password_confirm" minlength="8" required>
         </label>
 
@@ -71,29 +92,29 @@
           <p class="field-help">Ajoutez 3 questions/réponses personnelles. Elles serviront pour récupérer votre mot de passe.</p>
 
           <div class="config-row">
-            <label for="security_question_1">Question #1</label>
-            <input id="security_question_1" type="text" name="security_question_1" value="{{ form_data.security_question_1 }}" maxlength="140" required>
+            <label for="security_question_1">Question #1 <span class="required-star" aria-hidden="true">*</span></label>
+            <input id="security_question_1" type="text" name="security_question_1" value="{{ form_data.security_question_1 }}" maxlength="140" placeholder="Ex: Quel était le nom de mon premier animal?" required>
           </div>
           <div class="config-row">
-            <label for="security_answer_1">Réponse #1</label>
+            <label for="security_answer_1">Réponse #1 <span class="required-star" aria-hidden="true">*</span></label>
             <input id="security_answer_1" type="text" name="security_answer_1" maxlength="140" required>
           </div>
 
           <div class="config-row">
-            <label for="security_question_2">Question #2</label>
-            <input id="security_question_2" type="text" name="security_question_2" value="{{ form_data.security_question_2 }}" maxlength="140" required>
+            <label for="security_question_2">Question #2 <span class="required-star" aria-hidden="true">*</span></label>
+            <input id="security_question_2" type="text" name="security_question_2" value="{{ form_data.security_question_2 }}" maxlength="140" placeholder="Ex: Dans quelle ville ai-je grandi?" required>
           </div>
           <div class="config-row">
-            <label for="security_answer_2">Réponse #2</label>
+            <label for="security_answer_2">Réponse #2 <span class="required-star" aria-hidden="true">*</span></label>
             <input id="security_answer_2" type="text" name="security_answer_2" maxlength="140" required>
           </div>
 
           <div class="config-row">
-            <label for="security_question_3">Question #3</label>
-            <input id="security_question_3" type="text" name="security_question_3" value="{{ form_data.security_question_3 }}" maxlength="140" required>
+            <label for="security_question_3">Question #3 <span class="required-star" aria-hidden="true">*</span></label>
+            <input id="security_question_3" type="text" name="security_question_3" value="{{ form_data.security_question_3 }}" maxlength="140" placeholder="Ex: Quel est le nom de mon école primaire?" required>
           </div>
           <div class="config-row">
-            <label for="security_answer_3">Réponse #3</label>
+            <label for="security_answer_3">Réponse #3 <span class="required-star" aria-hidden="true">*</span></label>
             <input id="security_answer_3" type="text" name="security_answer_3" maxlength="140" required>
           </div>
         </div>
@@ -106,5 +127,26 @@
       </div>
     </div>
   </div>
+  <script>
+    (function initRegisterContactRequirement() {
+      const emailInput = document.getElementById('registerEmailInput');
+      const phoneInput = document.getElementById('registerPhoneInput');
+
+      if (!emailInput || !phoneInput) {
+        return;
+      }
+
+      const syncRequirement = () => {
+        const hasEmail = emailInput.value.trim() !== '';
+        const hasPhone = phoneInput.value.trim() !== '';
+        emailInput.required = !hasPhone;
+        phoneInput.required = !hasEmail;
+      };
+
+      emailInput.addEventListener('input', syncRequirement);
+      phoneInput.addEventListener('input', syncRequirement);
+      syncRequirement();
+    }());
+  </script>
 </body>
 </html>

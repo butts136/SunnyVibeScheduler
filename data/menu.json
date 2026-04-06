@@ -1,0 +1,3604 @@
+{
+  "updated_at": "2026-04-06T05:11:42.801900+00:00",
+  "categories": [
+    {
+      "key": "all",
+      "label": "Tout"
+    },
+    {
+      "key": "tea_bombs",
+      "label": "Bombe à thé"
+    },
+    {
+      "key": "shakes",
+      "label": "Shake"
+    },
+    {
+      "key": "protein_juices",
+      "label": "Jus protéiné"
+    },
+    {
+      "key": "protein_coffees",
+      "label": "Café protéiné"
+    },
+    {
+      "key": "kids_juices",
+      "label": "Jus enfant"
+    },
+    {
+      "key": "extras",
+      "label": "Extras"
+    },
+    {
+      "key": "hangover",
+      "label": "HANGOVER"
+    }
+  ],
+  "ingredients": [
+    "Aloès",
+    "Ananas",
+    "Ananas-orange",
+    "Arachide",
+    "Banane",
+    "Barbe à papa",
+    "Best Defense",
+    "Bleuet",
+    "Blue Blast",
+    "Blue Blast Sour",
+    "Blue Blast Surette",
+    "Bubblegum",
+    "Café",
+    "Canneberge",
+    "Cantaloup",
+    "Caramel",
+    "Cerise",
+    "Cerise ou Cerise surette",
+    "Cerise Sour",
+    "Cerise surette",
+    "Chaï",
+    "Chocolat",
+    "Choisissez votre bombe a thé et nous ajoutons la protéine de baie / pêche mangue",
+    "Citron",
+    "Coconut",
+    "Concombre lime",
+    "Cookie and cream",
+    "Crème",
+    "Fibre",
+    "Fraise",
+    "Fraise-kiwi",
+    "Framboise bleu ou Melon d'eau",
+    "Framboise bleue",
+    "Framboise bleue surette",
+    "Framboise rouge",
+    "Fruit de la passion",
+    "Fruit du dragon",
+    "Graham",
+    "Gâteau au fromage",
+    "Immunité essentielle",
+    "Jus cantaloup",
+    "Jus cerise",
+    "Jus de votre choix",
+    "Jus framboise bleue",
+    "Jus orange pineapple",
+    "Jus protéiné baies sauvages",
+    "Jus protéiné pêche mangue",
+    "Kiwi",
+    "Lift off lime",
+    "Lift off orange",
+    "Limonade",
+    "Limonade rose",
+    "Litchi",
+    "Mangue",
+    "Margarita",
+    "Melon d'eau",
+    "Mûres",
+    "Orange",
+    "Orange et lemonade",
+    "Orange Pineapple",
+    "Oréo",
+    "Pacanes",
+    "Pacanes- Cannelle",
+    "Pamplemousse",
+    "Piña Colada",
+    "Piña Colada ou Raisin blanc et Punch aux fruits",
+    "Pomegrenade",
+    "Pomme verte",
+    "Praline",
+    "Probio",
+    "Probio et H3O",
+    "Probiotique",
+    "Protéine baies sauvages",
+    "Protéine baies sauvages et jus Limonade",
+    "Protéine pêche mangue",
+    "Protéine pêche mangue et jus Cerise surette",
+    "Punch aux fruits",
+    "Pâte à biscuit",
+    "Pêche",
+    "Rainbow Candy",
+    "Raisin",
+    "Raisin blanc",
+    "Reese",
+    "Sirop de votre choix",
+    "Thé",
+    "Thé citron et aloès mandarine",
+    "Thé framboise et aloès mandarine",
+    "Thé pomegrenade et aloès canneberge",
+    "Thé pêche et aloès mangue",
+    "Triple chocolat",
+    "Tropical",
+    "Vanille",
+    "Électrolyte",
+    "Érable"
+  ],
+  "items": [
+    {
+      "id": "tea_bombs_001_aloha",
+      "name": "Aloha",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Ananas",
+        "Framboise bleue",
+        "Pomme verte"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_002_adelicious",
+      "name": "Adelicious",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise-kiwi",
+        "Coconut"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_003_amanda_2_0",
+      "name": "Amanda 2.0",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Punch aux fruits",
+        "Cerise",
+        "Framboise bleue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_004_after_sex",
+      "name": "After Sex",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Pêche",
+        "Fraise"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_005_aj",
+      "name": "AJ",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Melon d'eau",
+        "Limonade",
+        "Framboise bleue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_006_apocalypse",
+      "name": "Apocalypse",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Framboise bleue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_007_aurore",
+      "name": "Aurore",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Punch aux fruits",
+        "Framboise bleue",
+        "Pomme verte"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_008_arc_en_ciel",
+      "name": "Arc-en-ciel",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Melon d'eau",
+        "Limonade rose",
+        "Framboise bleue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_009_ariana_grande",
+      "name": "Ariana Grande",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise rouge",
+        "Cerise",
+        "Fraise-kiwi"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_010_barbe_bleu",
+      "name": "Barbe Bleu",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Barbe à papa",
+        "Framboise bleue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_011_babe",
+      "name": "Babe",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Limonade",
+        "Fraise-kiwi"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_012_baie_baie",
+      "name": "Baie-baie",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise",
+        "Bleuet",
+        "Framboise rouge"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_013_batman",
+      "name": "Batman",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Raisin",
+        "Limonade"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_014_banana_surf",
+      "name": "Banana surf",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Fraise",
+        "Banane"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_015_bartender_fuel",
+      "name": "Bartender Fuel",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Bleuet",
+        "Fraise-kiwi",
+        "Barbe à papa"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_016_bbb",
+      "name": "BBB",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Mûres",
+        "Bleuet",
+        "Framboise bleue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_017_bibi_power",
+      "name": "Bibi Power",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Limonade",
+        "Cerise"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_018_bloody_cherry",
+      "name": "Bloody cherry",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Mûres",
+        "Cerise surette",
+        "Limonade"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_019_blue_lagoon",
+      "name": "Blue Lagoon",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Concombre lime"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_020_blue_hawaii",
+      "name": "Blue hawaii",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Piña Colada",
+        "Framboise bleue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_021_bomba_banana",
+      "name": "Bomba banana",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Banane",
+        "Ananas",
+        "Orange"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_022_bombon",
+      "name": "Bombon",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise surette",
+        "Rainbow Candy"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_023_boisson_d_amour",
+      "name": "Boisson d'amour",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Raisin",
+        "Cerise",
+        "Framboise rouge"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_024_boisson_digestive",
+      "name": "Boisson Digestive",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Thé",
+        "Aloès",
+        "Fibre",
+        "Probiotique"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_025_boreale",
+      "name": "Boréale",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Melon d'eau",
+        "Limonade rose"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_026_bubblegum",
+      "name": "Bubblegum",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Barbe à papa",
+        "Framboise bleue",
+        "Fraise"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_027_calin_fruite",
+      "name": "Calin Fruité",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Punch aux fruits",
+        "Pêche",
+        "Framboise rouge"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_028_calinours",
+      "name": "Calinours",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Pomme verte"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_029_camping_car",
+      "name": "Camping car",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise-kiwi",
+        "Melon d'eau",
+        "Orange"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_030_cherry_blossom",
+      "name": "Cherry blossom",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise surette",
+        "Limonade"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_031_cindy_lou_chou",
+      "name": "Cindy Lou-Chou",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Canneberge",
+        "Framboise rouge",
+        "Raisin blanc"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_032_coco_lada",
+      "name": "Coco Lada",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Piña Colada",
+        "Ananas"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_033_coco_melon",
+      "name": "Coco melon",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Concombre lime",
+        "Melon d'eau"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_034_coeur_bleu",
+      "name": "Coeur Bleu",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Pomegrenade",
+        "Cerise",
+        "Melon d'eau"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_035_crush_crush",
+      "name": "Crush crush",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Orange Pineapple",
+        "Fraise-kiwi"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_036_cosmic",
+      "name": "Cosmic",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Pomegrenade",
+        "Melon d'eau",
+        "Punch aux fruits"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_037_cyclone",
+      "name": "Cyclone",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Barbe à papa",
+        "Framboise bleue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_038_cubbie",
+      "name": "Cubbie",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Raisin",
+        "Bleuet",
+        "Framboise rouge"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_039_donkey_kong",
+      "name": "Donkey Kong",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Banane",
+        "Mangue",
+        "Ananas"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_040_dragon_blood",
+      "name": "Dragon blood",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise surette",
+        "Barbe à papa",
+        "Raisin blanc"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_041_double_trouble",
+      "name": "Double Trouble",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise rouge",
+        "Cantaloup",
+        "Melon d'eau"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_042_emilie_s_drink",
+      "name": "Émilie's drink",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue surette",
+        "Pomme verte",
+        "Limonade"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_043_exotica",
+      "name": "Exotica",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fruit de la passion",
+        "Cantaloup",
+        "Orange Pineapple"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_044_extase",
+      "name": "Extase",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Rainbow Candy",
+        "Margarita"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_045_explosion_fruitee",
+      "name": "Explosion fruitée",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise",
+        "Pêche",
+        "Ananas"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_046_le_farfadet",
+      "name": "Le Farfadet",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Raisin blanc",
+        "Pomme verte"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_047_feel_good_tropical",
+      "name": "Feel Good Tropical",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Limonade",
+        "Ananas"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_048_feu_de_foyer",
+      "name": "Feu de foyer",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise surette",
+        "Raisin blanc"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_049_foret_enchante",
+      "name": "Forêt Enchanté",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Melon d'eau",
+        "Ananas",
+        "Framboise bleue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_050_fraisbee",
+      "name": "Fraisbee",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise",
+        "Limonade"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_051_fraisy_mango",
+      "name": "Fraisy Mango",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise",
+        "Mangue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_052_fraisy_vibes",
+      "name": "Fraisy Vibes",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise",
+        "Limonade"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_053_fuck_off",
+      "name": "Fuck off",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Orange",
+        "Fraise",
+        "Framboise rouge"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_054_galaxy",
+      "name": "Galaxy",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Piña Colada",
+        "Framboise bleue",
+        "Cerise"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_055_garfield",
+      "name": "Garfield",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Limonade",
+        "Ananas"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_056_geia_sou",
+      "name": "Geia sou",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise rouge",
+        "Orange",
+        "Melon d'eau"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_057_g_i_joe",
+      "name": "G.I Joe",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Mûres",
+        "Framboise bleue surette",
+        "Pomme verte"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_058_le_grinch",
+      "name": "Le grinch",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue surette",
+        "Ananas",
+        "Pomme verte"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_059_happy_mom",
+      "name": "Happy Mom",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise rouge",
+        "Fruit de la passion",
+        "Limonade rose"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_060_harley_quinn",
+      "name": "Harley Quinn",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Raisin"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_061_hockey_family",
+      "name": "Hockey Family",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise rouge",
+        "Margarita"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_062_hocus_pocus",
+      "name": "Hocus pocus",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue surette",
+        "Rainbow Candy",
+        "Limonade rose"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_063_huskies",
+      "name": "Huskies",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Raisin",
+        "Framboise rouge"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_064_jack_sparrow",
+      "name": "Jack sparrow",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue surette",
+        "Fruit de la passion",
+        "Canneberge"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_065_j_ai_la_peche",
+      "name": "J'ai la pêche",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Limonade",
+        "Melon d'eau",
+        "Pêche"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_066_jingle_bells",
+      "name": "Jingle bells",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Barbe à papa",
+        "Raisin blanc",
+        "Rainbow Candy"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_067_jolie_coeur",
+      "name": "Jolie Coeur",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise surette",
+        "Fruit de la passion",
+        "Raisin blanc"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_068_jour_de_la_femme",
+      "name": "Jour De La Femme",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Limonade rose",
+        "Pomegrenade",
+        "Cerise surette"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_069_jour_du_souvenir",
+      "name": "Jour du souvenir",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Raisin",
+        "Piña Colada",
+        "Framboise rouge"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_070_jolly_mix",
+      "name": "Jolly Mix",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Cerise",
+        "Melon d'eau",
+        "Pomme verte"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_071_jolly_ranger",
+      "name": "Jolly ranger",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise-kiwi",
+        "Limonade"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_072_invisible",
+      "name": "invisible",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Barbe à papa",
+        "Pomme verte",
+        "Rainbow Candy"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_073_kaleidoscope",
+      "name": "Kaleidoscope",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Framboise rouge",
+        "Limonade"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_074_karen",
+      "name": "Karen",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Limonade rose",
+        "Bleuet"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_075_kelso",
+      "name": "Kelso",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Canneberge",
+        "Framboise bleue",
+        "Cerise"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_076_ken",
+      "name": "Ken",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise",
+        "Raisin blanc",
+        "Framboise bleue surette"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_077_la_belle_soeur",
+      "name": "La belle-Soeur",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue surette",
+        "Limonade"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_078_la_petite_douceur",
+      "name": "La petite douceur",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Thé",
+        "Aloès",
+        "Probiotique",
+        "Framboise rouge",
+        "Limonade"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_079_life_saver",
+      "name": "Life Saver",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Melon d'eau"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_080_lotus",
+      "name": "Lotus",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise",
+        "Limonade",
+        "Coconut"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_081_lorax",
+      "name": "Lorax",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Limonade",
+        "Fruit de la passion",
+        "Orange"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_082_lucky",
+      "name": "Lucky",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue surette",
+        "Fruit de la passion",
+        "Ananas"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_083_mango_sour",
+      "name": "Mango Sour",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Limonade",
+        "Mangue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_084_mamacita",
+      "name": "Mamacita",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Ananas",
+        "Mangue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_085_melicieux",
+      "name": "Melicieux",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Mangue",
+        "Pêche"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_086_mere_noel",
+      "name": "Mère-Noël",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Framboise rouge",
+        "Limonade"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_087_mermaid",
+      "name": "Mermaid",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Bleuet",
+        "Raisin blanc"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_088_michael_myers",
+      "name": "Michael Myers",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Fruit de la passion",
+        "Melon d'eau"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_089_mexico",
+      "name": "Mexico",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Orange Pineapple",
+        "Cerise"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_090_midnight_mix",
+      "name": "Midnight mix",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Limonade",
+        "Cerise"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_091_mime",
+      "name": "Mime",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise rouge",
+        "Limonade rose",
+        "Ananas"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_092_morris_bomb",
+      "name": "Morris Bomb",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise-kiwi",
+        "Piña Colada"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_093_mistletoe",
+      "name": "Mistletoe",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Pomegrenade",
+        "Fraise",
+        "Melon d'eau"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_094_mom_brain",
+      "name": "Mom Brain",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Pêche",
+        "Limonade rose",
+        "Orange"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_095_mushu",
+      "name": "Mushu",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Mûres",
+        "Cerise",
+        "Punch aux fruits"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_096_nerds",
+      "name": "Nerds",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Raisin",
+        "Cerise",
+        "Melon d'eau"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_097_nova",
+      "name": "Nova",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Framboise rouge"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_098_nuage_rose",
+      "name": "Nuage Rose",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Barbe à papa",
+        "Fraise"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_099_oasis",
+      "name": "Oasis",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise",
+        "Banane",
+        "Mangue",
+        "Ananas"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_100_ocean",
+      "name": "Ocean",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Bleuet"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_101_olaf",
+      "name": "Olaf",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Limonade",
+        "Fruit de la passion",
+        "Framboise bleue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_102_outch_wow",
+      "name": "Outch Wow",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue surette",
+        "Raisin blanc",
+        "Cerise surette"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_103_paloma",
+      "name": "Paloma",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Pomegrenade",
+        "Pamplemousse"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_104_papillon_mauve",
+      "name": "Papillon mauve",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Bleuet",
+        "Fraise-kiwi"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_105_paradise",
+      "name": "Paradise",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Melon d'eau"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_106_le_parfait",
+      "name": "Le Parfait",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Orange",
+        "Ananas",
+        "Limonade rose"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_107_peach",
+      "name": "Peach",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Pêche"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_108_pere_noel",
+      "name": "Père-Noël",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Framboise rouge",
+        "Punch aux fruits"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_109_pink_bunny",
+      "name": "Pink bunny",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Raisin blanc",
+        "Rainbow Candy"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_110_pink_candy",
+      "name": "Pink Candy",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Melon d'eau"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_111_pink_pineapple",
+      "name": "Pink Pineapple",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Limonade",
+        "Fraise",
+        "Ananas"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_112_pink_spider",
+      "name": "Pink Spider",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Pamplemousse",
+        "Cerise surette",
+        "Limonade"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_113_pourquoi_pas",
+      "name": "Pourquoi pas?",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Pomme verte",
+        "Mûres",
+        "Framboise bleue surette",
+        "Cerise surette"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_114_popsicle",
+      "name": "Popsicle",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Punch aux fruits",
+        "Melon d'eau",
+        "Rainbow Candy"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_115_ptit_dej",
+      "name": "Ptit déj",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Banane",
+        "Orange Pineapple"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_116_pumba",
+      "name": "Pumba",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Raisin",
+        "Punch aux fruits",
+        "Framboise rouge"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_117_purple_mix",
+      "name": "Purple Mix",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Fraise"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_118_pride",
+      "name": "Pride",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Pomme verte",
+        "Framboise rouge"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_119_princesse_et_la_grenouille",
+      "name": "Princesse et la grenouille",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Pomme verte",
+        "Cerise",
+        "Melon d'eau"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_120_rac_a_banane",
+      "name": "Rac à banane",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise-kiwi",
+        "Banane",
+        "Ananas"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_121_rayon_de_soleil",
+      "name": "Rayon de Soleil",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Barbe à papa",
+        "Cantaloup",
+        "Mangue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_122_reine_elizabeth",
+      "name": "Reine Élizabeth",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cantaloup",
+        "Melon d'eau"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_123_la_riviere",
+      "name": "La Rivière",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Raisin",
+        "Fruit de la passion",
+        "Framboise bleue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_124_rocket",
+      "name": "Rocket",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Pomme verte",
+        "Melon d'eau",
+        "Punch aux fruits"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_125_le_romantique",
+      "name": "Le Romantique",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Pomegrenade",
+        "Canneberge",
+        "Framboise rouge"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_126_rose",
+      "name": "Rose",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise",
+        "Melon d'eau"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_127_rudolph",
+      "name": "Rudolph",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Raisin",
+        "Pomme verte"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_128_safari",
+      "name": "Safari",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Pomme verte"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_129_sang_the",
+      "name": "Sang'thé",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Raisin",
+        "Fraise",
+        "Cerise ou Cerise surette"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_130_snap_dragon",
+      "name": "Snap Dragon",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Limonade",
+        "Raisin"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_131_stitch",
+      "name": "Stitch",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Bleuet",
+        "Framboise bleue",
+        "Limonade"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_132_summer_breeze",
+      "name": "Summer breeze",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Limonade rose",
+        "Limonade"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_133_summer_cherry",
+      "name": "Summer Cherry",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Limonade rose"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_134_summer_party",
+      "name": "Summer Party",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Punch aux fruits",
+        "Coconut",
+        "Fraise"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_135_super_dad",
+      "name": "Super Dad",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Pêche"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_136_sunrise",
+      "name": "Sunrise",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Framboise bleue",
+        "Melon d'eau"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_137_snowman",
+      "name": "Snowman",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Margarita",
+        "Raisin blanc"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_138_soleil_levant",
+      "name": "Soleil Levant",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Mangue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_139_sour_berry",
+      "name": "Sour Berry",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Mûres",
+        "Framboise bleue surette",
+        "Limonade"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_140_speciale_rentree",
+      "name": "Spéciale rentrée",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise-kiwi",
+        "Piña Colada",
+        "Pomme verte"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_141_spritz",
+      "name": "Spritz",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Limonade",
+        "Orange",
+        "Framboise rouge"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_142_st_jean",
+      "name": "St-Jean",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Limonade",
+        "Bleuet"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_143_s_o_s_virus",
+      "name": "S.O.S Virus!",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Best Defense",
+        "Probio",
+        "Immunité essentielle",
+        "Électrolyte",
+        "Jus de votre choix"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_144_sunset",
+      "name": "Sunset",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Ananas",
+        "Melon d'eau"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_145_sunset_2_0",
+      "name": "Sunset 2.0",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Ananas",
+        "Mangue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_146_sunday_abby",
+      "name": "Sunday Abby",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue surette",
+        "Rainbow Candy",
+        "Barbe à papa"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_147_sunshine",
+      "name": "Sunshine",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Pêche",
+        "Limonade rose"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_148_strawberry_chill",
+      "name": "Strawberry chill",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Fraise",
+        "Limonade rose"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_149_super_woman",
+      "name": "Super woman",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise rouge",
+        "Orange",
+        "Cerise"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_150_sweet_d",
+      "name": "Sweet D",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise",
+        "Melon d'eau"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_151_sweet_melon_d_eau",
+      "name": "Sweet Melon d'eau",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise-kiwi",
+        "Pomme verte"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_152_sweet_tarts",
+      "name": "Sweet Tarts",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise",
+        "Pomme verte"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_153_sympathique",
+      "name": "Sympathique",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Mangue",
+        "Pêche",
+        "Fruit de la passion"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_154_tempete_d_ete",
+      "name": "Tempête d'été",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Melon d'eau",
+        "Barbe à papa",
+        "Fraise-kiwi"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_155_tete_a_claque",
+      "name": "Tête à Claque",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise",
+        "Fruit de la passion",
+        "Rainbow Candy"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_156_the_dark_side",
+      "name": "The dark side",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Mûres",
+        "Framboise bleue surette",
+        "Cerise surette",
+        "Pomme verte",
+        "Raisin blanc",
+        "Limonade"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_157_the_witches",
+      "name": "The witches",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Melon d'eau",
+        "Limonade rose",
+        "Framboise bleue surette"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_158_tigrou",
+      "name": "Tigrou",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Limonade",
+        "Orange"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_159_totally_spies",
+      "name": "Totally Spies",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Pêche",
+        "Pomme verte"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_160_tulipe",
+      "name": "Tulipe",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Bleuet",
+        "Limonade rose"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_161_tropical_val",
+      "name": "Tropical Val",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Orange Pineapple",
+        "Pêche",
+        "Fraise"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_162_ursula",
+      "name": "Ursula",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Rainbow Candy"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_163_valens_team",
+      "name": "Valens Team",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Punch aux fruits",
+        "Orange",
+        "Framboise rouge"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_164_vers_l_infini",
+      "name": "Vers l'infini",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue surette",
+        "Cerise surette",
+        "Limonade"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_165_vibes",
+      "name": "Vibes",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Fruit de la passion",
+        "Framboise bleue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_166_vic_i_p",
+      "name": "Vic I.P",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Ananas",
+        "Pamplemousse"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_167_victoire",
+      "name": "Victoire",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise",
+        "Limonade",
+        "Pêche"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_168_wow",
+      "name": "Wow",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Punch aux fruits",
+        "Cerise",
+        "Cantaloup",
+        "Pêche"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_169_wow_2_0",
+      "name": "Wow 2.0",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Punch aux fruits",
+        "Cerise",
+        "Orange",
+        "Pêche"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_170_yoshi",
+      "name": "Yoshi",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Pêche",
+        "Fruit de la passion"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_171_zombie_dad",
+      "name": "Zombie Dad",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Melon d'eau",
+        "Rainbow Candy",
+        "Raisin"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_172_zombie_mom",
+      "name": "Zombie Mom",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Raisin",
+        "Framboise bleue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_173_tropical_island",
+      "name": "Tropical Island",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Blue Blast",
+        "Coconut",
+        "Ananas"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_174_le_fruite",
+      "name": "Le Fruité",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Ananas-orange",
+        "Pamplemousse"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_175_ariat",
+      "name": "Ariat",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise-kiwi",
+        "Pêche",
+        "Framboise bleue",
+        "Limonade rose"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_176_melimellow",
+      "name": "MeliMellow",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise",
+        "Limonade rose",
+        "Rainbow Candy"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_177_fox",
+      "name": "Fox",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise-kiwi",
+        "Pomme verte",
+        "Cantaloup"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_178_omg",
+      "name": "OMG",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Pomme verte",
+        "Blue Blast Sour",
+        "Cerise Sour",
+        "Limonade rose"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_179_jungle_juice",
+      "name": "Jungle Juice",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Pêche",
+        "Fruit de la passion",
+        "Piña Colada"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_180_shut_down",
+      "name": "Shut down",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise",
+        "Banane"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_181_mandy",
+      "name": "Mandy",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Barbe à papa",
+        "Piña Colada"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_182_mon_cheri",
+      "name": "Mon chéri",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Blue Blast",
+        "Raisin blanc"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_183_le_lover",
+      "name": "Le lover",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise surette",
+        "Melon d'eau",
+        "Framboise rouge"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_184_dubai",
+      "name": "Dubai",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Coconut",
+        "Mangue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_185_go_habs_go",
+      "name": "Go habs Go",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Bleuet",
+        "Piña Colada ou Raisin blanc et Punch aux fruits"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_186_dumbo",
+      "name": "Dumbo",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Bleuet",
+        "Blue Blast",
+        "Barbe à papa"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_187_chill_d_ete",
+      "name": "Chill d'été",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue surette",
+        "Limonade rose",
+        "Punch aux fruits",
+        "Fraise-kiwi"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_188_bella",
+      "name": "Bella",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Melon d'eau",
+        "Concombre lime"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_189_jimmy_d",
+      "name": "Jimmy D",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Orange",
+        "Raisin blanc"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_190_yo_an",
+      "name": "Yo'an",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_191_unicorn",
+      "name": "Unicorn",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Rainbow Candy",
+        "Bleuet",
+        "Raisin blanc"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_191_kiki_candy",
+      "name": "Kiki Candy",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Rainbow Candy",
+        "Kiwi"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_192_coffey_sani_vrac",
+      "name": "Coffey Sani-Vrac",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Bleuet",
+        "Fraise"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_193_duck_boat",
+      "name": "Duck Boat",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Fraise",
+        "Barbe à papa"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_194_lollipop",
+      "name": "Lollipop",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Bleuet",
+        "Fraise",
+        "Rainbow Candy"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_195_candy_shop_dreams",
+      "name": "Candy Shop Dreams",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise",
+        "Rainbow Candy",
+        "Bubblegum"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_196_la_fraiche",
+      "name": "La Fraîche",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise",
+        "Pêche"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_197_le_krokmou",
+      "name": "Le Krokmou",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fruit du dragon",
+        "Concombre lime",
+        "Litchi"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_198_la_masso",
+      "name": "La Masso",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Rainbow Candy",
+        "Piña Colada",
+        "Ananas"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_199_jason_x",
+      "name": "Jason X",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Melon d'eau",
+        "Litchi"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_200_barney_candy",
+      "name": "Barney Candy",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Raisin",
+        "Barbe à papa"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_201_le_deli",
+      "name": "Le Déli",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise surette",
+        "Fraise-kiwi",
+        "Barbe à papa"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_202_grenier_d_eric",
+      "name": "Grenier d'Éric",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Framboise rouge",
+        "Framboise bleue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_203_l_ange_doudi",
+      "name": "L'ange Doudi",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise surette",
+        "Barbe à papa"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_204_passe_partout",
+      "name": "Passe Partout",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Barbe à papa",
+        "Fruit de la passion",
+        "Melon d'eau"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_205_muralex",
+      "name": "Muralex",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Blue Blast Surette",
+        "Raisin blanc",
+        "Cerise surette"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_206_les_plumes_d_anna",
+      "name": "Les plumes d'Anna",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue surette",
+        "Rainbow Candy"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_207_douceur_rose",
+      "name": "Douceur Rosé",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Melon d'eau",
+        "Fraise",
+        "Litchi"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_208_northern_light",
+      "name": "Northern Light",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Bleuet",
+        "Bubblegum"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_209_moonlight",
+      "name": "Moonlight",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Raisin",
+        "Fruit du dragon",
+        "Fraise"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_210_mom_heart",
+      "name": "Mom Heart",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Canneberge",
+        "Pomegrenade",
+        "Framboise bleue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_211_sunny_berry",
+      "name": "Sunny Berry",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Mangue",
+        "Framboise rouge"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_212_steph_warhead",
+      "name": "Steph Warhead",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Mûres",
+        "Blue Blast Sour",
+        "Limonade",
+        "Pomme verte"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_213_tym_peach",
+      "name": "Tym Peach",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Pêche",
+        "Litchi"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_214_heat_remedy",
+      "name": "Heat Remedy",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Kiwi",
+        "Litchi"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_215_blue_shark",
+      "name": "Blue Shark",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Bleuet",
+        "Litchi"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_216_classe_moyenne",
+      "name": "Classe Moyenne",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise",
+        "Melon d'eau",
+        "Fruit du dragon"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_217_joker",
+      "name": "Joker",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise-kiwi",
+        "Blue Blast Sour",
+        "Pomme verte"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_218_jacquie",
+      "name": "Jacquie",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise surette",
+        "Limonade rose"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_219_jamieson_maple",
+      "name": "Jamieson Maple",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fraise-kiwi",
+        "Punch aux fruits"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_220_eeveecki_s",
+      "name": "Eeveecki's",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fruit du dragon",
+        "Framboise rouge",
+        "Limonade rose"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_221_bibi_et_melo",
+      "name": "Bibi et Mélo",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Blue Blast",
+        "Bleuet",
+        "Pêche",
+        "Ananas"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_222_anti_bully_vibes",
+      "name": "Anti-Bully Vibes",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Limonade rose",
+        "Barbe à papa"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_223_coton_berry_dream",
+      "name": "Coton Berry Dream",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue",
+        "Framboise rouge",
+        "Barbe à papa"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_224_plasmol",
+      "name": "Plasmol",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Blue Blast",
+        "Banane",
+        "Ananas"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_225_le_p_tit_printemps",
+      "name": "Le p'tit Printemps",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Litchi",
+        "Piña Colada",
+        "Concombre lime",
+        "Framboise bleue surette"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_226_la_douce_annie",
+      "name": "La Douce Annie",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Pêche",
+        "Litchi",
+        "Mangue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "tea_bombs_227_crazy_monster",
+      "name": "Crazy Monster",
+      "category": "tea_bombs",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Blue Blast Sour",
+        "Ananas",
+        "Banane"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "shakes_001_pain_banane",
+      "name": "Pain banane",
+      "category": "shakes",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Vanille",
+        "Banane",
+        "Chocolat"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "shakes_002_oreo",
+      "name": "Oréo",
+      "category": "shakes",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Vanille",
+        "Chocolat",
+        "Oréo"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "shakes_003_oh_henry",
+      "name": "Oh Henry!",
+      "category": "shakes",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Chocolat",
+        "Graham",
+        "Arachide"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "shakes_004_shortcake_aux_fraises",
+      "name": "Shortcake aux Fraises",
+      "category": "shakes",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Vanille",
+        "Fraise",
+        "Graham"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "shakes_005_petite_brioche",
+      "name": "Petite Brioche",
+      "category": "shakes",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Vanille",
+        "Pacanes- Cannelle",
+        "Caramel"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "shakes_006_brownie",
+      "name": "Brownie",
+      "category": "shakes",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Triple chocolat"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "shakes_007_cookie_monster",
+      "name": "Cookie Monster",
+      "category": "shakes",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Chocolat",
+        "Pâte à biscuit"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "shakes_008_coffee_crisp",
+      "name": "Coffee Crisp",
+      "category": "shakes",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Café",
+        "Praline",
+        "Crème",
+        "Chocolat"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "shakes_009_feuille_d_erable",
+      "name": "Feuille D'érable",
+      "category": "shakes",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Érable"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "shakes_010_reese",
+      "name": "Reese",
+      "category": "shakes",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Chocolat",
+        "Arachide",
+        "Reese"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "shakes_011_creamsicle_orange",
+      "name": "Creamsicle orange",
+      "category": "shakes",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Vanille",
+        "Orange"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "shakes_012_caramilk",
+      "name": "Caramilk",
+      "category": "shakes",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Chocolat",
+        "Caramel"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "shakes_013_tarte_au_citron",
+      "name": "Tarte au citron",
+      "category": "shakes",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Vanille",
+        "Graham",
+        "Citron"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "shakes_014_chai",
+      "name": "Chaï",
+      "category": "shakes",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Vanille",
+        "Cookie and cream",
+        "Chaï"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "shakes_015_cheesecake_aux_fraises",
+      "name": "Cheesecake aux fraises",
+      "category": "shakes",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Vanille",
+        "Gâteau au fromage",
+        "Graham"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "shakes_016_erable_et_pacanes",
+      "name": "Érable et pacanes",
+      "category": "shakes",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Vanille",
+        "Érable",
+        "Pacanes"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "protein_juices_001_sour_patch",
+      "name": "Sour Patch",
+      "category": "protein_juices",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Protéine baies sauvages",
+        "Jus framboise bleue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "protein_juices_002_bombe_a_the_avec_jus_proteine",
+      "name": "Bombe à thé avec jus protéiné",
+      "category": "protein_juices",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Choisissez votre bombe a thé et nous ajoutons la protéine de baie / pêche mangue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "protein_juices_003_sunny_delight",
+      "name": "Sunny Delight",
+      "category": "protein_juices",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Protéine pêche mangue",
+        "Jus orange pineapple"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "protein_juices_004_slushi",
+      "name": "Slushi",
+      "category": "protein_juices",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Protéine baies sauvages",
+        "Jus cerise",
+        "Fraise",
+        "Melon d'eau"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "protein_juices_005_summer_sun",
+      "name": "Summer Sun",
+      "category": "protein_juices",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Protéine pêche mangue",
+        "Jus cantaloup",
+        "Pêche"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "protein_juices_006_karma",
+      "name": "Karma",
+      "category": "protein_juices",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Jus protéiné baies sauvages",
+        "Barbe à papa"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "protein_juices_007_gym_rat",
+      "name": "Gym Rat",
+      "category": "protein_juices",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Jus protéiné pêche mangue",
+        "Pêche",
+        "Mangue",
+        "Orange Pineapple",
+        "Cantaloup"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "protein_juices_008_no_name",
+      "name": "No name",
+      "category": "protein_juices",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Jus protéiné baies sauvages",
+        "Cerise",
+        "Fruit de la passion",
+        "Orange"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "protein_juices_009_bresil_tropical_punch",
+      "name": "Brésil Tropical Punch",
+      "category": "protein_juices",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Jus protéiné pêche mangue",
+        "Pomegrenade",
+        "Orange et lemonade"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "protein_juices_010_sensation",
+      "name": "Sensation",
+      "category": "protein_juices",
+      "description": "",
+      "price": "",
+      "ingredients": [],
+      "is_active": true
+    },
+    {
+      "id": "protein_coffees_001_melange_maison",
+      "name": "Mélange maison",
+      "category": "protein_coffees",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Sirop de votre choix"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "protein_coffees_002_moka",
+      "name": "Moka",
+      "category": "protein_coffees",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Sirop de votre choix"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "protein_coffees_003_caramel_macchiato",
+      "name": "Caramel Macchiato",
+      "category": "protein_coffees",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Sirop de votre choix"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "kids_juices_001_ariel",
+      "name": "Ariel",
+      "category": "kids_juices",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Tropical",
+        "Cerise",
+        "Fraise",
+        "Framboise rouge",
+        "Melon d'eau"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "kids_juices_002_hulk",
+      "name": "Hulk",
+      "category": "kids_juices",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Pomme verte"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "kids_juices_003_spider_man",
+      "name": "Spider man",
+      "category": "kids_juices",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Cerise",
+        "Framboise bleu ou Melon d'eau",
+        "Framboise bleue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "kids_juices_004_elsa",
+      "name": "Elsa",
+      "category": "kids_juices",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Framboise bleue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "kids_juices_005_pikachu",
+      "name": "Pikachu",
+      "category": "kids_juices",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Ananas"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "kids_juices_006_chase",
+      "name": "Chase",
+      "category": "kids_juices",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Fruit de la passion",
+        "Framboise bleue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "extras_001_collagene",
+      "name": "Collagène",
+      "category": "extras",
+      "description": "",
+      "price": "",
+      "ingredients": [],
+      "is_active": true
+    },
+    {
+      "id": "extras_002_lift_off",
+      "name": "Lift off",
+      "category": "extras",
+      "description": "",
+      "price": "",
+      "ingredients": [],
+      "is_active": true
+    },
+    {
+      "id": "extras_003_fibre",
+      "name": "Fibre",
+      "category": "extras",
+      "description": "",
+      "price": "",
+      "ingredients": [],
+      "is_active": true
+    },
+    {
+      "id": "extras_004_proteine",
+      "name": "Protéine",
+      "category": "extras",
+      "description": "",
+      "price": "",
+      "ingredients": [],
+      "is_active": true
+    },
+    {
+      "id": "extras_005_probiotique",
+      "name": "Probiotique",
+      "category": "extras",
+      "description": "",
+      "price": "",
+      "ingredients": [],
+      "is_active": true
+    },
+    {
+      "id": "extras_006_best_defense",
+      "name": "Best Defense",
+      "category": "extras",
+      "description": "",
+      "price": "",
+      "ingredients": [],
+      "is_active": true
+    },
+    {
+      "id": "extras_007_electrolytes_h3o",
+      "name": "Électrolytes H3O",
+      "category": "extras",
+      "description": "",
+      "price": "",
+      "ingredients": [],
+      "is_active": true
+    },
+    {
+      "id": "extras_008_immunite_essentielle",
+      "name": "Immunité essentielle",
+      "category": "extras",
+      "description": "",
+      "price": "",
+      "ingredients": [],
+      "is_active": true
+    },
+    {
+      "id": "hangover_001_hangover_peche_mangue",
+      "name": "Hangover Pêche mangue",
+      "category": "hangover",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Lift off lime",
+        "Thé pêche et aloès mangue",
+        "Probio et H3O",
+        "Protéine pêche mangue"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "hangover_002_hangover_baies_sauvages",
+      "name": "Hangover Baies sauvages",
+      "category": "hangover",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Lift off lime",
+        "Thé framboise et aloès mandarine",
+        "Probio et H3O",
+        "Protéine baies sauvages"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "hangover_003_hangover_le_retour_du_chalet",
+      "name": "Hangover Le retour du chalet",
+      "category": "hangover",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Lift off orange",
+        "Thé citron et aloès mandarine",
+        "Probio et H3O",
+        "Protéine baies sauvages et jus Limonade"
+      ],
+      "is_active": true
+    },
+    {
+      "id": "hangover_004_hangover_katie",
+      "name": "Hangover Katie",
+      "category": "hangover",
+      "description": "",
+      "price": "",
+      "ingredients": [
+        "Lift off lime",
+        "Thé pomegrenade et aloès canneberge",
+        "Probio et H3O",
+        "Protéine pêche mangue et jus Cerise surette"
+      ],
+      "is_active": true
+    }
+  ]
+}

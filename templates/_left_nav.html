@@ -1,58 +1,106 @@
+<div id="bg-animation" aria-hidden="true"></div>
+
 <div class="left-nav-mobile-bar">
   <button
     id="leftNavToggle"
-    class="left-nav-toggle"
+    class="left-nav-toggle sidebar-toggle"
     type="button"
     aria-label="Ouvrir le volet de navigation"
     aria-expanded="false"
     aria-controls="leftNav"
   >
-    <span class="left-nav-toggle-icon" aria-hidden="true"></span>
+    <span class="left-nav-toggle-icon toggle-icon" aria-hidden="true"></span>
     Menu
   </button>
 </div>
 
-<aside id="leftNav" class="left-nav" aria-label="Navigation principale">
-  <div class="left-nav-head">
-    <h2>Sunny Vibe</h2>
+<aside id="leftNav" class="left-nav sidebar" aria-label="Navigation principale">
+  <div class="left-nav-head sidebar-brand">
+    <img
+      class="sidebar-brand-logo"
+      src="{{ url_for('static', filename='logo.png') }}"
+      alt="Logo Sunny Vibe Nutrition"
+      width="104"
+      height="104"
+      decoding="async"
+    >
   </div>
 
-  <nav class="left-nav-links" aria-label="Navigation générale">
-    <a class="btn" href="{{ url_for('index') }}">Accueil</a>
-    <a class="btn" href="{{ url_for('calendar') }}">Réservation Salle d'entraînement</a>
-    {% if is_user_authenticated %}<a class="btn" href="{{ url_for('my_bookings') }}">Mes réservations</a>{% endif %}
-    <a class="btn" href="{{ url_for('horaire') }}">Horaires</a>
-    {% if is_admin_authenticated %}<a class="btn" href="{{ url_for('admin_dashboard') }}">Tableau de bord</a>{% endif %}
-  </nav>
-
-  {% if admin_nav_mode and is_admin_authenticated %}
-  <nav class="admin-tabs" aria-label="Sections administrateur">
-    <div class="admin-nav-subtabs">
-      <button class="admin-tab {% if active_tab == 'bookings-panel' %}is-active{% endif %}" type="button" data-tab-target="bookings-panel">Gérer les réservations</button>
-      <button class="admin-tab {% if active_tab == 'blocked-slots-panel' %}is-active{% endif %}" type="button" data-tab-target="blocked-slots-panel">Blocages horaires</button>
-      <button class="admin-tab {% if active_tab == 'configuration-panel' %}is-active{% endif %}" type="button" data-tab-target="configuration-panel">Règles de réservation</button>
-      <button class="admin-tab {% if active_tab == 'opening-hours-panel' %}is-active{% endif %}" type="button" data-tab-target="opening-hours-panel">Heures d'ouverture</button>
-      <button class="admin-tab {% if active_tab == 'invitation-codes-panel' %}is-active{% endif %}" type="button" data-tab-target="invitation-codes-panel">Invitations</button>
-      <button class="admin-tab {% if active_tab == 'users-panel' %}is-active{% endif %}" type="button" data-tab-target="users-panel">Gestion des comptes</button>
-    </div>
-  </nav>
-  {% endif %}
-
-  <section class="left-nav-auth" aria-label="Compte et connexion">
-    {% if is_user_authenticated %}
-    <p class="left-nav-help"><strong>Connecté en tant que {{ connection_display_name }}</strong></p>
-    {% elif is_admin_authenticated %}
-    <p class="left-nav-help"><strong>Connecté en tant que Administrateur</strong></p>
-    {% else %}
-    <p class="left-nav-help">Connectez-vous ou créez un compte pour réserver la salle.</p>
+  <nav class="left-nav-links sidebar-nav" aria-label="Navigation générale">
+    <a class="btn nav-link {% if request.endpoint == 'index' %}is-active{% endif %}" href="{{ url_for('index') }}">
+      <span class="nav-link-content"><span class="nav-label">Accueil</span></span>
+    </a>
+    <a class="btn nav-link {% if request.endpoint == 'sunnygym' %}is-active{% endif %}" href="{{ url_for('sunnygym') }}">
+      <span class="nav-link-content"><span class="nav-label">SunnyGym</span></span>
+    </a>
+    {% if is_user_authenticated or is_super_admin_authenticated %}
+    <a class="btn nav-link {% if request.endpoint == 'my_bookings' %}is-active{% endif %}" href="{{ url_for('my_bookings') }}">
+      <span class="nav-link-content"><span class="nav-label">Mes réservations</span></span>
+    </a>
     {% endif %}
-    <div class="left-nav-links">
-    {% if is_user_authenticated or is_admin_authenticated %}
-      <a class="btn" href="{{ url_for('logout') }}">Déconnexion</a>
+    <a class="btn nav-link {% if request.endpoint == 'horaire' %}is-active{% endif %}" href="{{ url_for('horaire') }}">
+      <span class="nav-link-content"><span class="nav-label">Horaires</span></span>
+    </a>
+    <a class="btn nav-link {% if request.endpoint == 'menu' %}is-active{% endif %}" href="{{ url_for('menu') }}">
+      <span class="nav-link-content"><span class="nav-label">Menu</span></span>
+    </a>
+
+    {% if is_admin_authenticated %}
+    {% set admin_active_tab = active_tab|default('') %}
+    {% set is_admin_dashboard_page = admin_active_tab in ['bookings-panel', 'active-slots-panel', 'menu-panel', 'settings-panel', 'opening-hours-panel', 'invitation-codes-panel', 'users-panel', 'configuration-panel'] %}
+    {% if reservation_config is defined and reservation_config %}
+      {% set dashboard_availability_mode = reservation_config.availability_mode|default('opening_hours') %}
     {% else %}
+      {% set dashboard_availability_mode = admin_availability_mode|default('opening_hours') %}
+    {% endif %}
+    {% set blocked_slots_tab_label = "Ajouter une plage horaire" if dashboard_availability_mode == 'active_slots' else "Blocages horaires" %}
+    <div class="left-nav-group dashboard-nav-group nav-group">
+      <button
+        id="adminDashboardToggle"
+        class="btn nav-link nav-toggle {% if is_admin_dashboard_page %}is-active{% endif %}"
+        type="button"
+        aria-controls="adminDashboardSubmenu"
+        aria-expanded="{% if is_admin_dashboard_page %}true{% else %}false{% endif %}"
+      >
+        <span class="nav-link-content">
+          <span class="nav-label">Tableau de bord</span>
+          <span class="nav-toggle-icon" aria-hidden="true">›</span>
+        </span>
+      </button>
+      <div
+        id="adminDashboardSubmenu"
+        class="left-nav-submenu nav-submenu {% if is_admin_dashboard_page %}is-open{% endif %}"
+        aria-label="Sous-sections du tableau de bord"
+        {% if not is_admin_dashboard_page %}hidden{% endif %}
+      >
+        <a class="btn admin-tab nav-sub-link {% if admin_active_tab == 'bookings-panel' %}is-active{% endif %}" href="{{ url_for('admin_dashboard_bookings') }}">Gérer les réservations</a>
+        <a class="btn admin-tab nav-sub-link {% if admin_active_tab == 'active-slots-panel' %}is-active{% endif %}" href="{{ url_for('admin_dashboard_active_slots') }}">{{ blocked_slots_tab_label }}</a>
+        <a class="btn admin-tab nav-sub-link {% if admin_active_tab == 'menu-panel' %}is-active{% endif %}" href="{{ url_for('admin_dashboard_menu') }}">Menu</a>
+        <a class="btn admin-tab nav-sub-link {% if admin_active_tab == 'settings-panel' %}is-active{% endif %}" href="{{ url_for('admin_dashboard_settings') }}">Paramètres</a>
+        <a class="btn admin-tab nav-sub-link {% if admin_active_tab == 'opening-hours-panel' %}is-active{% endif %}" href="{{ url_for('admin_dashboard_opening_hours') }}">Heures d'ouverture</a>
+        <a class="btn admin-tab nav-sub-link {% if admin_active_tab == 'invitation-codes-panel' %}is-active{% endif %}" href="{{ url_for('admin_dashboard_invitations') }}">Invitations</a>
+        <a class="btn admin-tab nav-sub-link {% if admin_active_tab == 'users-panel' %}is-active{% endif %}" href="{{ url_for('admin_dashboard_users') }}">Gestion des comptes</a>
+      </div>
+    </div>
+    {% endif %}
+  </nav>
+
+  <section class="left-nav-auth sidebar-user-status" aria-label="Compte et connexion">
+    {% if is_user_authenticated %}
+    <p class="left-nav-help sidebar-user-line"><strong>Connecté en tant que {{ connection_display_name }}</strong></p>
+    {% elif is_admin_authenticated %}
+    <p class="left-nav-help sidebar-user-line"><strong>Connecté en tant que {{ connection_display_name }}</strong></p>
+    {% else %}
+    <p class="left-nav-help sidebar-user-line">Connectez-vous ou créez un compte pour réserver la salle.</p>
+    {% endif %}
+
+    <div class="left-nav-links">
+      {% if is_user_authenticated or is_admin_authenticated %}
+      <a class="btn" href="{{ url_for('logout') }}">Déconnexion</a>
+      {% else %}
       <a class="btn" href="{{ url_for('login') }}">Connexion</a>
       <a class="btn" href="{{ url_for('register') }}">Créer un compte</a>
-    {% endif %}
+      {% endif %}
     </div>
   </section>
 </aside>
@@ -104,4 +152,23 @@
       }
     });
   })();
+
+  (function initDashboardSubmenu() {
+    const toggle = document.getElementById('adminDashboardToggle');
+    const submenu = document.getElementById('adminDashboardSubmenu');
+    if (!toggle || !submenu) {
+      return;
+    }
+
+    toggle.addEventListener('click', () => {
+      const expanded = toggle.getAttribute('aria-expanded') === 'true';
+      const next = !expanded;
+      toggle.setAttribute('aria-expanded', next ? 'true' : 'false');
+      submenu.hidden = !next;
+      submenu.classList.toggle('is-open', next);
+    });
+
+  })();
 </script>
+<script src="{{ url_for('static', filename='theme.js', v=theme_js_version) }}"></script>
+<script src="{{ url_for('static', filename='form-controls.js', v=form_controls_js_version) }}"></script>

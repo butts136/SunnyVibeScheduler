@@ -1,0 +1,382 @@
+{% extends 'admin_dashboard_base.html' %}
+{% from '_form_controls.html' import toggle %}
+
+{% block admin_panel %}
+        {% set sunnygym_display_mode = reservation_config.sunnygym_display_mode|default('calendar') %}
+        <section id="settings-panel" class="admin-section tab-panel {% if active_tab == 'settings-panel' %}is-active{% endif %}">
+          <form method="post" class="settings-form" novalidate>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <input type="hidden" name="admin_action" value="save_reservation_config">
+
+            <div class="settings-shell">
+              <div class="settings-tabs-wrap">
+                <div class="settings-tabs" id="settingsTabs">
+                  <div class="settings-tabs-hover-indicator" id="settingsTabsHoverIndicator"></div>
+                  <div class="settings-tabs-indicator" id="settingsTabsIndicator"></div>
+                  <button class="settings-tab-btn active" type="button" data-settings-tab="hours">Horaires</button>
+                  <button class="settings-tab-btn" type="button" data-settings-tab="sunnygym">Réservation Sunny Gym</button>
+                </div>
+              </div>
+
+              <div class="settings-tab-panels">
+                <section class="settings-tab-panel is-active" data-settings-panel="hours">
+                  <article class="settings-section-card">
+                    <div class="settings-section-head">
+                      <h2>Affichage des horaires</h2>
+                      <p class="subtitle">Réglages d’affichage pour la page Horaires et les vues hebdomadaires.</p>
+                    </div>
+
+                    <div class="settings-option-list">
+                      <div class="settings-option-row">
+                        <div class="settings-option-copy">
+                          <label for="reservation_timezone">Fuseau du projet</label>
+                          <p class="field-help">Toutes les dates et heures du site utilisent ce fuseau.</p>
+                        </div>
+                        <div class="settings-option-control">
+                          <select id="reservation_timezone" name="reservation_timezone" required>
+                            {% for timezone_value, timezone_label in reservation_timezone_options %}
+                            <option value="{{ timezone_value }}" {% if reservation_config.timezone == timezone_value %}selected{% endif %}>{{ timezone_label }}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+
+                      <div class="settings-option-row">
+                        <div class="settings-option-copy">
+                          <label>Début de semaine</label>
+                          <p class="field-help">Choisissez si les vues hebdomadaires commencent le dimanche ou le lundi.</p>
+                        </div>
+                        <div class="settings-option-control">
+                          <div class="segmented-choice settings-segmented-choice" role="radiogroup" aria-label="Début de semaine">
+                            <label class="segmented-choice-option">
+                              <input type="radio" name="week_start_day" value="sunday" {% if reservation_config.week_start_day|default('sunday') == 'sunday' %}checked{% endif %}>
+                              <span>Dimanche</span>
+                            </label>
+                            <label class="segmented-choice-option">
+                              <input type="radio" name="week_start_day" value="monday" {% if reservation_config.week_start_day == 'monday' %}checked{% endif %}>
+                              <span>Lundi</span>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="settings-option-row">
+                        <div class="settings-option-copy">
+                          <label for="warning_display_count">Nombre d’avertissements affichés</label>
+                          <p class="field-help">Nombre de cartes d’avertissement visibles sur la page Horaires. Par défaut: 4.</p>
+                        </div>
+                        <div class="settings-option-control settings-option-control-small">
+                          <input id="warning_display_count" type="number" min="1" name="warning_display_count" value="{{ reservation_config.warning_display_count|default(4) }}" required>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                </section>
+
+                <section class="settings-tab-panel" data-settings-panel="sunnygym" hidden>
+                  <article class="settings-section-card">
+                    <div class="settings-section-head">
+                      <h2>Disponibilités et affichage</h2>
+                      <p class="subtitle">Contrôle la façon dont Sunny Gym affiche les disponibilités et les plages activées.</p>
+                    </div>
+
+                    <div class="settings-option-list">
+                      <div class="settings-option-row">
+                        <div class="settings-option-copy">
+                          <label for="availability_mode">Mode des disponibilités</label>
+                          <p class="field-help">Mode 1 = heures d’ouverture + blocages. Mode 2 = uniquement les plages activées.</p>
+                        </div>
+                        <div class="settings-option-control">
+                          <select id="availability_mode" name="availability_mode" required>
+                            <option value="opening_hours" {% if reservation_config.availability_mode == 'opening_hours' %}selected{% endif %}>Mode 1: Heures d'ouverture</option>
+                            <option value="active_slots" {% if reservation_config.availability_mode == 'active_slots' %}selected{% endif %}>Mode 2: Plages activées</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div class="settings-option-row" data-active-slots-only {% if reservation_config.availability_mode != 'active_slots' %}hidden{% endif %}>
+                        <div class="settings-option-copy">
+                          <label for="sunnygym_display_mode">Affichage Sunny Gym</label>
+                          <p class="field-help">Choisissez la vue affichée lorsqu’on utilise le mode 2.</p>
+                        </div>
+                        <div class="settings-option-control">
+                          <select id="sunnygym_display_mode" name="sunnygym_display_mode">
+                            <option value="calendar" {% if sunnygym_display_mode == 'calendar' %}selected{% endif %}>Calendrier</option>
+                            <option value="cards" {% if sunnygym_display_mode == 'cards' %}selected{% endif %}>Cartes</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+
+                  <article class="settings-section-card">
+                    <div class="settings-section-head">
+                      <h2>Capacité et partage</h2>
+                      <p class="subtitle">Définit le nombre de personnes admises et les options de réservation partagée.</p>
+                    </div>
+
+                    <div class="settings-option-list">
+                      <div class="settings-option-row">
+                        <div class="settings-option-copy">
+                          <label for="max_simultaneous_bookings">Places disponibles en même temps</label>
+                          <p class="field-help">Exemple: 3 = maximum de 3 réservations simultanées.</p>
+                        </div>
+                        <div class="settings-option-control settings-option-control-small">
+                          <input id="max_simultaneous_bookings" type="number" min="1" name="max_simultaneous_bookings" value="{{ reservation_config.max_simultaneous_bookings }}" required>
+                        </div>
+                      </div>
+
+                      <div class="settings-option-row">
+                        <div class="settings-option-copy">
+                          <label for="allow_companion_booking">Autoriser les accompagnateurs</label>
+                          <p class="field-help">Permet de réserver pour soi et une personne supplémentaire.</p>
+                        </div>
+                        <div class="settings-option-control settings-option-control-toggle">
+                          {{ toggle('allow_companion_booking', 'allow_companion_booking', reservation_config.allow_companion_booking) }}
+                        </div>
+                      </div>
+
+                      <div class="settings-option-row">
+                        <div class="settings-option-copy">
+                          <label for="allow_private_room_choice">Autoriser l’option réservation privée</label>
+                          <p class="field-help">Permet à un membre de demander la salle pour lui seul.</p>
+                        </div>
+                        <div class="settings-option-control settings-option-control-toggle">
+                          {{ toggle('allow_private_room_choice', 'allow_private_room_choice', reservation_config.allow_private_room_choice) }}
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+
+                  <article class="settings-section-card">
+                    <div class="settings-section-head">
+                      <h2>Durées autorisées</h2>
+                      <p class="subtitle">Détermine les durées et intervalles disponibles lors de la réservation.</p>
+                    </div>
+
+                    <div class="settings-option-list">
+                      <div class="settings-option-row">
+                        <div class="settings-option-copy">
+                          <label for="min_duration_minutes">Durée minimale</label>
+                          <p class="field-help">Durée minimale autorisée pour une réservation.</p>
+                        </div>
+                        <div class="settings-option-control settings-option-control-small">
+                          <input id="min_duration_minutes" type="number" min="1" name="min_duration_minutes" value="{{ reservation_config.min_duration_minutes }}" required>
+                        </div>
+                      </div>
+
+                      <div class="settings-option-row">
+                        <div class="settings-option-copy">
+                          <label for="max_duration_minutes">Durée maximale</label>
+                          <p class="field-help">Durée maximale autorisée pour une réservation.</p>
+                        </div>
+                        <div class="settings-option-control settings-option-control-small">
+                          <input id="max_duration_minutes" type="number" min="1" name="max_duration_minutes" value="{{ reservation_config.max_duration_minutes }}" required>
+                        </div>
+                      </div>
+
+                      <div class="settings-option-row">
+                        <div class="settings-option-copy">
+                          <label for="slot_interval_enabled">Durées fixes uniquement</label>
+                          <p class="field-help">Autorise seulement des durées suivant un palier régulier.</p>
+                        </div>
+                        <div class="settings-option-control settings-option-control-toggle">
+                          {{ toggle('slot_interval_enabled', 'slot_interval_enabled', reservation_config.slot_interval_enabled) }}
+                        </div>
+                      </div>
+
+                      <div class="settings-option-row">
+                        <div class="settings-option-copy">
+                          <label for="slot_interval_minutes">Palier de durée</label>
+                          <p class="field-help">Exemple: 30 = 30, 60, 90, 120 minutes.</p>
+                        </div>
+                        <div class="settings-option-control settings-option-control-small">
+                          <select id="slot_interval_minutes" name="slot_interval_minutes">
+                            {% for interval in valid_slot_intervals %}
+                            <option value="{{ interval }}" {% if reservation_config.slot_interval_minutes == interval %}selected{% endif %}>{{ interval }} min</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+
+                  <article class="settings-section-card">
+                    <div class="settings-section-head">
+                      <h2>Règles de réservation</h2>
+                      <p class="subtitle">Affinez le comportement des heures de départ, enchaînements et limites de fréquentation.</p>
+                    </div>
+
+                    <div class="settings-option-list">
+                      <div class="settings-option-row">
+                        <div class="settings-option-copy">
+                          <label for="latest_start_before_close_minutes">Marge avant fermeture</label>
+                          <p class="field-help">Empêche de commencer une réservation trop près de la fermeture.</p>
+                        </div>
+                        <div class="settings-option-control settings-option-control-small">
+                          <input id="latest_start_before_close_minutes" type="number" min="0" name="latest_start_before_close_minutes" value="{{ reservation_config.latest_start_before_close_minutes }}" required>
+                        </div>
+                      </div>
+
+                      <div class="settings-option-row">
+                        <div class="settings-option-copy">
+                          <label for="allow_back_to_back">Autoriser les réservations collées</label>
+                          <p class="field-help">Quand désactivé, une pause devient obligatoire entre deux réservations.</p>
+                        </div>
+                        <div class="settings-option-control settings-option-control-toggle">
+                          {{ toggle('allow_back_to_back', 'allow_back_to_back', reservation_config.allow_back_to_back) }}
+                        </div>
+                      </div>
+
+                      <div class="settings-option-row">
+                        <div class="settings-option-copy">
+                          <label for="fixed_time_only">Heures de départ fixes</label>
+                          <p class="field-help">Force les heures de départ sur un intervalle régulier.</p>
+                        </div>
+                        <div class="settings-option-control settings-option-control-toggle">
+                          {{ toggle('fixed_time_only', 'fixed_time_only', reservation_config.fixed_time_only) }}
+                        </div>
+                      </div>
+
+                      <div class="settings-option-row">
+                        <div class="settings-option-copy">
+                          <label for="fixed_time_interval_minutes">Intervalle des heures fixes</label>
+                          <p class="field-help">Exemple: 15 = départ possible toutes les 15 minutes.</p>
+                        </div>
+                        <div class="settings-option-control settings-option-control-small">
+                          <select id="fixed_time_interval_minutes" name="fixed_time_interval_minutes">
+                            {% for interval in valid_slot_intervals %}
+                            <option value="{{ interval }}" {% if reservation_config.fixed_time_interval_minutes == interval %}selected{% endif %}>{{ interval }} min</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+
+                      <div class="settings-option-row">
+                        <div class="settings-option-copy">
+                          <label for="single_booking_per_day">Limiter à 1 réservation par jour</label>
+                          <p class="field-help">Empêche un utilisateur de créer plusieurs réservations sur la même date.</p>
+                        </div>
+                        <div class="settings-option-control settings-option-control-toggle">
+                          {{ toggle('single_booking_per_day', 'single_booking_per_day', reservation_config.single_booking_per_day) }}
+                        </div>
+                      </div>
+
+                      <div class="settings-option-row settings-option-row-frequency">
+                        <div class="settings-option-copy">
+                          <label for="frequency_limit_enabled">Limiter la fréquentation</label>
+                          <p class="field-help">Exemple: 3 réservations par semaine ou 20 heures par mois.</p>
+                        </div>
+                        <div class="settings-option-control settings-option-control-frequency">
+                          <label class="settings-inline-toggle">
+                            {{ toggle('frequency_limit_enabled', 'frequency_limit_enabled', reservation_config.frequency_limit_enabled) }}
+                            <span>Actif</span>
+                          </label>
+                          <div class="settings-inline-fields">
+                            <input id="frequency_limit_value" type="number" min="1" name="frequency_limit_value" value="{{ reservation_config.frequency_limit_value }}" required>
+                            <select id="frequency_limit_metric" name="frequency_limit_metric">
+                              <option value="bookings" {% if reservation_config.frequency_limit_metric == 'bookings' %}selected{% endif %}>Réservations</option>
+                              <option value="hours" {% if reservation_config.frequency_limit_metric == 'hours' %}selected{% endif %}>Heures</option>
+                            </select>
+                            <input id="frequency_limit_period_value" type="number" min="1" name="frequency_limit_period_value" value="{{ reservation_config.frequency_limit_period_value }}" required>
+                            <select id="frequency_limit_period_unit" name="frequency_limit_period_unit">
+                              <option value="days" {% if reservation_config.frequency_limit_period_unit == 'days' %}selected{% endif %}>Jour(s)</option>
+                              <option value="weeks" {% if reservation_config.frequency_limit_period_unit == 'weeks' %}selected{% endif %}>Semaine(s)</option>
+                              <option value="months" {% if reservation_config.frequency_limit_period_unit == 'months' %}selected{% endif %}>Mois</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                </section>
+
+              </div>
+
+              <div class="actions settings-actions">
+                <button class="btn primary" type="submit">Enregistrer les paramètres</button>
+              </div>
+            </div>
+          </form>
+        </section>
+
+        <script>
+          (function initSettingsTabs() {
+            const tabsContainer = document.getElementById('settingsTabs');
+            const indicator = document.getElementById('settingsTabsIndicator');
+            const hoverIndicator = document.getElementById('settingsTabsHoverIndicator');
+            const tabs = tabsContainer ? tabsContainer.querySelectorAll('.settings-tab-btn[data-settings-tab]') : [];
+            const panels = document.querySelectorAll('.settings-tab-panel[data-settings-panel]');
+
+            if (!tabsContainer || !indicator || !hoverIndicator || !tabs.length || !panels.length) {
+              return;
+            }
+
+            const setIndicatorPosition = (element, targetIndicator) => {
+              const containerRect = tabsContainer.getBoundingClientRect();
+              const elementRect = element.getBoundingClientRect();
+              const left = elementRect.left - containerRect.left;
+              targetIndicator.style.width = `${elementRect.width}px`;
+              targetIndicator.style.transform = `translateX(${left}px)`;
+            };
+
+            const hideHoverIndicator = () => {
+              hoverIndicator.style.opacity = '0';
+            };
+
+            const activateTab = (targetName) => {
+              tabs.forEach((tab) => {
+                const isActive = tab.dataset.settingsTab === targetName;
+                tab.classList.toggle('active', isActive);
+                if (isActive) {
+                  setIndicatorPosition(tab, indicator);
+                }
+              });
+
+              panels.forEach((panel) => {
+                const isActive = panel.dataset.settingsPanel === targetName;
+                panel.classList.toggle('is-active', isActive);
+                panel.hidden = !isActive;
+              });
+            };
+
+            tabs.forEach((tab) => {
+              tab.addEventListener('mouseenter', () => {
+                if (!tab.classList.contains('active')) {
+                  setIndicatorPosition(tab, hoverIndicator);
+                  hoverIndicator.style.opacity = '1';
+                }
+              });
+
+              tab.addEventListener('focus', () => {
+                if (!tab.classList.contains('active')) {
+                  setIndicatorPosition(tab, hoverIndicator);
+                  hoverIndicator.style.opacity = '1';
+                }
+              });
+
+              tab.addEventListener('mouseleave', hideHoverIndicator);
+              tab.addEventListener('blur', hideHoverIndicator);
+
+              tab.addEventListener('click', () => {
+                activateTab(tab.dataset.settingsTab);
+                hideHoverIndicator();
+              });
+            });
+
+            tabsContainer.addEventListener('mouseleave', hideHoverIndicator);
+
+            const syncIndicators = () => {
+              const activeTab = tabsContainer.querySelector('.settings-tab-btn.active');
+              if (activeTab) {
+                setIndicatorPosition(activeTab, indicator);
+              }
+              hideHoverIndicator();
+            };
+
+            window.addEventListener('load', syncIndicators);
+            window.addEventListener('resize', syncIndicators);
+            syncIndicators();
+          })();
+        </script>
+{% endblock %}

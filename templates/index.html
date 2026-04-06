@@ -4,33 +4,52 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Réservation de la salle d'entraînement du Sunny Vibe Nutrition</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v=styles_version) }}">
 </head>
-<body class="with-left-nav">
-  <div class="app-layout">
+<body data-ui-mode="dark" data-theme="modern-gradient" class="with-left-nav">
+  <div class="layout app-layout">
     {% include '_left_nav.html' %}
     <main class="home-main">
-      <section class="home-hero">
-        <p class="home-kicker">Sunny Vibe Nutrition</p>
-        <h1>Bienvenue sur Sunny Vibe Scheduler</h1>
-        <p class="home-lead">Accédez rapidement aux sections principales du site.</p>
+      {% if home_modified_schedule_dates %}
+      <section class="home-floating-notice" aria-label="Modification temporaire des horaires">
+        <p class="home-floating-notice-title">Horaire modifié exceptionnellement</p>
+        {% for item in home_modified_schedule_dates %}
+        <p class="home-floating-notice-line">
+          <strong>{{ item.weekday_label }}, {{ item.date_label }}</strong>
+          <span>{{ item.hours_text }}</span>
+          <span>{{ item.reason }}</span>
+        </p>
+        {% endfor %}
+      </section>
+      {% endif %}
 
-        <div class="home-links">
-          <a class="home-link" href="{{ url_for('login') }}">
-            <strong>Connexion</strong>
-            <span>Accéder à votre compte</span>
+      <section class="home-hero" aria-labelledby="homeTitle">
+        <header class="home-hero-head">
+          <p class="home-kicker">Sunny Vibe Nutrition</p>
+          <h1 id="homeTitle">Bienvenue sur Sunny Vibe Scheduler</h1>
+          <p class="home-lead">Accédez rapidement aux sections principales du site.</p>
+        </header>
+
+        <div class="home-links" role="list">
+          <a class="home-link" role="listitem" href="{{ url_for('login') }}">
+            <strong class="home-link-title">Connexion</strong>
+            <span class="home-link-text">Accéder à votre compte</span>
+            <span class="home-link-arrow" aria-hidden="true">&rarr;</span>
           </a>
-          <a class="home-link" href="{{ url_for('register') }}">
-            <strong>Créer un compte</strong>
-            <span>Démarrer avec un nouveau profil</span>
+          <a class="home-link" role="listitem" href="{{ url_for('register') }}">
+            <strong class="home-link-title">Créer un compte</strong>
+            <span class="home-link-text">Démarrer avec un nouveau profil</span>
+            <span class="home-link-arrow" aria-hidden="true">&rarr;</span>
           </a>
-          <a class="home-link" href="{{ url_for('horaire') }}">
-            <strong>Heures d'ouverture</strong>
-            <span>Consulter les horaires officiels</span>
+          <a class="home-link" role="listitem" href="{{ url_for('horaire') }}">
+            <strong class="home-link-title">Heures d'ouverture</strong>
+            <span class="home-link-text">Consulter les horaires officiels</span>
+            <span class="home-link-arrow" aria-hidden="true">&rarr;</span>
           </a>
-          <a class="home-link" href="{{ url_for('calendar') }}">
-            <strong>Calendrier de réservation</strong>
-            <span>Voir les plages disponibles de la salle</span>
+          <a class="home-link" role="listitem" href="{{ url_for('sunnygym') }}">
+            <strong class="home-link-title">SunnyGym</strong>
+            <span class="home-link-text">Accéder à la page de réservation de la salle</span>
+            <span class="home-link-arrow" aria-hidden="true">&rarr;</span>
           </a>
         </div>
       </section>

@@ -1,0 +1,182 @@
+{% extends 'admin_dashboard_base.html' %}
+
+{% block admin_panel %}
+        <section id="users-panel" class="admin-section tab-panel {% if active_tab == 'users-panel' %}is-active{% endif %}">
+          <h2>Utilisateurs</h2>
+          <p class="subtitle">Recherchez un utilisateur et cliquez sur sa carte pour voir tous les détails.</p>
+
+          <button id="openAdminAccountModalBtn" class="btn primary admin-create-account-btn" type="button">Créer un compte administrateur</button>
+
+          <dialog id="adminAccountCreateModal" class="user-modal">
+            <div class="user-modal-head">
+              <h3>Créer un compte administrateur</h3>
+              <button id="closeAdminAccountModalBtn" class="btn" type="button">Fermer</button>
+            </div>
+            <div class="user-modal-content">
+            <form method="post" class="reservation-config-form admin-create-account-form" novalidate>
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <input type="hidden" name="admin_action" value="create_admin_account">
+
+              <div class="config-row">
+                <label for="new_admin_identifier">Identifiant administrateur</label>
+                <input
+                  id="new_admin_identifier"
+                  type="text"
+                  name="new_admin_identifier"
+                  required
+                  value="{{ admin_account_creation_form.identifier }}"
+                  autocomplete="username"
+                  autocapitalize="none"
+                  spellcheck="false"
+                  placeholder="Nom d'utilisateur ou courriel"
+                >
+              </div>
+
+              <div class="config-row">
+                <label for="new_admin_password">Mot de passe</label>
+                <input
+                  id="new_admin_password"
+                  type="password"
+                  name="new_admin_password"
+                  minlength="8"
+                  required
+                  autocomplete="new-password"
+                >
+              </div>
+
+              <div class="config-row">
+                <label for="new_admin_password_confirm">Confirmer le mot de passe</label>
+                <input
+                  id="new_admin_password_confirm"
+                  type="password"
+                  name="new_admin_password_confirm"
+                  minlength="8"
+                  required
+                  autocomplete="new-password"
+                >
+              </div>
+
+              <div class="actions">
+                <button id="cancelAdminAccountModalBtn" class="btn" type="button">Annuler</button>
+                <button class="btn primary" type="submit">Créer le compte administrateur</button>
+              </div>
+            </form>
+            </div>
+          </dialog>
+
+          {% if temporary_password_notice %}
+          <div class="alert success">{{ temporary_password_notice }}</div>
+          {% endif %}
+
+          <label class="users-search-wrap" for="usersSearchInput">
+            Recherche utilisateur
+            <input id="usersSearchInput" type="text" placeholder="Nom, nom d'utilisateur, courriel ou téléphone">
+          </label>
+
+          {% if users %}
+          <div id="usersCardsGrid" class="users-cards-grid">
+            {% for user in users %}
+            {% if user.is_super_admin_user %}
+            <button
+              type="button"
+              class="user-card-btn{% if user.is_super_admin_user %} is-super-admin-user{% endif %}"
+              data-user-id="{{ user.id }}"
+              data-search="{{ user.first_name }} {{ user.last_name }} {{ user.full_name }} {{ user.username }} {{ user.email }} {{ user.phone }}"
+            >
+              <span class="user-card-name">{{ user.first_name if user.first_name else 'Sans prénom' }} {{ user.last_name }}</span>
+              <span class="user-card-subtitle">
+                {% if user.is_super_admin_user %}
+                SuperAdmin · Réservations de test · Protégé
+                {% elif user.next_booking_start %}
+                Prochaine réservation: {{ user.next_booking_start }}
+                {% else %}
+                Prochaine réservation: Aucune
+                {% endif %}
+              </span>
+            </button>
+            {% endif %}
+            {% endfor %}
+
+            {% for account in admin_account_cards %}
+            <article
+              class="user-card-btn admin-account-card"
+              data-search="{{ account.display_name }} {{ account.identifier }} Administrateur Accès complet"
+            >
+              <span class="user-card-name">{{ account.display_name }}</span>
+              <span class="user-card-subtitle">Administrateur · Accès complet</span>
+            </article>
+            {% endfor %}
+
+            {% for user in users %}
+            {% if user.is_admin_account_user %}
+            <button
+              type="button"
+              class="user-card-btn is-admin-account-user"
+              data-user-id="{{ user.id }}"
+              data-search="{{ user.first_name }} {{ user.last_name }} {{ user.full_name }} {{ user.username }} {{ user.email }} {{ user.phone }} Administrateur Accès complet"
+            >
+              <span class="user-card-name">{{ user.first_name if user.first_name else user.email }} {{ user.last_name }}</span>
+              <span class="user-card-subtitle">Administrateur · Accès complet</span>
+            </button>
+            {% endif %}
+            {% endfor %}
+
+            {% for user in users %}
+            {% if not user.is_super_admin_user and not user.is_admin_account_user %}
+            <button
+              type="button"
+              class="user-card-btn"
+              data-user-id="{{ user.id }}"
+              data-search="{{ user.first_name }} {{ user.last_name }} {{ user.full_name }} {{ user.username }} {{ user.email }} {{ user.phone }}"
+            >
+              <span class="user-card-name">{{ user.first_name if user.first_name else 'Sans prénom' }} {{ user.last_name }}</span>
+              <span class="user-card-subtitle">
+                {% if user.next_booking_start %}
+                Prochaine réservation: {{ user.next_booking_start }}
+                {% else %}
+                Prochaine réservation: Aucune
+                {% endif %}
+              </span>
+            </button>
+            {% endif %}
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="empty-state">Aucun utilisateur enregistré.</div>
+          {% endif %}
+        </section>
+
+        <script>
+          (function initAdminAccountCreateModal() {
+            const openButton = document.getElementById('openAdminAccountModalBtn');
+            const modal = document.getElementById('adminAccountCreateModal');
+            const closeButton = document.getElementById('closeAdminAccountModalBtn');
+            const cancelButton = document.getElementById('cancelAdminAccountModalBtn');
+            const identifierInput = document.getElementById('new_admin_identifier');
+            const shouldOpen = {{ admin_account_creation_form.identifier|tojson }};
+
+            if (!openButton || !modal) {
+              return;
+            }
+
+            const openModal = () => {
+              modal.showModal();
+              window.requestAnimationFrame(() => {
+                identifierInput?.focus();
+              });
+            };
+
+            const closeModal = () => {
+              modal.close();
+            };
+
+            openButton.addEventListener('click', openModal);
+            closeButton?.addEventListener('click', closeModal);
+            cancelButton?.addEventListener('click', closeModal);
+
+            if (shouldOpen) {
+              openModal();
+            }
+          }());
+        </script>
+{% endblock %}

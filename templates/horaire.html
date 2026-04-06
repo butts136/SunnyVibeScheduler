@@ -3,284 +3,93 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Calendrier des heures d'ouverture | Sunny Vibe Nutrition</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <title>Horaires | Sunny Vibe Nutrition</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v=styles_version) }}">
 </head>
-<body class="with-left-nav hours-calendar-body">
-  <div class="app-layout">
+<body data-ui-mode="dark" data-theme="modern-gradient" class="with-left-nav hours-calendar-body">
+  <div class="layout app-layout">
     {% include '_left_nav.html' %}
     <main class="hours-calendar-main">
-      <header class="hours-calendar-head card form-card">
-        <h1>Calendrier des heures d'ouverture</h1>
-        <p class="subtitle">Desktop: vue calendrier classique. Mobile: liste détaillée en une colonne avec défilement illimité.</p>
+      <header class="hours-page-intro">
+        <h1>Horaires</h1>
       </header>
 
-      <section class="hours-calendar-desktop-panel" id="hoursDesktopPanel" aria-label="Calendrier des heures d'ouverture (desktop)">
-        <div class="hours-calendar-weekdays" id="hoursDesktopWeekdays"></div>
-        <div class="hours-calendar-grid" id="hoursDesktopGrid"></div>
+      <section class="hours-weekly-panel card form-card" aria-label="Horaire hebdomadaire régulier">
+        <div class="hours-panel-head">
+          <div>
+
+            <h2>Heures d’ouverture</h2>
+          </div>
+        </div>
+        <div class="hours-weekly-grid">
+          {% for row in weekly_hours %}
+          <article
+            class="hours-weekly-row{% if row.is_closed %} is-closed{% endif %}"
+            style="grid-column: {{ row.column_start }} / span {{ row.span }};"
+          >
+            <div class="hours-weekly-main">
+              <p class="hours-weekly-days">{{ row.day_label }}</p>
+            </div>
+            <p class="hours-weekly-hours">{{ row.hours_text }}</p>
+          </article>
+          {% endfor %}
+        </div>
       </section>
 
-      <section class="hours-calendar-mobile-panel" id="hoursMobilePanel" aria-label="Calendrier des heures d'ouverture (mobile)">
-        <div class="hours-mobile-list" id="hoursMobileList"></div>
+      {% if modified_schedule_dates %}
+      <section class="hours-modified-panel card form-card" aria-label="Horaires modifiés exceptionnellement">
+        <div class="hours-panel-head">
+          <div>
+            <p class="hours-panel-kicker">Modification</p>
+            <h2>Horaires modifiés</h2>
+          </div>
+        </div>
+
+        <div class="hours-modified-list">
+          {% for item in modified_schedule_dates %}
+          <article class="hours-modified-card{% if item.is_closed %} is-closed{% endif %}">
+            <div class="hours-modified-main">
+              <p class="hours-special-date">{{ item.weekday_label }}, {{ item.date_label }}</p>
+              <p class="hours-special-title">{{ item.reason }}</p>
+            </div>
+            <div class="hours-modified-side">
+              <p class="hours-modified-hours">{{ item.hours_text }}</p>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+      </section>
+      {% endif %}
+
+      <section class="hours-special-panel card form-card" aria-label="Prochaines dates spéciales">
+        <div class="hours-panel-head">
+          <div>
+            <p class="hours-panel-kicker">Information</p>
+            <h2>Avertissement</h2>
+          </div>
+        </div>
+        <div class="hours-warning-callout">
+          <p class="hours-warning-text">Lors des jours fériés, un changement d’horaire peut exceptionnellement ne pas avoir encore été affiché.</p>
+        </div>
+
+        {% if warning_dates %}
+        <div class="hours-special-list">
+          {% for item in warning_dates %}
+          <article class="hours-special-card is-holiday">
+            <div class="hours-special-main">
+              <p class="hours-special-date">{{ item.weekday_label }}, {{ item.date_label }}</p>
+              <p class="hours-special-title">{{ item.title }}</p>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+          Aucun avertissement à venir pour le moment.
+        </div>
+        {% endif %}
       </section>
     </main>
   </div>
-
-  <script>
-    const weekDays = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
-    const weekDaysShort = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
-    const hoursByDay = {{ hours_by_day|tojson }};
-    const holidays = {{ holidays_json|tojson }};
-    const specialDates = {{ special_dates_json|tojson }};
-
-    const holidaysByDate = {};
-    const holidaysByMonthDay = {};
-    const specialDatesByDate = {};
-
-    holidays.forEach((holiday) => {
-      if (!holiday || typeof holiday !== 'object') {
-        return;
-      }
-      if (holiday.date) {
-        holidaysByDate[holiday.date] = holiday;
-      }
-      if (holiday.month_day) {
-        holidaysByMonthDay[holiday.month_day] = holiday;
-      }
-    });
-
-    specialDates.forEach((item) => {
-      if (item && item.date) {
-        specialDatesByDate[item.date] = item;
-      }
-    });
-
-    function escapeHtml(value) {
-      return String(value ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    }
-
-    function dateToIso(dateObj) {
-      const y = dateObj.getFullYear();
-      const m = String(dateObj.getMonth() + 1).padStart(2, '0');
-      const d = String(dateObj.getDate()).padStart(2, '0');
-      return `${y}-${m}-${d}`;
-    }
-
-    function formatDateLong(dateObj) {
-      return dateObj.toLocaleDateString('fr-CA', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-      });
-    }
-
-    function formatMonthTitle(dateObj) {
-      return dateObj.toLocaleDateString('fr-CA', { month: 'long', year: 'numeric' });
-    }
-
-    function getHolidayForDate(dateObj) {
-      const iso = dateToIso(dateObj);
-      const monthDay = iso.slice(5);
-      return holidaysByDate[iso] || holidaysByMonthDay[monthDay] || null;
-    }
-
-    function getDayHoursInfo(dateObj) {
-      const iso = dateToIso(dateObj);
-      const special = specialDatesByDate[iso];
-
-      if (special) {
-        if (special.closed) {
-          return {
-            hoursText: 'Fermé (horaire spécial)',
-            isSpecial: true,
-            specialReason: String(special.reason || '').trim(),
-          };
-        }
-        return {
-          hoursText: `${special.start} à ${special.end} (horaire spécial)`,
-          isSpecial: true,
-          specialReason: String(special.reason || '').trim(),
-        };
-      }
-
-      const dayIndex = (dateObj.getDay() + 6) % 7;
-      return {
-        hoursText: hoursByDay[dayIndex] || 'Fermé',
-        isSpecial: false,
-        specialReason: '',
-      };
-    }
-
-    const desktopWeekdaysEl = document.getElementById('hoursDesktopWeekdays');
-    const desktopGridEl = document.getElementById('hoursDesktopGrid');
-    const mobileListEl = document.getElementById('hoursMobileList');
-
-    weekDaysShort.forEach((label) => {
-      const el = document.createElement('span');
-      el.textContent = label;
-      desktopWeekdaysEl.appendChild(el);
-    });
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    let nextMonthDate = new Date(today.getFullYear(), today.getMonth(), 1);
-
-    function createDesktopCell(dateObj) {
-      const holiday = getHolidayForDate(dateObj);
-      const info = getDayHoursInfo(dateObj);
-      const isToday = dateObj.getTime() === today.getTime();
-
-      const cell = document.createElement('article');
-      let className = 'hours-desktop-day';
-      if (holiday) className += ' is-holiday';
-      if (info.isSpecial) className += ' is-special';
-      if (isToday) className += ' is-today';
-      cell.className = className;
-
-      const weekdayLabel = weekDays[(dateObj.getDay() + 6) % 7];
-      const dateLong = formatDateLong(dateObj);
-      const statusParts = [];
-      if (info.isSpecial) {
-        statusParts.push('<span class="hours-desktop-status is-special">Horaire spécial</span>');
-      }
-      if (holiday) {
-        statusParts.push('<span class="hours-desktop-status is-holiday">Férié</span>');
-      }
-
-      cell.innerHTML = `
-        <p class="hours-desktop-weekday">${escapeHtml(weekdayLabel)}</p>
-        <p class="hours-desktop-date">${escapeHtml(dateLong)}</p>
-        <p class="hours-desktop-hours">${escapeHtml(info.hoursText)}</p>
-        ${statusParts.length ? `<div class="hours-desktop-status-row">${statusParts.join('')}</div>` : ''}
-        ${info.specialReason ? `<p class="hours-desktop-note">${escapeHtml(info.specialReason)}</p>` : ''}
-        ${holiday ? `<p class="hours-desktop-note holiday">${escapeHtml(holiday.name)}${holiday.alert ? `: ${escapeHtml(holiday.alert)}` : ''}</p>` : ''}
-      `;
-
-      return cell;
-    }
-
-    function createDesktopMonthDivider(dateObj) {
-      const divider = document.createElement('div');
-      divider.className = 'hours-desktop-month-divider';
-      divider.textContent = formatMonthTitle(dateObj);
-      return divider;
-    }
-
-    function createMobileMonthDivider(dateObj) {
-      const divider = document.createElement('div');
-      divider.className = 'hours-mobile-month-divider';
-      divider.textContent = formatMonthTitle(dateObj);
-      return divider;
-    }
-
-    function createMobileDayCell(dateObj) {
-      const holiday = getHolidayForDate(dateObj);
-      const info = getDayHoursInfo(dateObj);
-      const weekdayLabel = weekDays[(dateObj.getDay() + 6) % 7];
-      const isToday = dateObj.getTime() === today.getTime();
-
-      const cell = document.createElement('article');
-      let className = 'hours-mobile-day';
-      if (holiday) className += ' is-holiday';
-      if (info.isSpecial) className += ' is-special';
-      if (isToday) className += ' is-today';
-      cell.className = className;
-
-      const dayText = dateObj.toLocaleDateString('fr-CA', { day: 'numeric', month: 'long' });
-      const yearText = dateObj.getFullYear();
-
-      cell.innerHTML = `
-        <p class="hours-mobile-line weekday">${escapeHtml(weekdayLabel)}</p>
-        <p class="hours-mobile-line day">${escapeHtml(dayText)}</p>
-        <p class="hours-mobile-line year">${escapeHtml(yearText)}</p>
-        <p class="hours-mobile-line hours">${escapeHtml(info.hoursText)}</p>
-        ${info.specialReason ? `<p class="hours-mobile-line info special">${escapeHtml(info.specialReason)}</p>` : ''}
-        ${holiday ? `<p class="hours-mobile-line info holiday">${escapeHtml(holiday.name)}</p>` : ''}
-        ${holiday && holiday.alert ? `<p class="hours-mobile-line info holiday-alert">${escapeHtml(holiday.alert)}</p>` : ''}
-      `;
-
-      return cell;
-    }
-
-    function addMonth() {
-      const y = nextMonthDate.getFullYear();
-      const m = nextMonthDate.getMonth();
-      const first = new Date(y, m, 1);
-      const last = new Date(y, m + 1, 0);
-      const totalDays = last.getDate();
-      const startDay = (first.getDay() + 6) % 7;
-
-      desktopGridEl.appendChild(createDesktopMonthDivider(first));
-      const mobileMonthDivider = createMobileMonthDivider(first);
-      mobileListEl.appendChild(mobileMonthDivider);
-
-      let weekRow = [];
-      let col = 0;
-      for (let i = 0; i < startDay; i++) {
-        weekRow.push(null);
-        col += 1;
-      }
-
-      for (let d = 1; d <= totalDays; d++) {
-        const dateObj = new Date(y, m, d);
-
-        if (dateObj < today) {
-          weekRow.push(null);
-        } else {
-          weekRow.push({ dateObj });
-          mobileListEl.appendChild(createMobileDayCell(dateObj));
-        }
-
-        col += 1;
-        if (col === 7 || d === totalDays) {
-          while (weekRow.length < 7) {
-            weekRow.push(null);
-          }
-          const hasVisibleDayInWeek = weekRow.some((entry) => Boolean(entry));
-          if (!hasVisibleDayInWeek) {
-            weekRow = [];
-            col = 0;
-            continue;
-          }
-          weekRow.forEach((entry) => {
-            if (!entry) {
-              const empty = document.createElement('div');
-              empty.className = 'hours-desktop-day empty';
-              desktopGridEl.appendChild(empty);
-            } else {
-              desktopGridEl.appendChild(createDesktopCell(entry.dateObj));
-            }
-          });
-          weekRow = [];
-          col = 0;
-        }
-      }
-
-      nextMonthDate.setMonth(nextMonthDate.getMonth() + 1);
-    }
-
-    function maybeLoadMoreMonths() {
-      const doc = document.documentElement;
-      const remaining = doc.scrollHeight - (window.scrollY + window.innerHeight);
-      if (remaining < 480) {
-        addMonth();
-      }
-    }
-
-    addMonth();
-    addMonth();
-
-    while (document.documentElement.scrollHeight < window.innerHeight + 180) {
-      addMonth();
-    }
-
-    window.addEventListener('scroll', maybeLoadMoreMonths, { passive: true });
-    window.addEventListener('resize', maybeLoadMoreMonths);
-  </script>
 </body>
 </html>

@@ -1,13 +1,14 @@
+{% from '_form_controls.html' import toggle %}
 <!doctype html>
 <html lang="fr">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Mes réservations | Sunny Vibe Nutrition</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v=styles_version) }}">
 </head>
-<body class="with-left-nav">
-  <div class="app-layout">
+<body data-ui-mode="dark" data-theme="modern-gradient" class="with-left-nav my-bookings-body">
+  <div class="layout app-layout">
     {% include '_left_nav.html' %}
     <main class="my-bookings-main">
       <section class="card form-card my-bookings-card">
@@ -28,10 +29,16 @@
         <div class="alert success">{{ success_message }}</div>
         {% endif %}
 
-        {% if bookings %}
-        <div class="my-bookings-list">
-          {% for booking in bookings %}
-          <article class="my-booking-item {% if booking.is_past %}is-past{% endif %}">
+        {% if upcoming_bookings or past_bookings %}
+        {% if upcoming_bookings %}
+        <div class="my-bookings-section">
+          <div class="my-bookings-section-head">
+            <h2>Réservations à venir et en cours</h2>
+            <p class="field-help">Vos réservations actives apparaissent ici.</p>
+          </div>
+          <div class="my-bookings-list">
+            {% for booking in upcoming_bookings %}
+          <article class="my-booking-item">
             <div class="my-booking-summary">
               <div class="my-booking-time">
                 <strong>{{ booking.date_label }}</strong>
@@ -44,9 +51,6 @@
               </div>
             </div>
 
-            {% if booking.is_past %}
-            <p class="field-help">Réservation terminée: édition et annulation désactivées.</p>
-            {% else %}
             <details class="my-booking-edit">
               <summary>Modifier la réservation</summary>
               <form method="post" class="reservation-config-form" novalidate>
@@ -94,7 +98,7 @@
                 {% if reservation_config.allow_private_room_choice %}
                 <div class="config-row checkbox-row">
                   <label for="private_{{ booking.id }}">Réservation privée</label>
-                  <input id="private_{{ booking.id }}" type="checkbox" name="is_private" {% if booking.is_private %}checked{% endif %}>
+                  {{ toggle('private_' ~ booking.id, 'is_private', booking.is_private) }}
                 </div>
                 {% endif %}
 
@@ -110,10 +114,35 @@
               <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
               <button class="btn danger" type="submit">Annuler la réservation</button>
             </form>
-            {% endif %}
           </article>
           {% endfor %}
+          </div>
         </div>
+        {% endif %}
+
+        {% if past_bookings %}
+        <details class="past-bookings-details" {% if not upcoming_bookings %}open{% endif %}>
+          <summary><span class="caret">&#9662;</span> Réservations passées ({{ past_bookings|length }})</summary>
+          <div class="past-bookings-list">
+            {% for booking in past_bookings %}
+            <article class="my-booking-item is-past">
+              <div class="my-booking-summary">
+                <div class="my-booking-time">
+                  <strong>{{ booking.date_label }}</strong>
+                  <span>{{ booking.start_time }} à {{ booking.end_time }}</span>
+                </div>
+                <div class="my-booking-meta">
+                  <span><strong>Titre:</strong> {{ booking.title if booking.title else 'Sans titre' }}</span>
+                  <span><strong>Personnes:</strong> {{ booking.people_count }}</span>
+                  <span><strong>Partage:</strong> {{ 'Privée' if booking.is_private else 'Partagée' }}</span>
+                </div>
+              </div>
+              <p class="field-help">Réservation terminée: édition et annulation désactivées.</p>
+            </article>
+            {% endfor %}
+          </div>
+        </details>
+        {% endif %}
         {% else %}
         <div class="empty-state">Aucune réservation enregistrée pour votre compte.</div>
         {% endif %}

@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Menu | Sunny Vibe Nutrition</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v=styles_version) }}">
+</head>
+<body data-ui-mode="dark" data-theme="modern-gradient" class="with-left-nav menu-body">
+  <div class="layout app-layout">
+    {% include '_left_nav.html' %}
+    <main class="home-main">
+      <section class="home-hero" aria-labelledby="menuTitle">
+        <header class="home-hero-head">
+          <p class="home-kicker">Sunny Vibe Nutrition</p>
+          <h1 id="menuTitle">Menu</h1>
+        </header>
+
+        <div class="settings-shell public-menu-shell">
+          <div class="settings-tabs-wrap">
+            <div class="settings-tabs" id="publicMenuTabs">
+              <div class="settings-tabs-hover-indicator" id="publicMenuTabsHoverIndicator"></div>
+              <div class="settings-tabs-indicator" id="publicMenuTabsIndicator"></div>
+              {% for category in menu_categories %}
+              <button
+                class="settings-tab-btn{% if loop.first %} active{% endif %}"
+                type="button"
+                data-public-menu-tab="{{ category.key }}"
+              >
+                {{ category.label }}
+              </button>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="public-menu-filterbar">
+            <label class="menu-search-field public-menu-search-field">
+              <span class="menu-search-label">Recherche</span>
+              <input
+                id="publicMenuSearchInput"
+                class="menu-glow-input menu-search-input"
+                type="search"
+                placeholder="Rechercher un produit"
+                autocomplete="off"
+              >
+            </label>
+            <button class="btn primary public-menu-filter-btn" id="openMenuFlavorFilter" type="button">
+              Filtrer par saveurs
+            </button>
+            <span class="public-menu-filter-status" id="menuFlavorFilterStatus">Toutes les saveurs</span>
+          </div>
+
+          <div class="settings-tab-panels">
+            {% for category in menu_categories %}
+            {% set category_items = menu_items_by_category.get(category.key, []) %}
+            <section
+              class="settings-tab-panel public-menu-panel{% if loop.first %} is-active{% endif %}"
+              data-public-menu-panel="{{ category.key }}"
+              {% if not loop.first %}hidden{% endif %}
+            >
+              {% if category_items %}
+              <div class="menu-admin-items public-menu-items" data-public-menu-list>
+                {% for item in category_items %}
+                <article class="menu-admin-item public-menu-item" data-menu-product-card>
+                  <div class="public-menu-item-main">
+                    <div class="public-menu-item-head">
+                      <p class="menu-admin-item-title public-menu-item-title">{{ item.name }}</p>
+                      {% if category.key == 'all' %}
+                      <span class="public-menu-item-category">
+                        {{ (menu_categories | selectattr('key', 'equalto', item.category) | map(attribute='label') | first) or item.category }}
+                      </span>
+                      {% endif %}
+                    </div>
+                    {% if item.description %}
+                    <p class="menu-admin-item-copy">{{ item.description }}</p>
+                    {% endif %}
+                    {% if item.ingredients %}
+                    <div class="menu-admin-ingredient-list public-menu-ingredient-list" aria-label="Ingrédients">
+                      {% for ingredient in item.ingredients %}
+                      <span class="menu-admin-ingredient-pill public-menu-ingredient-pill" data-menu-flavor-value="{{ ingredient }}">{{ ingredient }}</span>
+                      {% endfor %}
+                    </div>
+                    {% endif %}
+                  </div>
+                  {% if item.price %}
+                  <span class="menu-admin-item-price">{{ item.price }}</span>
+                  {% endif %}
+                </article>
+                {% endfor %}
+              </div>
+              <div class="empty-state public-menu-filter-empty" data-menu-filter-empty hidden>Aucun produit ne correspond aux filtres.</div>
+              {% else %}
+              <div class="empty-state public-menu-empty">Aucun item dans cette section pour le moment.</div>
+              {% endif %}
+            </section>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="menuFlavorFilterModal" class="user-modal menu-flavor-filter-modal">
+    <div class="user-modal-head">
+      <h3>Filtrer par saveurs</h3>
+      <button class="btn" id="closeMenuFlavorFilter" type="button">Fermer</button>
+    </div>
+    <div class="user-modal-content">
+      {% if menu_ingredients %}
+      <div class="menu-flavor-filter-list">
+        {% for ingredient in menu_ingredients %}
+        <div class="menu-flavor-filter-row" data-menu-flavor-row data-menu-flavor-name="{{ ingredient }}">
+          <span class="menu-flavor-filter-name">{{ ingredient }}</span>
+          <label class="toggle-switch" for="menuFlavorFilter{{ loop.index }}">
+            <input
+              id="menuFlavorFilter{{ loop.index }}"
+              class="toggle-switch__input"
+              type="checkbox"
+              value="{{ ingredient }}"
+              data-menu-flavor-filter
+            >
+            <span class="toggle-switch__slider" aria-hidden="true"></span>
+            <span class="toggle-switch__status" aria-hidden="true"></span>
+          </label>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="modal-actions">
+        <button class="btn" id="clearMenuFlavorFilter" type="button">Tout désactiver</button>
+        <button class="btn primary" id="applyMenuFlavorFilter" type="button">Appliquer</button>
+      </div>
+      {% else %}
+      <div class="empty-state public-menu-empty">Aucune saveur enregistrée pour le moment.</div>
+      {% endif %}
+    </div>
+  </dialog>
+
+  <script>
+    (function initPublicMenuTabs() {
+      const tabsContainer = document.getElementById('publicMenuTabs');
+      const indicator = document.getElementById('publicMenuTabsIndicator');
+      const hoverIndicator = document.getElementById('publicMenuTabsHoverIndicator');
+      const tabs = tabsContainer ? tabsContainer.querySelectorAll('.settings-tab-btn[data-public-menu-tab]') : [];
+      const panels = document.querySelectorAll('.public-menu-panel[data-public-menu-panel]');
+
+      if (!tabsContainer || !indicator || !hoverIndicator || !tabs.length || !panels.length) {
+        return;
+      }
+
+      const setIndicatorPosition = (element, targetIndicator) => {
+        const containerRect = tabsContainer.getBoundingClientRect();
+        const elementRect = element.getBoundingClientRect();
+        const left = elementRect.left - containerRect.left;
+        targetIndicator.style.width = `${elementRect.width}px`;
+        targetIndicator.style.transform = `translateX(${left}px)`;
+      };
+
+      const hideHoverIndicator = () => {
+        hoverIndicator.style.opacity = '0';
+      };
+
+      const activateTab = (targetName) => {
+        tabs.forEach((tab) => {
+          const isActive = tab.dataset.publicMenuTab === targetName;
+          tab.classList.toggle('active', isActive);
+          if (isActive) {
+            setIndicatorPosition(tab, indicator);
+          }
+        });
+
+        panels.forEach((panel) => {
+          const isActive = panel.dataset.publicMenuPanel === targetName;
+          panel.classList.toggle('is-active', isActive);
+          panel.hidden = !isActive;
+        });
+
+        document.dispatchEvent(new CustomEvent('public-menu-tab-change', {
+          detail: { activeTab: targetName },
+        }));
+      };
+
+      tabs.forEach((tab) => {
+        tab.addEventListener('mouseenter', () => {
+          if (!tab.classList.contains('active')) {
+            setIndicatorPosition(tab, hoverIndicator);
+            hoverIndicator.style.opacity = '1';
+          }
+        });
+
+        tab.addEventListener('focus', () => {
+          if (!tab.classList.contains('active')) {
+            setIndicatorPosition(tab, hoverIndicator);
+            hoverIndicator.style.opacity = '1';
+          }
+        });
+
+        tab.addEventListener('mouseleave', hideHoverIndicator);
+        tab.addEventListener('blur', hideHoverIndicator);
+
+        tab.addEventListener('click', () => {
+          activateTab(tab.dataset.publicMenuTab);
+          hideHoverIndicator();
+        });
+      });
+
+      tabsContainer.addEventListener('mouseleave', hideHoverIndicator);
+
+      const syncIndicators = () => {
+        const activeTab = tabsContainer.querySelector('.settings-tab-btn.active');
+        if (activeTab) {
+          setIndicatorPosition(activeTab, indicator);
+        }
+        hideHoverIndicator();
+      };
+
+      window.addEventListener('load', syncIndicators);
+      window.addEventListener('resize', syncIndicators);
+      syncIndicators();
+    }());
+
+    (function initMenuFlavorFilter() {
+      const openButton = document.getElementById('openMenuFlavorFilter');
+      const closeButton = document.getElementById('closeMenuFlavorFilter');
+      const applyButton = document.getElementById('applyMenuFlavorFilter');
+      const clearButton = document.getElementById('clearMenuFlavorFilter');
+      const modal = document.getElementById('menuFlavorFilterModal');
+      const status = document.getElementById('menuFlavorFilterStatus');
+      const toggles = document.querySelectorAll('[data-menu-flavor-filter]');
+      const flavorRows = document.querySelectorAll('[data-menu-flavor-row]');
+      const cards = document.querySelectorAll('.public-menu-item[data-menu-product-card]');
+      const lists = document.querySelectorAll('[data-public-menu-list]');
+      const searchInput = document.getElementById('publicMenuSearchInput');
+
+      if (!openButton || !modal || !toggles.length || !cards.length) {
+        return;
+      }
+
+      const normalize = (value) => String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim()
+        .toLocaleLowerCase();
+
+      const selectedFlavors = () => Array.from(toggles)
+        .filter((toggle) => toggle.checked && !toggle.closest('[data-menu-flavor-row]')?.hidden)
+        .map((toggle) => normalize(toggle.value))
+        .filter(Boolean);
+
+      const flavorsForCard = (card) => {
+        return Array.from(card.querySelectorAll('[data-menu-flavor-value]'))
+          .map((flavor) => normalize(flavor.dataset.menuFlavorValue || flavor.textContent))
+          .filter(Boolean);
+      };
+
+      const nameForCard = (card) => normalize(card.querySelector('.public-menu-item-title')?.textContent || '');
+
+      const activePanel = () => document.querySelector('.public-menu-panel.is-active[data-public-menu-panel]');
+
+      const activeFlavorSet = () => {
+        const panel = activePanel();
+        return new Set(Array.from(panel?.querySelectorAll('[data-menu-flavor-value]') || [])
+          .map((flavor) => normalize(flavor.dataset.menuFlavorValue || flavor.textContent))
+          .filter(Boolean));
+      };
+
+      const syncAvailableFlavorRows = () => {
+        const availableFlavors = activeFlavorSet();
+        flavorRows.forEach((row) => {
+          const toggle = row.querySelector('[data-menu-flavor-filter]');
+          const isAvailable = availableFlavors.has(normalize(row.dataset.menuFlavorName || toggle?.value || ''));
+          row.hidden = !isAvailable;
+          if (!isAvailable && toggle) {
+            toggle.checked = false;
+          }
+        });
+      };
+
+      const updateEmptyStates = () => {
+        lists.forEach((list) => {
+          const visibleCount = Array.from(list.querySelectorAll('.public-menu-item'))
+            .filter((card) => !card.classList.contains('is-filtered-out')).length;
+          const emptyState = list.nextElementSibling?.matches('[data-menu-filter-empty]')
+            ? list.nextElementSibling
+            : null;
+          if (emptyState) {
+            emptyState.hidden = visibleCount > 0;
+          }
+        });
+      };
+
+      const applyFilter = () => {
+        const selected = selectedFlavors();
+        const query = normalize(searchInput?.value || '');
+        cards.forEach((card) => {
+          const cardFlavors = flavorsForCard(card);
+          const matchesFlavors = selected.every((flavor) => cardFlavors.includes(flavor));
+          const matchesSearch = !query || nameForCard(card).includes(query);
+          card.classList.toggle('is-filtered-out', !matchesFlavors || !matchesSearch);
+        });
+
+        if (status) {
+          const statusParts = [];
+          if (query) {
+            statusParts.push('Recherche active');
+          }
+          if (selected.length) {
+            statusParts.push(`${selected.length} saveur${selected.length > 1 ? 's' : ''} active${selected.length > 1 ? 's' : ''}`);
+          }
+          status.textContent = statusParts.length ? statusParts.join(' · ') : 'Tous les produits';
+        }
+
+        updateEmptyStates();
+      };
+
+      openButton.addEventListener('click', () => {
+        syncAvailableFlavorRows();
+        modal.showModal();
+      });
+
+      closeButton?.addEventListener('click', () => {
+        modal.close();
+      });
+
+      applyButton?.addEventListener('click', () => {
+        applyFilter();
+        modal.close();
+      });
+
+      clearButton?.addEventListener('click', () => {
+        toggles.forEach((toggle) => {
+          toggle.checked = false;
+        });
+        applyFilter();
+      });
+
+      toggles.forEach((toggle) => {
+        toggle.addEventListener('change', applyFilter);
+      });
+
+      searchInput?.addEventListener('input', applyFilter);
+      document.addEventListener('public-menu-tab-change', () => {
+        syncAvailableFlavorRows();
+        applyFilter();
+      });
+
+      syncAvailableFlavorRows();
+      applyFilter();
+    }());
+  </script>
+</body>
+</html>

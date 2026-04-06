@@ -1,0 +1,89 @@
+{% extends 'admin_dashboard_base.html' %}
+
+{% block admin_panel %}
+        <section id="bookings-panel" class="admin-section tab-panel {% if active_tab == 'bookings-panel' %}is-active{% endif %}">
+          <section id="bookingsOverviewPanel" class="bookings-overview-panel">
+            <div id="calendarMobileList" class="calendar-mobile-list bookings-overview-list" aria-label="Liste des plages disponibles"></div>
+          </section>
+
+          <section class="bookings-calendar-bootstrap" hidden aria-hidden="true">
+            <section class="calendar-panel">
+              <div class="calendar-panel-head">
+                <h1>SunnyGym</h1>
+                <p class="subtitle">Gestion interne.</p>
+              </div>
+
+              <div class="calendar-nav" aria-label="Navigation des mois">
+                <button id="prevMonthBtn" class="nav-btn" type="button" aria-label="Mois précédent">&lsaquo;</button>
+                <h2 id="monthLabel" class="month-label"></h2>
+                <button id="nextMonthBtn" class="nav-btn" type="button" aria-label="Mois suivant">&rsaquo;</button>
+              </div>
+
+              <div class="reservation-calendar-wrapper">
+                <div class="weekdays" aria-hidden="true">
+                  <span>Lun</span>
+                  <span>Mar</span>
+                  <span>Mer</span>
+                  <span>Jeu</span>
+                  <span>Ven</span>
+                  <span>Sam</span>
+                  <span>Dim</span>
+                </div>
+
+                <div id="calendarGrid" class="day-grid" role="grid" aria-label="Calendrier mensuel"></div>
+              </div>
+
+              <div class="calendar-legend">
+                <span><i class="legend-dot green"></i> Disponibilités</span>
+                <span><i class="legend-dot purple"></i> Réservé partiel</span>
+                <span><i class="legend-dot red"></i> Complet ou fermé</span>
+              </div>
+            </section>
+          </section>
+
+          <section id="bookingManagerPanel" class="booking-manager-panel" hidden>
+            <div class="booking-manager-toolbar" aria-label="Navigation par date">
+              <button id="bookingManagerPrevDateBtn" class="nav-btn booking-manager-arrow-btn" type="button" aria-label="Date précédente">&lsaquo;</button>
+              <button id="bookingManagerDateBtn" class="booking-manager-date-btn" type="button" aria-label="Revenir à l'aperçu">
+                <span class="booking-manager-date-kicker">Date sélectionnée</span>
+                <span id="bookingManagerDateLabel" class="booking-manager-date-label">Choisissez une date</span>
+                <span class="booking-manager-date-hint">Cliquez pour revenir à l’aperçu</span>
+              </button>
+              <button id="bookingManagerNextDateBtn" class="nav-btn booking-manager-arrow-btn" type="button" aria-label="Date suivante">&rsaquo;</button>
+            </div>
+
+            <div class="booking-manager-grid">
+              <section class="day-panel">
+                <div class="day-panel-head">
+                  <h2 id="selectedDateLabel">Jour sélectionné</h2>
+                  <p id="selectedDateSubtext" class="subtitle">Choisissez une date dans l'aperçu des plages disponibles.</p>
+                </div>
+
+                <div id="daySummary" class="day-summary"></div>
+                <div id="timelinePlaceHeaders" class="timeline-place-headers" hidden></div>
+                <div class="timeline-legend" aria-label="Légende du planificateur">
+                  <span class="timeline-legend__item">
+                    <i class="timeline-legend__dot booking"></i>
+                    Réservation
+                  </span>
+                  <span class="timeline-legend__item">
+                    <i class="timeline-legend__dot private"></i>
+                    Réservation privée
+                  </span>
+                  <span class="timeline-legend__item">
+                    <i class="timeline-legend__dot blocked"></i>
+                    Blocage
+                  </span>
+                </div>
+                <div id="timelineContainer" class="timeline-container"></div>
+              </section>
+
+              <section class="config-section-block bookings-details-panel">
+                <h3>Détails des réservations (ordre d’arrivée)</h3>
+                <p id="adminBookingsDetailsDateLabel" class="subtitle">Date sélectionnée: -</p>
+                <div id="adminBookingsDetailsList" class="booking-day-list"></div>
+              </section>
+            </div>
+          </section>
+        </section>
+{% endblock %}

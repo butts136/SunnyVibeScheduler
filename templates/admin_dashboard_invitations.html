@@ -1,0 +1,107 @@
+{% extends 'admin_dashboard_base.html' %}
+{% from '_form_controls.html' import toggle %}
+
+{% block admin_panel %}
+        <section id="invitation-codes-panel" class="admin-section tab-panel {% if active_tab == 'invitation-codes-panel' %}is-active{% endif %}">
+          <h2>Code d'invitation</h2>
+          <p class="subtitle">Générez des codes à usage unique ou définissez un code personnalisé obligatoire.</p>
+
+          {% if generated_invitation_code_notice %}
+          <div class="alert success">{{ generated_invitation_code_notice }}</div>
+          {% endif %}
+
+          <div class="invitation-mode-switch" role="tablist" aria-label="Type de code d'invitation">
+            <button class="invitation-mode-btn is-active" type="button" data-invitation-mode="unique">Code unique</button>
+            <button class="invitation-mode-btn" type="button" data-invitation-mode="custom">Code personnalisé</button>
+          </div>
+
+          <div class="invitation-mode-panel is-active" data-invitation-panel="unique">
+            <form method="post" class="reservation-config-form" novalidate>
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <input type="hidden" name="admin_action" value="generate_invitation_code">
+
+              <section class="config-section-block">
+                <h3>Code à usage unique</h3>
+                <p class="field-help">Chaque code est valide une seule fois pour créer un compte utilisateur.</p>
+
+                <div class="config-row">
+                  <label for="one_time_validity_days_generate">Validité du code (jours)</label>
+                  <p class="field-help">Par défaut 15 jours.</p>
+                  <input id="one_time_validity_days_generate" type="number" min="1" max="365" name="one_time_validity_days" value="{{ invitation_config.one_time_validity_days }}" required>
+                </div>
+
+                <div class="actions">
+                  <button class="btn primary" type="submit">Générer un code à usage unique (6 chiffres)</button>
+                </div>
+              </section>
+            </form>
+
+            <section class="config-section-block">
+              <h3>Historique des codes uniques</h3>
+              {% if invitation_codes %}
+              <div class="bookings-table-wrap">
+                <table class="bookings-table">
+                  <thead>
+                    <tr>
+                      <th>Code</th>
+                      <th>Statut</th>
+                      <th>Expire le</th>
+                      <th>Utilisé le</th>
+                      <th>Créé le</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for row in invitation_codes %}
+                    <tr>
+                      <td>{{ row.code }}</td>
+                      <td>{{ row.status }}</td>
+                      <td>{{ row.expires_at }}</td>
+                      <td>{{ row.used_at if row.used_at else '-' }}</td>
+                      <td>{{ row.created_at }}</td>
+                      <td>
+                        <form method="post" class="inline-form" onsubmit="return confirm('Supprimer ce code invitation ?');">
+                          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                          <input type="hidden" name="admin_action" value="delete_invitation_code">
+                          <input type="hidden" name="invitation_code_id" value="{{ row.id }}">
+                          <button class="btn btn-icon-danger" type="submit" title="Supprimer le code" aria-label="Supprimer le code">&times;</button>
+                        </form>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              {% else %}
+              <div class="empty-state">Aucun code unique généré pour le moment.</div>
+              {% endif %}
+            </section>
+          </div>
+
+          <div class="invitation-mode-panel" data-invitation-panel="custom" hidden>
+            <form method="post" class="reservation-config-form" novalidate>
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <input type="hidden" name="admin_action" value="save_invitation_config">
+
+              <section class="config-section-block">
+                <h3>Code personnalisé</h3>
+                <p class="field-help">Quand activé, ce code devient obligatoire pour toutes les créations de compte.</p>
+
+                <div class="config-row checkbox-row">
+                  <label for="custom_code_enabled">Activer le code personnalisé global</label>
+                  {{ toggle('custom_code_enabled', 'custom_code_enabled', invitation_config.custom_code_enabled) }}
+                </div>
+
+                <div class="config-row">
+                  <label for="custom_code">Code personnalisé</label>
+                  <input id="custom_code" type="text" maxlength="32" name="custom_code" value="{{ invitation_config.custom_code }}">
+                </div>
+
+                <div class="actions">
+                  <button class="btn primary" type="submit">Enregistrer la configuration</button>
+                </div>
+              </section>
+            </form>
+          </div>
+        </section>
+{% endblock %}

@@ -1,0 +1,7 @@
+{% macro toggle(id, name, checked=False) -%}
+<label class="toggle-switch" for="{{ id }}">
+  <input id="{{ id }}" class="toggle-switch__input" type="checkbox" name="{{ name }}" {% if checked %}checked{% endif %}>
+  <span class="toggle-switch__slider" aria-hidden="true"></span>
+  <span class="toggle-switch__status" aria-hidden="true"></span>
+</label>
+{%- endmacro %}
