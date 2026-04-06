@@ -223,6 +223,16 @@
       const historyList = (user.recent_bookings || [])
         .map((item) => `<li>${escapeHtml(item.start_display)} - ${escapeHtml(item.end_display)}${item.title ? ` (${escapeHtml(item.title)})` : ''}</li>`)
         .join('');
+      const adminAccessActions = user.can_delete_admin_account
+        ? `
+          <form method="post" class="inline-form" onsubmit="return confirm('Supprimer cet accès administrateur ?');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <input type="hidden" name="admin_action" value="delete_admin_account">
+            <input type="hidden" name="admin_identifier" value="${escapeHtml(user.admin_account_identifier)}">
+            <button class="btn danger" type="submit">Supprimer accès admin</button>
+          </form>
+        `
+        : '';
       const protectedActions = isProtectedSuperAdminUser
         ? `
           <div class="alert success full-width">Compte utilisateur SuperAdmin protégé. Utilisé pour les réservations de test.</div>
@@ -233,6 +243,8 @@
           {% endif %}
         `
         : `
+          ${adminAccessActions}
+
           <form method="post" class="inline-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <input type="hidden" name="admin_action" value="toggle_user_block">

@@ -4380,6 +4380,32 @@ def admin_dashboard():
                 except ValueError as exc:
                     errors.append(str(exc))
 
+        if admin_action == 'delete_admin_account':
+            active_tab = 'users-panel'
+            target_identifier = _normalize_admin_identifier(request.form.get('admin_identifier', ''))
+            current_admin_identifier = _normalize_admin_identifier(session.get('admin_identifier', ''))
+
+            if not target_identifier:
+                errors.append("Compte administrateur invalide.")
+            elif target_identifier == current_admin_identifier:
+                errors.append("Vous ne pouvez pas supprimer le compte administrateur actuellement connecté.")
+            elif target_identifier == SUPER_ADMIN_IDENTIFIER:
+                errors.append("Le compte SuperAdmin est protégé.")
+            else:
+                admin_accounts_to_keep = []
+                removed_admin_account = False
+                for account in _load_admin_accounts():
+                    if account.get('identifier') == target_identifier:
+                        removed_admin_account = True
+                        continue
+                    admin_accounts_to_keep.append(account)
+
+                if not removed_admin_account:
+                    errors.append("Compte administrateur introuvable.")
+                else:
+                    _save_admin_accounts(admin_accounts_to_keep)
+                    success_message = "Compte administrateur supprimé."
+
         if admin_action == 'update_super_admin_password':
             active_tab = 'users-panel'
             current_password = request.form.get('super_admin_current_password', '')
@@ -4907,17 +4933,54 @@ def admin_dashboard():
     bookings = _load_bookings_for_admin()
     bookings_grouped = _group_bookings_by_date(bookings)
     users = _load_users_for_admin()
-    admin_account_identifiers = {account.get('identifier') for account in admin_accounts if account.get('identifier')}
-    for user in users:
-        user['is_admin_account_user'] = (
-            str(user.get('email', '')).strip().lower() in admin_account_identifiers
-            and not user.get('is_super_admin_user')
-        )
-    user_emails = {str(user.get('email', '')).strip().lower() for user in users if user.get('email')}
-    admin_account_cards = [
-        account
+    current_admin_identifier = _normalize_admin_identifier(session.get('admin_identifier', ''))
+    admin_account_by_identifier = {
+        account.get('identifier'): account
         for account in admin_accounts
-        if not account.get('is_super_admin') and account.get('identifier') not in user_emails
+        if account.get('identifier')
+    }
+    linked_user_admin_identifiers = set()
+    for user in users:
+        user_admin_identifiers = [
+            _normalize_admin_identifier(user.get('email', '')),
+            _normalize_admin_identifier(user.get('username', '')),
+        ]
+        user_admin_identifiers = [identifier for identifier in user_admin_identifiers if identifier]
+        matched_admin_identifiers = [
+            identifier
+            for identifier in user_admin_identifiers
+            if identifier in admin_account_by_identifier
+        ]
+        linked_user_admin_identifiers.update(matched_admin_identifiers)
+        matched_admin_identifier = (
+            current_admin_identifier
+            if current_admin_identifier in matched_admin_identifiers
+            else (matched_admin_identifiers[0] if matched_admin_identifiers else '')
+        )
+        matched_admin_account = (
+            admin_account_by_identifier.get(matched_admin_identifier)
+            if matched_admin_identifier
+            else None
+        )
+
+        user['admin_account_identifier'] = matched_admin_account['identifier'] if matched_admin_account else ''
+        user['is_admin_account_user'] = bool(matched_admin_account and not user.get('is_super_admin_user'))
+        user['can_delete_admin_account'] = bool(
+            matched_admin_account
+            and matched_admin_account.get('identifier') != current_admin_identifier
+            and not matched_admin_account.get('is_super_admin')
+        )
+    admin_account_cards = [
+        {
+            **account,
+            'can_delete': (
+                account.get('identifier') != current_admin_identifier
+                and not account.get('is_super_admin')
+            ),
+        }
+        for account in admin_accounts
+        if not account.get('is_super_admin')
+        and account.get('identifier') not in linked_user_admin_identifiers
     ]
     invitation_codes = _load_invitation_codes_for_admin()
     blocked_slots = _load_blocked_slots_for_admin()

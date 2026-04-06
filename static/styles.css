@@ -9673,10 +9673,24 @@ input[type="number"].number-input {
 
 .admin-account-card {
   cursor: default;
+  align-content: start;
 }
 
 .admin-account-card:hover {
   transform: none;
+}
+
+.admin-account-delete-form {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 0.55rem;
+}
+
+.admin-account-delete-btn {
+  width: auto;
+  min-height: 34px;
+  padding: 0.38rem 0.72rem;
+  font-size: 0.78rem;
 }
 
 .super-admin-password-form {
