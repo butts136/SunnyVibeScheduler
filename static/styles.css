@@ -9705,12 +9705,12 @@ input[type="number"].number-input {
 }
 
 .admin-account-card {
-  cursor: default;
+  cursor: pointer;
   align-content: start;
 }
 
 .admin-account-card:hover {
-  transform: none;
+  transform: translateY(-1px);
 }
 
 .admin-account-delete-form {
@@ -10766,7 +10766,7 @@ body.admin-body #bookings-panel .booking-manager-date-hint {
 
 body.admin-body #bookings-panel .booking-manager-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 1rem;
   align-items: start;
 }
@@ -10846,11 +10846,11 @@ body.admin-body.bookings-manager-open #bookings-panel {
 body.admin-body.bookings-manager-open #bookings-panel .booking-manager-grid {
   flex: 1 1 auto;
   min-height: 0;
-  grid-template-rows: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1.35fr) minmax(180px, 0.65fr);
   align-items: stretch;
   align-content: stretch;
-  grid-template-columns: minmax(0, 1.45fr) minmax(360px, 1fr);
-  gap: 1.15rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.9rem;
   overflow: hidden;
 }
 

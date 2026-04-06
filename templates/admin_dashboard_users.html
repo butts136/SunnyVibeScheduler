@@ -100,6 +100,12 @@
             {% for account in admin_account_cards %}
             <article
               class="user-card-btn admin-account-card"
+              role="button"
+              tabindex="0"
+              data-admin-account-card
+              data-admin-identifier="{{ account.identifier }}"
+              data-admin-display-name="{{ account.display_name }}"
+              data-admin-can-delete="{{ '1' if account.can_delete else '0' }}"
               data-search="{{ account.display_name }} {{ account.identifier }} Administrateur Accès complet"
             >
               <span class="user-card-name">{{ account.display_name }}</span>
@@ -109,18 +115,6 @@
                 · Compte actuel
                 {% endif %}
               </span>
-              {% if account.can_delete %}
-              <form
-                method="post"
-                class="admin-account-delete-form"
-                onsubmit="return confirm('Supprimer cet accès administrateur ?');"
-              >
-                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                <input type="hidden" name="admin_action" value="delete_admin_account">
-                <input type="hidden" name="admin_identifier" value="{{ account.identifier }}">
-                <button class="btn danger admin-account-delete-btn" type="submit">Supprimer admin</button>
-              </form>
-              {% endif %}
             </article>
             {% endfor %}
 

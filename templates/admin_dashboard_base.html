@@ -302,6 +302,40 @@
       `;
     };
 
+    const renderAdminAccountModal = (card) => {
+      if (!modalUserTitle || !modalUserContent) {
+        return;
+      }
+
+      const displayName = card.dataset.adminDisplayName || card.dataset.adminIdentifier || 'Administrateur';
+      const identifier = card.dataset.adminIdentifier || '';
+      const canDelete = card.dataset.adminCanDelete === '1';
+      const adminActions = canDelete
+        ? `
+          <form method="post" class="inline-form" onsubmit="return confirm('Supprimer cet accès administrateur ?');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <input type="hidden" name="admin_action" value="delete_admin_account">
+            <input type="hidden" name="admin_identifier" value="${escapeHtml(identifier)}">
+            <button class="btn danger" type="submit">Supprimer admin</button>
+          </form>
+        `
+        : '<div class="alert success full-width">Ce compte administrateur est le compte actuellement connecté.</div>';
+
+      modalUserTitle.textContent = displayName;
+      modalUserContent.innerHTML = `
+        <div class="user-details-grid">
+          <div><strong>Type</strong><span>Administrateur</span></div>
+          <div><strong>Identifiant</strong><span>${escapeHtml(identifier || '-')}</span></div>
+          <div><strong>Accès</strong><span>Complet</span></div>
+          <div><strong>Statut</strong><span>${canDelete ? 'Supprimable' : 'Compte actuel'}</span></div>
+        </div>
+
+        <div class="modal-actions">
+          ${adminActions}
+        </div>
+      `;
+    };
+
     const parseTimeToMinutes = (timeText) => {
       if (!/^\d{2}:\d{2}$/.test(String(timeText || ''))) {
         return null;
@@ -576,7 +610,26 @@
 
     userCards.forEach((card) => {
       card.addEventListener('click', () => {
+        if (card.hasAttribute('data-admin-account-card')) {
+          if (!userModal) {
+            return;
+          }
+          renderAdminAccountModal(card);
+          userModal.showModal();
+          return;
+        }
         openUserDetailsById(card.dataset.userId);
+      });
+
+      card.addEventListener('keydown', (event) => {
+        if (!card.hasAttribute('data-admin-account-card')) {
+          return;
+        }
+        if (event.key !== 'Enter' && event.key !== ' ') {
+          return;
+        }
+        event.preventDefault();
+        card.click();
       });
     });
 
