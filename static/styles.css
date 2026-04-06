@@ -7612,6 +7612,8 @@ input[type="number"].number-input {
   }
 
   .left-nav {
+    display: flex !important;
+    flex-direction: column;
     position: fixed;
     top: 0;
     left: 0;
@@ -7622,6 +7624,18 @@ input[type="number"].number-input {
     transform: translateX(-104%);
     transition: transform 0.22s ease;
     z-index: 1300;
+  }
+
+  .left-nav .nav-label {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+    border: 0;
   }
 
   .left-nav.is-open {
@@ -11737,6 +11751,19 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
 
   .hours-special-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hours-weekly-panel {
+    overflow-x: visible;
+  }
+
+  .hours-weekly-grid {
+    grid-template-columns: minmax(0, 1fr);
+    min-width: 0;
+  }
+
+  .hours-weekly-row {
+    grid-column: auto !important;
   }
 
   .settings-option-row {
