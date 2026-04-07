@@ -225,8 +225,18 @@
       const statusClass = user.is_blocked ? 'blocked' : 'active';
       const limitValue = user.reservation_limit === null ? '' : user.reservation_limit;
       const historyList = (user.recent_bookings || [])
-        .map((item) => `<li>${escapeHtml(item.start_display)} - ${escapeHtml(item.end_display)}${item.title ? ` (${escapeHtml(item.title)})` : ''}</li>`)
+        .map((item) => {
+          const statusLabel = item.booking_status === 'present'
+            ? 'Présent'
+            : item.booking_status === 'no_show'
+              ? 'Pas venue'
+              : 'À venir';
+          return `<li>${escapeHtml(item.start_display)} - ${escapeHtml(item.end_display)} · ${statusLabel}${item.title ? ` (${escapeHtml(item.title)})` : ''}</li>`;
+        })
         .join('');
+      const reliabilityText = user.tracked_booking_count
+        ? `${escapeHtml(user.reliability_rate)}% (${escapeHtml(user.present_count)} / ${escapeHtml(user.tracked_booking_count)})`
+        : 'Aucune donnée';
       const adminAccessActions = user.can_delete_admin_account
         ? `
           <form method="post" class="inline-form" onsubmit="return confirm('Supprimer cet accès administrateur ?');">
@@ -293,6 +303,9 @@
           <div><strong>Statut</strong><span class="status-pill ${statusClass}">${statusText}</span></div>
           <div><strong>Limite réservations</strong><span>${user.reservation_limit === null ? 'Aucune' : escapeHtml(user.reservation_limit)}</span></div>
           <div><strong>Total réservations</strong><span>${escapeHtml(user.booking_count || 0)}</span></div>
+          <div><strong>Présences</strong><span>${escapeHtml(user.present_count || 0)}</span></div>
+          <div><strong>Pas venue</strong><span>${escapeHtml(user.no_show_count || 0)}</span></div>
+          <div><strong>Fiabilité</strong><span>${reliabilityText}</span></div>
           <div><strong>Dernière réservation</strong><span>${escapeHtml(user.last_booking_start || '-')}</span></div>
           <div><strong>Prochaine réservation</strong><span>${escapeHtml(user.next_booking_start || 'Aucune')}</span></div>
           <div class="full-width"><strong>Historique récent</strong>${historyList ? `<ul>${historyList}</ul>` : '<span>Aucune réservation.</span>'}</div>

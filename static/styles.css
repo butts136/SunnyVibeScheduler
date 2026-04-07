@@ -9751,6 +9751,12 @@ input[type="number"].number-input {
   font-size: 0.84rem;
 }
 
+.user-card-reliability {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
 .user-modal,
 .booking-modal,
 .calendar-day-modal {

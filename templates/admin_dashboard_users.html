@@ -93,6 +93,9 @@
                 Prochaine réservation: Aucune
                 {% endif %}
               </span>
+              <span class="user-card-reliability">
+                Présences: {{ user.present_count }} · Pas venue: {{ user.no_show_count }}
+              </span>
             </button>
             {% endif %}
             {% endfor %}
@@ -128,6 +131,9 @@
             >
               <span class="user-card-name">{{ user.first_name if user.first_name else user.email }} {{ user.last_name }}</span>
               <span class="user-card-subtitle">Administrateur · Accès complet</span>
+              <span class="user-card-reliability">
+                Présences: {{ user.present_count }} · Pas venue: {{ user.no_show_count }}
+              </span>
             </button>
             {% endif %}
             {% endfor %}
@@ -147,6 +153,9 @@
                 {% else %}
                 Prochaine réservation: Aucune
                 {% endif %}
+              </span>
+              <span class="user-card-reliability">
+                Présences: {{ user.present_count }} · Pas venue: {{ user.no_show_count }}
               </span>
             </button>
             {% endif %}

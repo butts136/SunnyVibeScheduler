@@ -2035,7 +2035,8 @@ def _load_users_for_admin(limit=300):
                 b.user_id,
                 b.start,
                 b.end,
-                b.title
+                b.title,
+                b.booking_status
             FROM bookings b
             ORDER BY b.start DESC
             '''
@@ -2049,6 +2050,8 @@ def _load_users_for_admin(limit=300):
     now_local = _now_in_reservation_timezone(reservation_config, tzinfo=reservation_tz)
 
     booking_count_by_user = {}
+    present_count_by_user = {}
+    no_show_count_by_user = {}
     last_booking_by_user = {}
     next_booking_by_user = {}
     recent_by_user = {}
@@ -2063,6 +2066,11 @@ def _load_users_for_admin(limit=300):
             continue
 
         booking_count_by_user[user_id] = booking_count_by_user.get(user_id, 0) + 1
+        booking_status = row['booking_status'] or 'upcoming'
+        if booking_status == 'present':
+            present_count_by_user[user_id] = present_count_by_user.get(user_id, 0) + 1
+        elif booking_status == 'no_show':
+            no_show_count_by_user[user_id] = no_show_count_by_user.get(user_id, 0) + 1
 
         current_last = last_booking_by_user.get(user_id)
         if current_last is None or start_dt > current_last:
@@ -2082,6 +2090,7 @@ def _load_users_for_admin(limit=300):
                 'start_display': start_dt.strftime('%Y-%m-%d %H:%M') if start_dt else str(row['start']),
                 'end_display': end_dt.strftime('%Y-%m-%d %H:%M') if end_dt else str(row['end']),
                 'title': row['title'] or '',
+                'booking_status': booking_status,
             }
         )
 
@@ -2094,6 +2103,10 @@ def _load_users_for_admin(limit=300):
             first_name = row['username']
         if not first_name and row['email']:
             first_name = str(row['email']).split('@', 1)[0]
+        present_count = int(present_count_by_user.get(row['id'], 0))
+        no_show_count = int(no_show_count_by_user.get(row['id'], 0))
+        tracked_booking_count = present_count + no_show_count
+        reliability_rate = round((present_count / tracked_booking_count) * 100) if tracked_booking_count else None
 
         users.append(
             {
@@ -2110,6 +2123,10 @@ def _load_users_for_admin(limit=300):
                 'must_change_password': bool(row['must_change_password']),
                 'is_super_admin_user': _is_super_admin_user_email(row['email']),
                 'booking_count': int(booking_count_by_user.get(row['id'], 0)),
+                'present_count': present_count,
+                'no_show_count': no_show_count,
+                'tracked_booking_count': tracked_booking_count,
+                'reliability_rate': reliability_rate,
                 'last_booking_start': last_booking_dt.strftime('%Y-%m-%d %H:%M') if last_booking_dt else '',
                 'next_booking_start': next_booking_dt.strftime('%Y-%m-%d %H:%M') if next_booking_dt else '',
                 'recent_bookings': recent_by_user.get(row['id'], []),
