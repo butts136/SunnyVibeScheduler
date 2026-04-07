@@ -2081,7 +2081,7 @@
 
     const gridRect = bookingManagerGridEl.getBoundingClientRect();
     const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-    const availableHeight = Math.max(viewportHeight - gridRect.top, 260);
+    const availableHeight = Math.max(viewportHeight - gridRect.top - 1, 260);
     bookingManagerGridEl.style.height = `${availableHeight}px`;
     bookingManagerGridEl.style.minHeight = `${availableHeight}px`;
     bookingManagerGridEl.style.maxHeight = `${availableHeight}px`;

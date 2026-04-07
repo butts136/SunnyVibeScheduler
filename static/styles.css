@@ -10862,10 +10862,10 @@ body.admin-body.bookings-manager-open #bookings-panel {
 body.admin-body.bookings-manager-open #bookings-panel .booking-manager-grid {
   flex: 1 1 auto;
   min-height: 0;
-  grid-template-rows: minmax(0, 1.35fr) minmax(180px, 0.65fr);
+  grid-template-rows: minmax(0, 1fr);
   align-items: stretch;
   align-content: stretch;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.45fr) minmax(360px, 1fr);
   gap: 0.9rem;
   overflow: hidden;
 }
@@ -11264,8 +11264,16 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
   }
 
   body.admin-body.bookings-manager-open #bookings-panel .booking-manager-grid {
+    grid-template-columns: minmax(0, 1fr);
     grid-template-rows: minmax(0, 1fr);
     gap: 0.6rem;
+  }
+
+  body.admin-body.bookings-manager-open #bookings-panel .booking-manager-panel,
+  body.admin-body.bookings-manager-open #bookings-panel .booking-manager-panel[data-mobile-view="grid"] {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
   }
 
   body.admin-body.bookings-manager-open #bookings-panel .booking-manager-panel[data-mobile-view="grid"] .booking-manager-grid {
@@ -11280,6 +11288,8 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
     border-radius: 0;
     background: transparent;
     box-shadow: none;
+    min-height: 0;
+    height: 100%;
     gap: 0;
   }
 
