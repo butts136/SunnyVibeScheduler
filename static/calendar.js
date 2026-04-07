@@ -1122,7 +1122,12 @@
         }
       }
     }
-    const timelineMinuteHeight = (timelineHourHeight * timelineScale) / 60;
+    let timelineMinuteHeight = (timelineHourHeight * timelineScale) / 60;
+    if (isMobileBookingsManager && availableHeight > mobileTimelineHeaderHeight) {
+      const availableTrackHeight = Math.max(availableHeight - mobileTimelineHeaderHeight, 1);
+      const visibleSpanMinutes = Math.max(1, Math.min(spanMinutes, 180));
+      timelineMinuteHeight = availableTrackHeight / visibleSpanMinutes;
+    }
     const trackContentHeight = spanMinutes * timelineMinuteHeight;
     const trackHeight = trackContentHeight + mobileTimelineHeaderHeight;
     const tickStepMinutes = chooseTimelineStepMinutes(spanMinutes, trackHeight, isMobileBookingsManager);
