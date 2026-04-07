@@ -10345,6 +10345,10 @@ input[type="number"].number-input {
   display: contents;
 }
 
+.timeline-place-headers--integrated {
+  display: none;
+}
+
 .timeline-legend {
   display: flex;
   flex-wrap: wrap;
@@ -11264,6 +11268,11 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
     gap: 0.6rem;
   }
 
+  body.admin-body.bookings-manager-open #bookings-panel .booking-manager-panel[data-mobile-view="grid"] .booking-manager-grid {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
   body.admin-body.bookings-manager-open #bookings-panel .day-panel {
     padding: 0 0.15rem;
     border: 0;
@@ -11283,12 +11292,16 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
 
   body.admin-body.bookings-manager-open #bookings-panel .timeline-place-headers {
     display: grid;
-    grid-template-columns: 42px max(calc(100% - 42px), calc(var(--capacity) * 78px));
+    grid-template-columns: 42px minmax(0, 1fr);
     gap: 0;
     margin-left: 0;
-    width: 100%;
+    width: max(100%, calc(42px + (var(--capacity) * 78px)));
     overflow-x: auto;
     scrollbar-width: none;
+  }
+
+  body.admin-body.bookings-manager-open #bookings-panel .day-panel > .timeline-place-headers:not(.timeline-place-headers--integrated) {
+    display: none;
   }
 
   body.admin-body.bookings-manager-open #bookings-panel .timeline-place-headers::-webkit-scrollbar {
@@ -11303,7 +11316,7 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
   body.admin-body.bookings-manager-open #bookings-panel .timeline-place-track {
     display: grid;
     grid-template-columns: repeat(var(--capacity), minmax(0, 1fr));
-    width: max(calc(100% - 42px), calc(var(--capacity) * 78px));
+    width: 100%;
     gap: 0;
   }
 
@@ -11327,6 +11340,15 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
     overflow: auto;
     overscroll-behavior: contain;
     touch-action: pan-x pan-y pinch-zoom;
+  }
+
+  body.admin-body.bookings-manager-open #bookings-panel .timeline-place-headers--integrated {
+    display: grid;
+    position: sticky;
+    top: 0;
+    z-index: 8;
+    background: linear-gradient(180deg, rgba(7, 12, 25, 0.98), rgba(7, 12, 25, 0.86));
+    backdrop-filter: blur(10px);
   }
 
   body.admin-body.bookings-manager-open #bookings-panel .timeline-track {

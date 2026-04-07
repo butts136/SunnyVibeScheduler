@@ -1063,9 +1063,8 @@
       addBookingBtn.disabled = !data.hasAvailability;
     }
 
-    renderTimelinePlaceHeaders(data.capacity, data.windows.length > 0);
-
     if (data.windows.length === 0) {
+      renderTimelinePlaceHeaders(data.capacity, false);
       timelineContainerEl.innerHTML = '<div class="empty-state">Aucune plage horaire n\'est disponible pour ce jour.</div>';
       return;
     }
@@ -1079,6 +1078,7 @@
       && mobileBookingsManagerQuery
       && mobileBookingsManagerQuery.matches
     );
+    renderTimelinePlaceHeaders(data.capacity, !isMobileBookingsManager);
     const timelineHourHeight = isMobileBookingsManager ? 72 : HOUR_HEIGHT;
     let timelineScale = 1;
     let availableHeight = 0;
@@ -1171,6 +1171,12 @@
     timelineTrackEl.appendChild(reservationsLayerEl);
 
     timelineContainerEl.innerHTML = '';
+    if (isMobileBookingsManager) {
+      const integratedHeaders = document.createElement('div');
+      integratedHeaders.className = 'timeline-place-headers timeline-place-headers--integrated';
+      populateTimelinePlaceHeaders(integratedHeaders, data.capacity);
+      timelineContainerEl.appendChild(integratedHeaders);
+    }
     timelineContainerEl.appendChild(timelineTrackEl);
   }
 
@@ -1199,19 +1205,29 @@
       return;
     }
 
-    timelinePlaceHeadersEl.innerHTML = '';
     if (!visible) {
+      timelinePlaceHeadersEl.innerHTML = '';
       timelinePlaceHeadersEl.hidden = true;
       return;
     }
 
-    const totalPlaces = Math.max(1, Number(capacity) || 1);
     timelinePlaceHeadersEl.hidden = false;
-    timelinePlaceHeadersEl.style.setProperty('--capacity', String(totalPlaces));
+    populateTimelinePlaceHeaders(timelinePlaceHeadersEl, capacity);
+  }
+
+  function populateTimelinePlaceHeaders(targetEl, capacity) {
+    if (!targetEl) {
+      return;
+    }
+
+    const totalPlaces = Math.max(1, Number(capacity) || 1);
+    targetEl.innerHTML = '';
+    targetEl.style.setProperty('--capacity', String(totalPlaces));
+
     const axis = document.createElement('span');
     axis.className = 'timeline-place-axis';
     axis.setAttribute('aria-hidden', 'true');
-    timelinePlaceHeadersEl.appendChild(axis);
+    targetEl.appendChild(axis);
 
     const track = document.createElement('div');
     track.className = 'timeline-place-track';
@@ -1222,7 +1238,7 @@
       chip.textContent = `Place ${index}`;
       track.appendChild(chip);
     }
-    timelinePlaceHeadersEl.appendChild(track);
+    targetEl.appendChild(track);
   }
 
   function summaryChip(label, value) {
