@@ -93,8 +93,17 @@
                 Prochaine réservation: Aucune
                 {% endif %}
               </span>
-              <span class="user-card-reliability">
-                Présences: {{ user.present_count }} · Pas venue: {{ user.no_show_count }}
+              <span
+                class="user-card-reliability{% if user.reliability_rate is none %} is-empty{% endif %}"
+                {% if user.reliability_rate is not none %}
+                style="--reliability: {{ user.reliability_rate }};"
+                {% endif %}
+              >
+                {% if user.reliability_rate is not none %}
+                Fiabilité {{ user.reliability_rate }}%
+                {% else %}
+                Fiabilité n/d
+                {% endif %}
               </span>
             </button>
             {% endif %}
@@ -131,8 +140,17 @@
             >
               <span class="user-card-name">{{ user.first_name if user.first_name else user.email }} {{ user.last_name }}</span>
               <span class="user-card-subtitle">Administrateur · Accès complet</span>
-              <span class="user-card-reliability">
-                Présences: {{ user.present_count }} · Pas venue: {{ user.no_show_count }}
+              <span
+                class="user-card-reliability{% if user.reliability_rate is none %} is-empty{% endif %}"
+                {% if user.reliability_rate is not none %}
+                style="--reliability: {{ user.reliability_rate }};"
+                {% endif %}
+              >
+                {% if user.reliability_rate is not none %}
+                Fiabilité {{ user.reliability_rate }}%
+                {% else %}
+                Fiabilité n/d
+                {% endif %}
               </span>
             </button>
             {% endif %}
@@ -154,8 +172,17 @@
                 Prochaine réservation: Aucune
                 {% endif %}
               </span>
-              <span class="user-card-reliability">
-                Présences: {{ user.present_count }} · Pas venue: {{ user.no_show_count }}
+              <span
+                class="user-card-reliability{% if user.reliability_rate is none %} is-empty{% endif %}"
+                {% if user.reliability_rate is not none %}
+                style="--reliability: {{ user.reliability_rate }};"
+                {% endif %}
+              >
+                {% if user.reliability_rate is not none %}
+                Fiabilité {{ user.reliability_rate }}%
+                {% else %}
+                Fiabilité n/d
+                {% endif %}
               </span>
             </button>
             {% endif %}
