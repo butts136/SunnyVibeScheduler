@@ -76,6 +76,7 @@
     selectedDate: usesDayPanelModal ? null : (isBookingsDashboardPage ? null : new Date(today)),
   };
   const dayPanelEl = document.getElementById('dayPanel') || document.querySelector('.day-panel');
+  const bookingsManagerDayPanelEl = document.querySelector('#bookings-panel .day-panel');
 
   const availabilityCache = new Map();
   const configuredOpeningHours = sanitizeOpeningHours(window.SUNNYVIBE_OPENING_HOURS || {});
@@ -1083,6 +1084,19 @@
     let timelineScale = 1;
     let availableHeight = 0;
     if (isBookingsDashboardPage && bookingsDashboardMode === 'manager' && timelineContainerEl) {
+      if (isMobileBookingsManager && bookingsManagerDayPanelEl) {
+        const containerRect = timelineContainerEl.getBoundingClientRect();
+        const panelRect = bookingsManagerDayPanelEl.getBoundingClientRect();
+        const availablePanelHeight = panelRect.bottom - containerRect.top;
+        if (availablePanelHeight > 0) {
+          timelineContainerEl.style.height = `${availablePanelHeight}px`;
+          timelineContainerEl.style.flexBasis = `${availablePanelHeight}px`;
+        }
+      } else {
+        timelineContainerEl.style.removeProperty('height');
+        timelineContainerEl.style.removeProperty('flex-basis');
+      }
+
       const timelineStyles = window.getComputedStyle(timelineContainerEl);
       const verticalPadding = (parseFloat(timelineStyles.paddingTop) || 0) + (parseFloat(timelineStyles.paddingBottom) || 0);
       availableHeight = Math.max(timelineContainerEl.clientHeight - verticalPadding, 0);
@@ -1224,10 +1238,12 @@
     targetEl.innerHTML = '';
     targetEl.style.setProperty('--capacity', String(totalPlaces));
 
-    const axis = document.createElement('span');
-    axis.className = 'timeline-place-axis';
-    axis.setAttribute('aria-hidden', 'true');
-    targetEl.appendChild(axis);
+    if (!targetEl.classList.contains('timeline-place-headers--integrated')) {
+      const axis = document.createElement('span');
+      axis.className = 'timeline-place-axis';
+      axis.setAttribute('aria-hidden', 'true');
+      targetEl.appendChild(axis);
+    }
 
     const track = document.createElement('div');
     track.className = 'timeline-place-track';
