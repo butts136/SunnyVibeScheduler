@@ -10721,6 +10721,10 @@ body.admin-body #bookings-panel .booking-manager-toolbar {
   align-items: stretch;
 }
 
+.booking-manager-mobile-tabs {
+  display: none;
+}
+
 body.admin-body #bookings-panel .booking-manager-arrow-btn {
   width: 42px;
 }
@@ -11230,8 +11234,33 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
     line-height: 1.05;
   }
 
+  body.admin-body #bookings-panel .booking-manager-mobile-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.35rem;
+    padding-inline: 0.15rem;
+  }
+
+  body.admin-body #bookings-panel .booking-manager-mobile-tab {
+    min-height: 34px;
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.045);
+    color: var(--muted);
+    font-size: 0.74rem;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  body.admin-body #bookings-panel .booking-manager-mobile-tab.is-active {
+    border-color: rgba(0, 164, 220, 0.62);
+    background: linear-gradient(180deg, rgba(0, 164, 220, 0.24), rgba(0, 164, 220, 0.1));
+    color: var(--text);
+    box-shadow: 0 0 0 2px rgba(0, 164, 220, 0.12);
+  }
+
   body.admin-body.bookings-manager-open #bookings-panel .booking-manager-grid {
-    grid-template-rows: minmax(0, 0.82fr) minmax(230px, 0.72fr);
+    grid-template-rows: minmax(0, 1fr);
     gap: 0.6rem;
   }
 
@@ -11241,6 +11270,15 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
     border-radius: 0;
     background: transparent;
     box-shadow: none;
+    gap: 0;
+  }
+
+  body.admin-body.bookings-manager-open #bookings-panel .booking-manager-panel[data-mobile-view="grid"] .bookings-details-panel {
+    display: none;
+  }
+
+  body.admin-body.bookings-manager-open #bookings-panel .booking-manager-panel[data-mobile-view="details"] .day-panel {
+    display: none;
   }
 
   body.admin-body.bookings-manager-open #bookings-panel .timeline-place-headers {
@@ -11282,7 +11320,7 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
 
   body.admin-body.bookings-manager-open #bookings-panel .timeline-container {
     width: 100%;
-    padding: 0.65rem 0;
+    padding: 0.35rem 0 0.65rem;
     border: 0;
     border-radius: 0;
     background: transparent;

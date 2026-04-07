@@ -203,6 +203,8 @@
     const confirmBookingDeleteBtn = document.getElementById('confirmBookingDeleteBtn');
     const adminBookingsDetailsList = document.getElementById('adminBookingsDetailsList');
     const adminBookingsDetailsDateLabel = document.getElementById('adminBookingsDetailsDateLabel');
+    const bookingManagerPanel = document.getElementById('bookingManagerPanel');
+    const bookingManagerMobileTabs = document.querySelectorAll('[data-booking-manager-mobile-tab]');
     let pendingBookingDeleteForm = null;
 
     const escapeHtml = (value) => {
@@ -597,6 +599,19 @@
       }
     };
 
+    const setBookingManagerMobileView = (view) => {
+      if (!bookingManagerPanel) {
+        return;
+      }
+      const safeView = view === 'details' ? 'details' : 'grid';
+      bookingManagerPanel.dataset.mobileView = safeView;
+      bookingManagerMobileTabs.forEach((tab) => {
+        const isActive = tab.dataset.bookingManagerMobileTab === safeView;
+        tab.classList.toggle('is-active', isActive);
+        tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      });
+    };
+
     const openUserDetailsById = (rawUserId) => {
       const userId = Number(rawUserId);
       const user = usersData.find((item) => Number(item.id) === userId);
@@ -632,6 +647,13 @@
         card.click();
       });
     });
+
+    bookingManagerMobileTabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        setBookingManagerMobileView(tab.dataset.bookingManagerMobileTab);
+      });
+    });
+    setBookingManagerMobileView('grid');
 
     document.addEventListener('click', (event) => {
       const passwordModalTrigger = event.target.closest('[data-open-super-admin-password-modal]');
@@ -684,6 +706,7 @@
         if (!bookingId) {
           return;
         }
+        setBookingManagerMobileView('grid');
         selectBookingInAdminView(bookingId, 'timeline');
         return;
       }
@@ -695,6 +718,7 @@
       if (!selectedDateKey) {
         return;
       }
+      setBookingManagerMobileView('grid');
       renderBookingsDetailListForDate(selectedDateKey);
     });
 
@@ -703,6 +727,7 @@
       if (!bookingId) {
         return;
       }
+      setBookingManagerMobileView('details');
       selectBookingInAdminView(bookingId, 'details');
     });
 
