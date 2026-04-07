@@ -11186,7 +11186,101 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
   }
 
   body.admin-body #bookings-panel .booking-manager-toolbar {
-    grid-template-columns: 38px minmax(0, 1fr) 38px;
+    grid-template-columns: 34px minmax(0, 1fr) 34px;
+    gap: 0.35rem;
+  }
+
+  body.admin-body #bookings-panel .booking-manager-arrow-btn {
+    width: 34px;
+    min-height: 38px;
+    padding: 0;
+  }
+
+  body.admin-body #bookings-panel .booking-manager-date-btn {
+    min-height: 46px;
+    padding: 0.34rem 0.45rem;
+    border-radius: 12px;
+    gap: 0.02rem;
+  }
+
+  body.admin-body #bookings-panel .booking-manager-date-kicker {
+    font-size: 0.54rem;
+    letter-spacing: 0.06em;
+  }
+
+  body.admin-body #bookings-panel .booking-manager-date-label {
+    font-size: 0.78rem;
+    line-height: 1.05;
+  }
+
+  body.admin-body #bookings-panel .booking-manager-date-hint {
+    font-size: 0.58rem;
+    line-height: 1.05;
+  }
+
+  body.admin-body.bookings-manager-open #bookings-panel .booking-manager-grid {
+    grid-template-rows: minmax(0, 1fr) minmax(150px, 0.55fr);
+    gap: 0.6rem;
+  }
+
+  body.admin-body.bookings-manager-open #bookings-panel .day-panel {
+    padding: 0 0.15rem;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  body.admin-body.bookings-manager-open #bookings-panel .timeline-place-headers {
+    margin-left: 42px;
+    width: calc(100% - 42px);
+    gap: 0;
+  }
+
+  body.admin-body.bookings-manager-open #bookings-panel .timeline-place-chip {
+    min-height: 20px;
+    border-radius: 0;
+    font-size: 0.62rem;
+    padding-inline: 0.15rem;
+  }
+
+  body.admin-body.bookings-manager-open #bookings-panel .timeline-legend {
+    margin-left: 42px;
+    gap: 0.28rem 0.55rem;
+    font-size: 0.72rem;
+  }
+
+  body.admin-body.bookings-manager-open #bookings-panel .timeline-container {
+    width: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    overflow: hidden;
+  }
+
+  body.admin-body.bookings-manager-open #bookings-panel .timeline-track {
+    width: calc(100% - 42px);
+    min-width: 0;
+    margin-left: 42px;
+  }
+
+  body.admin-body.bookings-manager-open #bookings-panel .time-marker {
+    left: -42px;
+    font-size: 0.62rem;
+  }
+
+  body.admin-body.bookings-manager-open #bookings-panel .timeline-reservation {
+    border-radius: 8px;
+    padding: 0.2rem 0.24rem;
+  }
+
+  body.admin-body.bookings-manager-open #bookings-panel .timeline-reservation-time {
+    font-size: 0.66rem;
+  }
+
+  body.admin-body.bookings-manager-open #bookings-panel .timeline-reservation-label {
+    font-size: 0.68rem;
   }
 }
 
