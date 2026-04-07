@@ -1082,6 +1082,8 @@
     renderTimelinePlaceHeaders(data.capacity, !isMobileBookingsManager);
     const timelineHourHeight = isMobileBookingsManager ? 72 : HOUR_HEIGHT;
     const mobileTimelineHeaderHeight = isMobileBookingsManager ? 24 : 0;
+    const mobileTimelineEndInset = isMobileBookingsManager ? 18 : 0;
+    const mobileTimelineNoScrollLimitMinutes = 240;
     let timelineScale = 1;
     let availableHeight = 0;
     if (isBookingsDashboardPage && bookingsDashboardMode === 'manager' && timelineContainerEl) {
@@ -1115,7 +1117,7 @@
       const baseHeight = (spanMinutes * timelineHourHeight) / 60;
       if (availableHeight > 0 && baseHeight > 0) {
         if (isMobileBookingsManager) {
-          const mobileMaxScale = spanMinutes > 240 ? 1 : 1.15;
+          const mobileMaxScale = spanMinutes > mobileTimelineNoScrollLimitMinutes ? 1 : 1.15;
           timelineScale = Math.min(mobileMaxScale, Math.max(1, availableHeight / baseHeight));
         } else {
           timelineScale = availableHeight / baseHeight;
@@ -1124,12 +1126,12 @@
     }
     let timelineMinuteHeight = (timelineHourHeight * timelineScale) / 60;
     if (isMobileBookingsManager && availableHeight > mobileTimelineHeaderHeight) {
-      const availableTrackHeight = Math.max(availableHeight - mobileTimelineHeaderHeight, 1);
-      const visibleSpanMinutes = Math.max(1, Math.min(spanMinutes, 240));
+      const availableTrackHeight = Math.max(availableHeight - mobileTimelineHeaderHeight - mobileTimelineEndInset, 1);
+      const visibleSpanMinutes = Math.max(1, Math.min(spanMinutes, mobileTimelineNoScrollLimitMinutes));
       timelineMinuteHeight = availableTrackHeight / visibleSpanMinutes;
     }
     const trackContentHeight = spanMinutes * timelineMinuteHeight;
-    const trackHeight = trackContentHeight + mobileTimelineHeaderHeight;
+    const trackHeight = trackContentHeight + mobileTimelineHeaderHeight + mobileTimelineEndInset;
     const tickStepMinutes = chooseTimelineStepMinutes(spanMinutes, trackHeight, isMobileBookingsManager);
 
     const timelineTrackEl = document.createElement('div');
