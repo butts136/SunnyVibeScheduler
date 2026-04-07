@@ -1065,6 +1065,7 @@
 
     if (data.windows.length === 0) {
       renderTimelinePlaceHeaders(data.capacity, false);
+      timelineContainerEl.removeAttribute('data-horizontal-overflow');
       timelineContainerEl.innerHTML = '<div class="empty-state">Aucune plage horaire n\'est disponible pour ce jour.</div>';
       return;
     }
@@ -1085,14 +1086,25 @@
     let availableHeight = 0;
     if (isBookingsDashboardPage && bookingsDashboardMode === 'manager' && timelineContainerEl) {
       if (isMobileBookingsManager) {
-        const containerRect = timelineContainerEl.getBoundingClientRect();
+        const targetRect = bookingManagerGridEl
+          ? bookingManagerGridEl.getBoundingClientRect()
+          : timelineContainerEl.getBoundingClientRect();
         const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-        const availableViewportHeight = viewportHeight - containerRect.top;
+        const availableViewportHeight = viewportHeight - targetRect.top;
         if (availableViewportHeight > 0) {
-          timelineContainerEl.style.height = `${availableViewportHeight}px`;
-          timelineContainerEl.style.flexBasis = `${availableViewportHeight}px`;
+          const clampedHeight = Math.max(availableViewportHeight, 260);
+          if (bookingManagerGridEl) {
+            bookingManagerGridEl.style.height = `${clampedHeight}px`;
+            bookingManagerGridEl.style.minHeight = `${clampedHeight}px`;
+            bookingManagerGridEl.style.maxHeight = `${clampedHeight}px`;
+          }
         }
       } else {
+        if (bookingManagerGridEl) {
+          bookingManagerGridEl.style.removeProperty('height');
+          bookingManagerGridEl.style.removeProperty('min-height');
+          bookingManagerGridEl.style.removeProperty('max-height');
+        }
         timelineContainerEl.style.removeProperty('height');
         timelineContainerEl.style.removeProperty('flex-basis');
       }
@@ -1120,6 +1132,8 @@
     timelineTrackEl.style.height = `${trackHeight}px`;
     timelineTrackEl.style.setProperty('--capacity', String(Math.max(data.capacity, 1)));
     if (isMobileBookingsManager && timelineContainerEl) {
+      const hasHorizontalOverflow = data.capacity > 4;
+      timelineContainerEl.dataset.horizontalOverflow = hasHorizontalOverflow ? 'true' : 'false';
       const timelineGridWidth = getMobileTimelineGridWidth(data.capacity, timelineContainerEl.clientWidth);
       timelineTrackEl.style.width = `${timelineGridWidth}px`;
       timelineTrackEl.style.minWidth = `${timelineGridWidth}px`;
@@ -2052,9 +2066,25 @@
     if (!isBookingsDashboardPage || bookingsDashboardMode !== 'manager' || !bookingManagerGridEl) {
       return;
     }
-    bookingManagerGridEl.style.removeProperty('height');
-    bookingManagerGridEl.style.removeProperty('min-height');
-    bookingManagerGridEl.style.removeProperty('max-height');
+
+    const isMobileBookingsManager = Boolean(
+      mobileBookingsManagerQuery
+      && mobileBookingsManagerQuery.matches
+    );
+
+    if (!isMobileBookingsManager) {
+      bookingManagerGridEl.style.removeProperty('height');
+      bookingManagerGridEl.style.removeProperty('min-height');
+      bookingManagerGridEl.style.removeProperty('max-height');
+      return;
+    }
+
+    const gridRect = bookingManagerGridEl.getBoundingClientRect();
+    const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    const availableHeight = Math.max(viewportHeight - gridRect.top, 260);
+    bookingManagerGridEl.style.height = `${availableHeight}px`;
+    bookingManagerGridEl.style.minHeight = `${availableHeight}px`;
+    bookingManagerGridEl.style.maxHeight = `${availableHeight}px`;
   }
 
   function showBookingsManager(date = state.selectedDate || today) {
