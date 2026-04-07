@@ -68,6 +68,9 @@
   const HOUR_HEIGHT = isAdminMode ? 32 : 42;
   const isCalendarPage = document.body.classList.contains('calendar-body');
   const calendarPanelEl = document.querySelector('.calendar-panel');
+  const mobileBookingsManagerQuery = window.matchMedia
+    ? window.matchMedia('(max-width: 780px)')
+    : null;
   const state = {
     viewMonth: new Date(today.getFullYear(), today.getMonth(), 1),
     selectedDate: usesDayPanelModal ? null : (isBookingsDashboardPage ? null : new Date(today)),
@@ -83,6 +86,23 @@
   const configuredBlockedRules = sanitizeBlockedRules(window.SUNNYVIBE_BLOCKED_RULES || []);
   const configuredActiveSlots = sanitizeActiveSlots(window.SUNNYVIBE_ACTIVE_SLOTS || []);
   const userCanBook = Boolean(window.SUNNYVIBE_USER_CAN_BOOK);
+
+  if (timelineContainerEl && timelinePlaceHeadersEl) {
+    let syncingTimelineScroll = false;
+    const syncScroll = (source, target) => {
+      if (syncingTimelineScroll) {
+        return;
+      }
+      syncingTimelineScroll = true;
+      target.scrollLeft = source.scrollLeft;
+      window.requestAnimationFrame(() => {
+        syncingTimelineScroll = false;
+      });
+    };
+
+    timelineContainerEl.addEventListener('scroll', () => syncScroll(timelineContainerEl, timelinePlaceHeadersEl));
+    timelinePlaceHeadersEl.addEventListener('scroll', () => syncScroll(timelinePlaceHeadersEl, timelineContainerEl));
+  }
   const createBookingApiUrl = resolveApiUrl(window.SUNNYVIBE_API_BOOKINGS_URL || 'api/bookings');
   const timeInputDirection = new WeakMap();
   const previousTimeValue = new WeakMap();
@@ -1053,20 +1073,32 @@
     const startMinutes = Math.round(Math.min(...data.windows.map((window) => window.start * 60)));
     const endMinutes = Math.round(Math.max(...data.windows.map((window) => window.end * 60)));
     const spanMinutes = Math.max(endMinutes - startMinutes, 1);
+    const isMobileBookingsManager = Boolean(
+      isBookingsDashboardPage
+      && bookingsDashboardMode === 'manager'
+      && mobileBookingsManagerQuery
+      && mobileBookingsManagerQuery.matches
+    );
+    const timelineHourHeight = isMobileBookingsManager ? 72 : HOUR_HEIGHT;
     let timelineScale = 1;
     let availableHeight = 0;
     if (isBookingsDashboardPage && bookingsDashboardMode === 'manager' && timelineContainerEl) {
       const timelineStyles = window.getComputedStyle(timelineContainerEl);
       const verticalPadding = (parseFloat(timelineStyles.paddingTop) || 0) + (parseFloat(timelineStyles.paddingBottom) || 0);
       availableHeight = Math.max(timelineContainerEl.clientHeight - verticalPadding, 0);
-      const baseHeight = (spanMinutes * HOUR_HEIGHT) / 60;
+      const baseHeight = (spanMinutes * timelineHourHeight) / 60;
       if (availableHeight > 0 && baseHeight > 0) {
-        timelineScale = availableHeight / baseHeight;
+        if (isMobileBookingsManager) {
+          const mobileMaxScale = spanMinutes > 180 ? 1 : 1.15;
+          timelineScale = Math.min(mobileMaxScale, Math.max(1, availableHeight / baseHeight));
+        } else {
+          timelineScale = availableHeight / baseHeight;
+        }
       }
     }
-    const timelineMinuteHeight = (HOUR_HEIGHT * timelineScale) / 60;
+    const timelineMinuteHeight = (timelineHourHeight * timelineScale) / 60;
     const trackHeight = spanMinutes * timelineMinuteHeight;
-    const tickStepMinutes = chooseTimelineStepMinutes(spanMinutes, availableHeight);
+    const tickStepMinutes = chooseTimelineStepMinutes(spanMinutes, trackHeight, isMobileBookingsManager);
 
     const timelineTrackEl = document.createElement('div');
     timelineTrackEl.className = 'timeline-track';
@@ -1142,9 +1174,9 @@
     timelineContainerEl.appendChild(timelineTrackEl);
   }
 
-  function chooseTimelineStepMinutes(spanMinutes, availableHeight) {
+  function chooseTimelineStepMinutes(spanMinutes, availableHeight, isCompact = false) {
     const candidates = [15, 30, 60];
-    const targetSpacing = 76;
+    const targetSpacing = isCompact ? 28 : 76;
     const safeHeight = Math.max(Number(availableHeight) || 0, 0);
     let bestStep = candidates[candidates.length - 1];
     let bestScore = Number.POSITIVE_INFINITY;
@@ -1176,12 +1208,21 @@
     const totalPlaces = Math.max(1, Number(capacity) || 1);
     timelinePlaceHeadersEl.hidden = false;
     timelinePlaceHeadersEl.style.setProperty('--capacity', String(totalPlaces));
+    const axis = document.createElement('span');
+    axis.className = 'timeline-place-axis';
+    axis.setAttribute('aria-hidden', 'true');
+    timelinePlaceHeadersEl.appendChild(axis);
+
+    const track = document.createElement('div');
+    track.className = 'timeline-place-track';
+    track.style.setProperty('--capacity', String(totalPlaces));
     for (let index = 1; index <= totalPlaces; index += 1) {
       const chip = document.createElement('span');
       chip.className = 'timeline-place-chip';
       chip.textContent = `Place ${index}`;
-      timelinePlaceHeadersEl.appendChild(chip);
+      track.appendChild(chip);
     }
+    timelinePlaceHeadersEl.appendChild(track);
   }
 
   function summaryChip(label, value) {

@@ -10337,6 +10337,14 @@ input[type="number"].number-input {
   color: var(--muted);
 }
 
+.timeline-place-axis {
+  display: none;
+}
+
+.timeline-place-track {
+  display: contents;
+}
+
 .timeline-legend {
   display: flex;
   flex-wrap: wrap;
@@ -10872,6 +10880,10 @@ body.admin-body.bookings-manager-open #bookings-panel #adminBookingsDetailsDateL
   display: none;
 }
 
+body.admin-body.bookings-manager-open #bookings-panel .timeline-legend {
+  display: none;
+}
+
 body.admin-body.bookings-manager-open #bookings-panel .booking-manager-grid .day-panel,
 body.admin-body.bookings-manager-open #bookings-panel .booking-manager-grid .bookings-details-panel {
   min-height: 0;
@@ -11219,7 +11231,7 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
   }
 
   body.admin-body.bookings-manager-open #bookings-panel .booking-manager-grid {
-    grid-template-rows: minmax(0, 1fr) minmax(150px, 0.55fr);
+    grid-template-rows: minmax(0, 0.82fr) minmax(230px, 0.72fr);
     gap: 0.6rem;
   }
 
@@ -11232,8 +11244,28 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
   }
 
   body.admin-body.bookings-manager-open #bookings-panel .timeline-place-headers {
-    margin-left: 42px;
-    width: calc(100% - 42px);
+    display: grid;
+    grid-template-columns: 42px max(calc(100% - 42px), calc(var(--capacity) * 78px));
+    gap: 0;
+    margin-left: 0;
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  body.admin-body.bookings-manager-open #bookings-panel .timeline-place-headers::-webkit-scrollbar {
+    display: none;
+  }
+
+  body.admin-body.bookings-manager-open #bookings-panel .timeline-place-axis {
+    display: block;
+    width: 42px;
+  }
+
+  body.admin-body.bookings-manager-open #bookings-panel .timeline-place-track {
+    display: grid;
+    grid-template-columns: repeat(var(--capacity), minmax(0, 1fr));
+    width: max(calc(100% - 42px), calc(var(--capacity) * 78px));
     gap: 0;
   }
 
@@ -11245,23 +11277,23 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
   }
 
   body.admin-body.bookings-manager-open #bookings-panel .timeline-legend {
-    margin-left: 42px;
-    gap: 0.28rem 0.55rem;
-    font-size: 0.72rem;
+    display: none;
   }
 
   body.admin-body.bookings-manager-open #bookings-panel .timeline-container {
     width: 100%;
-    padding: 0;
+    padding: 0.65rem 0;
     border: 0;
     border-radius: 0;
     background: transparent;
-    overflow: hidden;
+    overflow: auto;
+    overscroll-behavior: contain;
+    touch-action: pan-x pan-y pinch-zoom;
   }
 
   body.admin-body.bookings-manager-open #bookings-panel .timeline-track {
-    width: calc(100% - 42px);
-    min-width: 0;
+    width: max(calc(100% - 42px), calc(var(--capacity) * 78px));
+    min-width: max(calc(100% - 42px), calc(var(--capacity) * 78px));
     margin-left: 42px;
   }
 
@@ -11281,6 +11313,26 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
 
   body.admin-body.bookings-manager-open #bookings-panel .timeline-reservation-label {
     font-size: 0.68rem;
+  }
+
+  body.admin-body.bookings-manager-open #bookings-panel .bookings-details-panel {
+    padding: 0.72rem;
+    border-radius: 12px;
+  }
+
+  body.admin-body.bookings-manager-open #bookings-panel .bookings-details-panel h3 {
+    font-size: 0.98rem;
+    line-height: 1.15;
+  }
+
+  body.admin-body.bookings-manager-open #bookings-panel .booking-item {
+    min-height: 0;
+    padding: 0.52rem 0.58rem 0.54rem 0.7rem;
+  }
+
+  body.admin-body.bookings-manager-open #bookings-panel .booking-item-time strong,
+  body.admin-body.bookings-manager-open #bookings-panel .booking-item-value {
+    font-size: 0.86rem;
   }
 }
 
