@@ -76,7 +76,6 @@
     selectedDate: usesDayPanelModal ? null : (isBookingsDashboardPage ? null : new Date(today)),
   };
   const dayPanelEl = document.getElementById('dayPanel') || document.querySelector('.day-panel');
-  const bookingsManagerDayPanelEl = document.querySelector('#bookings-panel .day-panel');
 
   const availabilityCache = new Map();
   const configuredOpeningHours = sanitizeOpeningHours(window.SUNNYVIBE_OPENING_HOURS || {});
@@ -1081,16 +1080,17 @@
     );
     renderTimelinePlaceHeaders(data.capacity, !isMobileBookingsManager);
     const timelineHourHeight = isMobileBookingsManager ? 72 : HOUR_HEIGHT;
+    const mobileTimelineHeaderHeight = isMobileBookingsManager ? 24 : 0;
     let timelineScale = 1;
     let availableHeight = 0;
     if (isBookingsDashboardPage && bookingsDashboardMode === 'manager' && timelineContainerEl) {
-      if (isMobileBookingsManager && bookingsManagerDayPanelEl) {
+      if (isMobileBookingsManager) {
         const containerRect = timelineContainerEl.getBoundingClientRect();
-        const panelRect = bookingsManagerDayPanelEl.getBoundingClientRect();
-        const availablePanelHeight = panelRect.bottom - containerRect.top;
-        if (availablePanelHeight > 0) {
-          timelineContainerEl.style.height = `${availablePanelHeight}px`;
-          timelineContainerEl.style.flexBasis = `${availablePanelHeight}px`;
+        const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+        const availableViewportHeight = viewportHeight - containerRect.top;
+        if (availableViewportHeight > 0) {
+          timelineContainerEl.style.height = `${availableViewportHeight}px`;
+          timelineContainerEl.style.flexBasis = `${availableViewportHeight}px`;
         }
       } else {
         timelineContainerEl.style.removeProperty('height');
@@ -1111,13 +1111,24 @@
       }
     }
     const timelineMinuteHeight = (timelineHourHeight * timelineScale) / 60;
-    const trackHeight = spanMinutes * timelineMinuteHeight;
+    const trackContentHeight = spanMinutes * timelineMinuteHeight;
+    const trackHeight = trackContentHeight + mobileTimelineHeaderHeight;
     const tickStepMinutes = chooseTimelineStepMinutes(spanMinutes, trackHeight, isMobileBookingsManager);
 
     const timelineTrackEl = document.createElement('div');
     timelineTrackEl.className = 'timeline-track';
     timelineTrackEl.style.height = `${trackHeight}px`;
     timelineTrackEl.style.setProperty('--capacity', String(Math.max(data.capacity, 1)));
+    if (isMobileBookingsManager && timelineContainerEl) {
+      const timelineGridWidth = getMobileTimelineGridWidth(data.capacity, timelineContainerEl.clientWidth);
+      timelineTrackEl.style.width = `${timelineGridWidth}px`;
+      timelineTrackEl.style.minWidth = `${timelineGridWidth}px`;
+      const integratedHeaders = document.createElement('div');
+      integratedHeaders.className = 'timeline-place-headers timeline-place-headers--integrated';
+      integratedHeaders.style.height = `${mobileTimelineHeaderHeight}px`;
+      populateTimelinePlaceHeaders(integratedHeaders, data.capacity);
+      timelineTrackEl.appendChild(integratedHeaders);
+    }
 
     let lastRenderedMinute = startMinutes - tickStepMinutes;
     for (let minute = startMinutes; minute <= endMinutes; minute += tickStepMinutes) {
@@ -1126,14 +1137,14 @@
       const isHourTick = minute % 60 === 0;
       const markerEl = document.createElement('div');
       markerEl.className = `time-marker ${isHourTick ? 'is-hour' : 'is-subtick'}`;
-      markerEl.style.top = `${offsetMinutes * timelineMinuteHeight}px`;
+      markerEl.style.top = `${mobileTimelineHeaderHeight + (offsetMinutes * timelineMinuteHeight)}px`;
       markerEl.textContent = formatHour(minute / 60);
       timelineTrackEl.appendChild(markerEl);
 
       if (minute < endMinutes) {
         const dividerEl = document.createElement('div');
         dividerEl.className = `time-divider ${isHourTick ? 'is-hour' : 'is-subtick'}`;
-        dividerEl.style.top = `${offsetMinutes * timelineMinuteHeight}px`;
+        dividerEl.style.top = `${mobileTimelineHeaderHeight + (offsetMinutes * timelineMinuteHeight)}px`;
         timelineTrackEl.appendChild(dividerEl);
       }
     }
@@ -1143,7 +1154,7 @@
       const isHourTick = endMinutes % 60 === 0;
       const markerEl = document.createElement('div');
       markerEl.className = `time-marker ${isHourTick ? 'is-hour' : 'is-subtick'}`;
-      markerEl.style.top = `${offsetMinutes * timelineMinuteHeight}px`;
+      markerEl.style.top = `${mobileTimelineHeaderHeight + (offsetMinutes * timelineMinuteHeight)}px`;
       markerEl.textContent = formatHour(endMinutes / 60);
       timelineTrackEl.appendChild(markerEl);
     }
@@ -1159,7 +1170,7 @@
     placements.forEach((placement) => {
       const itemEl = document.createElement('article');
       itemEl.className = `timeline-reservation ${placement.kind}`;
-      itemEl.style.top = `${(placement.startMinutes - startMinutes) * timelineMinuteHeight}px`;
+      itemEl.style.top = `${mobileTimelineHeaderHeight + ((placement.startMinutes - startMinutes) * timelineMinuteHeight)}px`;
       itemEl.style.height = `${(placement.endMinutes - placement.startMinutes) * timelineMinuteHeight}px`;
       itemEl.style.left = `${((placement.columnStart - 1) / data.capacity) * 100}%`;
       itemEl.style.width = `${(placement.columnSpan / data.capacity) * 100}%`;
@@ -1185,12 +1196,6 @@
     timelineTrackEl.appendChild(reservationsLayerEl);
 
     timelineContainerEl.innerHTML = '';
-    if (isMobileBookingsManager) {
-      const integratedHeaders = document.createElement('div');
-      integratedHeaders.className = 'timeline-place-headers timeline-place-headers--integrated';
-      populateTimelinePlaceHeaders(integratedHeaders, data.capacity);
-      timelineContainerEl.appendChild(integratedHeaders);
-    }
     timelineContainerEl.appendChild(timelineTrackEl);
   }
 
@@ -1212,6 +1217,17 @@
     });
 
     return bestStep;
+  }
+
+  function getMobileTimelineGridWidth(capacity, containerWidth) {
+    const safeCapacity = Math.max(1, Number(capacity) || 1);
+    const safeContainerWidth = Math.max(Number(containerWidth) || 0, 1);
+    const timeAxisWidth = 42;
+    const visibleGridWidth = Math.max(safeContainerWidth - timeAxisWidth, 1);
+    if (safeCapacity <= 4) {
+      return visibleGridWidth;
+    }
+    return Math.max(visibleGridWidth, safeCapacity * 78);
   }
 
   function renderTimelinePlaceHeaders(capacity, visible) {

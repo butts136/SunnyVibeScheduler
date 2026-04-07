@@ -11348,17 +11348,19 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
     position: sticky;
     top: 0;
     z-index: 8;
+    width: 100%;
+    overflow: visible;
     background: linear-gradient(180deg, rgba(7, 12, 25, 0.98), rgba(7, 12, 25, 0.86));
     backdrop-filter: blur(10px);
   }
 
   body.admin-body.bookings-manager-open #bookings-panel .timeline-place-headers--integrated .timeline-place-track {
-    width: max(100%, calc(var(--capacity) * 78px));
+    width: 100%;
   }
 
   body.admin-body.bookings-manager-open #bookings-panel .timeline-track {
-    width: max(100%, calc(var(--capacity) * 78px));
-    min-width: max(100%, calc(var(--capacity) * 78px));
+    width: calc(100% - 42px);
+    min-width: calc(100% - 42px);
     margin-left: 42px;
   }
 
