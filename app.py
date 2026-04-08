@@ -2136,6 +2136,128 @@ def _load_users_for_admin(limit=300):
     return users
 
 
+def _load_user_profile_for_account(user_id):
+    conn = _get_db_connection()
+    try:
+        user_row = conn.execute(
+            '''
+            SELECT
+                id,
+                username,
+                full_name,
+                email,
+                phone,
+                created_at,
+                is_blocked,
+                reservation_limit,
+                must_change_password
+            FROM users
+            WHERE id = ?
+            LIMIT 1
+            ''',
+            (user_id,),
+        ).fetchone()
+
+        if not user_row:
+            return None
+
+        booking_rows = conn.execute(
+            '''
+            SELECT
+                id,
+                start,
+                end,
+                title,
+                booking_status,
+                companion_count,
+                is_private,
+                created_at
+            FROM bookings
+            WHERE user_id = ?
+            ORDER BY start DESC
+            ''',
+            (user_id,),
+        ).fetchall()
+    finally:
+        conn.close()
+
+    reservation_config = _load_reservation_config()
+    reservation_tz = _get_reservation_timezone(reservation_config)
+    now_local = _now_in_reservation_timezone(reservation_config, tzinfo=reservation_tz)
+
+    booking_count = 0
+    present_count = 0
+    no_show_count = 0
+    last_booking_dt = None
+    next_booking_dt = None
+    recent_bookings = []
+    booking_history = []
+
+    for row in booking_rows:
+        start_dt = _to_reservation_timezone(_parse_stored_datetime(row['start']), tzinfo=reservation_tz)
+        end_dt = _to_reservation_timezone(_parse_stored_datetime(row['end']), tzinfo=reservation_tz)
+        if not start_dt or not end_dt:
+            continue
+
+        booking_count += 1
+        booking_status = row['booking_status'] or 'upcoming'
+        if booking_status == 'present':
+            present_count += 1
+        elif booking_status == 'no_show':
+            no_show_count += 1
+
+        if last_booking_dt is None or start_dt > last_booking_dt:
+            last_booking_dt = start_dt
+
+        if start_dt >= now_local and (next_booking_dt is None or start_dt < next_booking_dt):
+            next_booking_dt = start_dt
+
+        booking_entry = {
+            'start_display': start_dt.strftime('%Y-%m-%d %H:%M'),
+            'end_display': end_dt.strftime('%Y-%m-%d %H:%M'),
+            'title': row['title'] or '',
+            'booking_status': booking_status,
+            'people_count': max(int(row['companion_count'] or 0), 0) + 1,
+            'is_private': bool(row['is_private']),
+        }
+        booking_history.append(booking_entry)
+
+        if len(recent_bookings) < 5:
+            recent_bookings.append(booking_entry)
+
+    tracked_booking_count = present_count + no_show_count
+    reliability_rate = round((present_count / tracked_booking_count) * 100) if tracked_booking_count else None
+    first_name, last_name = _split_full_name(user_row['full_name'])
+    if not first_name and user_row['username']:
+        first_name = user_row['username']
+    if not first_name and user_row['email']:
+        first_name = str(user_row['email']).split('@', 1)[0]
+
+    return {
+        'id': int(user_row['id']),
+        'username': user_row['username'] or '',
+        'full_name': user_row['full_name'] or '',
+        'first_name': first_name,
+        'last_name': last_name,
+        'email': user_row['email'] or '',
+        'phone': user_row['phone'] or '',
+        'created_at': user_row['created_at'] or '',
+        'is_blocked': bool(user_row['is_blocked']),
+        'reservation_limit': user_row['reservation_limit'],
+        'must_change_password': bool(user_row['must_change_password']),
+        'is_super_admin_user': _is_super_admin_user_email(user_row['email']),
+        'booking_count': booking_count,
+        'present_count': present_count,
+        'no_show_count': no_show_count,
+        'tracked_booking_count': tracked_booking_count,
+        'reliability_rate': reliability_rate,
+        'last_booking_start': last_booking_dt.strftime('%Y-%m-%d %H:%M') if last_booking_dt else '',
+        'next_booking_start': next_booking_dt.strftime('%Y-%m-%d %H:%M') if next_booking_dt else '',
+        'recent_bookings': recent_bookings,
+        'booking_history': booking_history,
+    }
+
+
 def _load_existing_bookings_for_date(date_text):
     day_start = f'{date_text}T00:00'
     next_day = (datetime.strptime(date_text, '%Y-%m-%d') + timedelta(days=1)).strftime('%Y-%m-%d')
@@ -3961,6 +4083,103 @@ def my_bookings():
         reservation_config=reservation_config,
         errors=errors,
         success_message=success_message,
+    )
+
+
+@app.route('/mon-compte', methods=['GET', 'POST'])
+@app.route('/account', methods=['GET', 'POST'])
+def my_account():
+    profile_user_id = _booking_user_id_for_session()
+    if not profile_user_id:
+        if session.get('is_admin_authenticated'):
+            return redirect(url_for('admin_dashboard_bookings'))
+        return redirect(url_for('login'))
+
+    if session.get('user_id') and session.get('must_change_password'):
+        return redirect(url_for('force_password_change'))
+
+    profile = _load_user_profile_for_account(profile_user_id)
+    if not profile:
+        session.clear()
+        return redirect(url_for('login'))
+
+    errors = []
+    success_message = None
+    can_change_password = bool(session.get('user_id')) and not bool(session.get('must_change_password'))
+    show_password_form = can_change_password
+    profile_can_edit_password = bool(session.get('user_id'))
+
+    if request.method == 'POST' and show_password_form:
+        if not _validate_csrf_token():
+            errors.append("Jeton de sécurité invalide. Veuillez réessayer.")
+        else:
+            current_password = request.form.get('current_password', '')
+            new_password = request.form.get('new_password', '')
+            new_password_confirm = request.form.get('new_password_confirm', '')
+
+            if not current_password:
+                errors.append("Le mot de passe actuel est requis.")
+            if len(new_password) < 8:
+                errors.append("Le nouveau mot de passe doit contenir au moins 8 caractères.")
+            if new_password != new_password_confirm:
+                errors.append("La confirmation du nouveau mot de passe ne correspond pas.")
+
+            conn = _get_db_connection()
+            try:
+                row = conn.execute(
+                    'SELECT password_hash FROM users WHERE id = ? LIMIT 1',
+                    (profile_user_id,),
+                ).fetchone()
+            finally:
+                conn.close()
+
+            if not row:
+                errors.append("Compte introuvable.")
+            elif not _verify_user_password(current_password, row['password_hash']):
+                errors.append("Le mot de passe actuel est invalide.")
+
+            if not errors:
+                new_password_hash = _make_user_password_hash(new_password)
+                conn = _get_db_connection()
+                try:
+                    conn.execute(
+                        'UPDATE users SET password_hash = ?, must_change_password = 0 WHERE id = ?',
+                        (new_password_hash, profile_user_id),
+                    )
+                    conn.commit()
+                finally:
+                    conn.close()
+
+                session['must_change_password'] = False
+                success_message = 'Mot de passe mis à jour.'
+                profile = _load_user_profile_for_account(profile_user_id) or profile
+
+    reservation_config = _load_reservation_config()
+    reservation_tz = _get_reservation_timezone(reservation_config)
+    current_day_key = _current_day_key(reservation_config, tzinfo=reservation_tz)
+    current_time_minutes = _now_in_reservation_timezone(reservation_config, tzinfo=reservation_tz).hour * 60 + _now_in_reservation_timezone(reservation_config, tzinfo=reservation_tz).minute
+
+    return render_template(
+        'my_account.html',
+        profile=profile,
+        errors=errors,
+        success_message=success_message,
+        can_change_password=profile_can_edit_password,
+        show_password_form=show_password_form,
+        users=[],
+        bookings=[],
+        invitation_mode_default='manual',
+        current_day_key=current_day_key,
+        current_time_minutes=current_time_minutes,
+        opening_hours_json={},
+        holidays_json={},
+        special_dates_json={},
+        reservation_config_json=reservation_config,
+        bookings_json=[],
+        blocked_slots_json=[],
+        active_slots_json=[],
+        user_can_book=bool(session.get('user_id')),
+        reservation_config=reservation_config,
     )
 
 

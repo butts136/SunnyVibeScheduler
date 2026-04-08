@@ -1,0 +1,211 @@
+{% extends 'admin_dashboard_base.html' %}
+
+{% block admin_panel %}
+        <section id="my-account-panel" class="admin-section tab-panel is-active">
+          <div class="my-account-layout">
+            <section class="settings-section-card my-account-card">
+              <div class="settings-section-head">
+                <div>
+                  <h2>Mon compte</h2>
+                  <p class="subtitle">Consultez les informations visibles sur votre fiche et vos statistiques d'utilisation.</p>
+                </div>
+              </div>
+
+              {% if success_message %}
+              <div class="alert success">{{ success_message }}</div>
+              {% endif %}
+
+              {% if errors %}
+              <div class="alert error">
+                <ul>
+                  {% for error in errors %}
+                  <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+              {% endif %}
+
+              <section class="account-block">
+                <div class="settings-section-head">
+                  <div>
+                    <h3>Informations personnelles</h3>
+                    <p class="field-help">Les données affichées ici correspondent à ce qui est visible dans votre fiche.</p>
+                  </div>
+                </div>
+              <div class="user-details-grid account-details-grid">
+                <div><strong>Prénom</strong><span>{{ profile.first_name if profile.first_name else '-' }}</span></div>
+                <div><strong>Nom</strong><span>{{ profile.last_name if profile.last_name else '-' }}</span></div>
+                <div><strong>Nom d'utilisateur</strong><span>{{ profile.username if profile.username else '-' }}</span></div>
+                <div><strong>Nom complet</strong><span>{{ profile.full_name if profile.full_name else '-' }}</span></div>
+                <div><strong>Courriel</strong><span>{{ profile.email if profile.email else '-' }}</span></div>
+                <div><strong>Téléphone</strong><span>{{ profile.phone if profile.phone else '-' }}</span></div>
+                <div><strong>Créé le</strong><span>{{ profile.created_at if profile.created_at else '-' }}</span></div>
+              </div>
+              </section>
+            </section>
+
+            <section class="settings-section-card my-account-card my-account-bookings-card">
+              <div class="settings-section-head">
+                <div>
+                  <h2>Mes réservations</h2>
+                  <p class="subtitle">Les 5 dernières réservations et l'historique complet au besoin.</p>
+                </div>
+                {% if profile.booking_history and profile.booking_history|length > 5 %}
+                <button class="btn" type="button" id="openAccountHistoryModalBtn">Voir plus</button>
+                {% endif %}
+              </div>
+
+              <section class="account-history-section">
+                <h3>Historique récent</h3>
+                <div class="account-booking-stats">
+                  <div><strong>Limite réservations</strong><span>{{ profile.reservation_limit if profile.reservation_limit is not none else 'Aucune' }}</span></div>
+                  <div><strong>Total réservations</strong><span>{{ profile.booking_count }}</span></div>
+                  <div><strong>Présences</strong><span>{{ profile.present_count }}</span></div>
+                  <div><strong>Pas venue</strong><span>{{ profile.no_show_count }}</span></div>
+                  <div><strong>Fiabilité</strong><span>{% if profile.reliability_rate is not none %}{{ profile.reliability_rate }}%{% else %}Aucune donnée{% endif %}</span></div>
+                  <div><strong>Dernière réservation</strong><span>{{ profile.last_booking_start if profile.last_booking_start else '-' }}</span></div>
+                  <div><strong>Prochaine réservation</strong><span>{{ profile.next_booking_start if profile.next_booking_start else 'Aucune' }}</span></div>
+                </div>
+                {% if profile.recent_bookings %}
+                <div class="account-history-list">
+                  {% for booking in profile.recent_bookings %}
+                  <article class="account-history-item">
+                    <div class="account-history-row">
+                      <strong>{{ booking.start_display }} - {{ booking.end_display }}</strong>
+                      <span class="account-history-status {% if booking.booking_status == 'present' %}is-present{% elif booking.booking_status == 'no_show' %}is-no-show{% else %}is-upcoming{% endif %}">
+                        {% if booking.booking_status == 'present' %}
+                        Présent
+                        {% elif booking.booking_status == 'no_show' %}
+                        Pas venue
+                        {% else %}
+                        À venir
+                        {% endif %}
+                      </span>
+                    </div>
+                    <div class="account-history-meta">
+                      <span><strong>Titre:</strong> {{ booking.title if booking.title else 'Sans titre' }}</span>
+                      <span><strong>Personnes:</strong> {{ booking.people_count }}</span>
+                      <span><strong>Partage:</strong> {{ 'Privée' if booking.is_private else 'Partagée' }}</span>
+                    </div>
+                  </article>
+                  {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">Aucune réservation enregistrée pour ce compte.</div>
+                {% endif %}
+              </section>
+            </section>
+
+            <section class="settings-section-card my-account-password-card">
+              <div class="settings-section-head">
+                <div>
+                  <h2>Mot de passe</h2>
+                  <p class="subtitle">Mettez à jour votre mot de passe avec votre mot de passe actuel.</p>
+                </div>
+              </div>
+
+              {% if show_password_form %}
+              <form method="post" class="reservation-config-form account-password-form" novalidate>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                <div class="config-row">
+                  <label for="current_password">Mot de passe actuel</label>
+                  <input id="current_password" type="password" name="current_password" autocomplete="current-password" required>
+                </div>
+
+                <div class="config-row">
+                  <label for="new_password">Nouveau mot de passe</label>
+                  <input id="new_password" type="password" name="new_password" minlength="8" autocomplete="new-password" required>
+                </div>
+
+                <div class="config-row">
+                  <label for="new_password_confirm">Confirmer</label>
+                  <input id="new_password_confirm" type="password" name="new_password_confirm" minlength="8" autocomplete="new-password" required>
+                </div>
+
+                <div class="actions">
+                  <button class="btn primary" type="submit">Modifier le mot de passe</button>
+                </div>
+              </form>
+              {% else %}
+              <div class="empty-state">Le mot de passe de ce compte est géré depuis la fiche SuperAdmin dans Gestion des comptes.</div>
+              {% endif %}
+            </section>
+
+            {% if profile.booking_history %}
+            <dialog id="accountHistoryModal" class="user-modal account-history-modal">
+              <div class="user-modal-head">
+                <h3>Historique complet</h3>
+                <button id="closeAccountHistoryModalBtn" class="btn" type="button">Fermer</button>
+              </div>
+              <div class="user-modal-content account-history-modal-content">
+                {% if profile.booking_history %}
+                <div class="account-history-list account-history-list--full">
+                  {% for booking in profile.booking_history %}
+                  <article class="account-history-item">
+                    <div class="account-history-row">
+                      <strong>{{ booking.start_display }} - {{ booking.end_display }}</strong>
+                      <span class="account-history-status {% if booking.booking_status == 'present' %}is-present{% elif booking.booking_status == 'no_show' %}is-no-show{% else %}is-upcoming{% endif %}">
+                        {% if booking.booking_status == 'present' %}
+                        Présent
+                        {% elif booking.booking_status == 'no_show' %}
+                        Pas venue
+                        {% else %}
+                        À venir
+                        {% endif %}
+                      </span>
+                    </div>
+                    <div class="account-history-meta">
+                      <span><strong>Titre:</strong> {{ booking.title if booking.title else 'Sans titre' }}</span>
+                      <span><strong>Personnes:</strong> {{ booking.people_count }}</span>
+                      <span><strong>Partage:</strong> {{ 'Privée' if booking.is_private else 'Partagée' }}</span>
+                    </div>
+                  </article>
+                  {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">Aucune réservation enregistrée pour ce compte.</div>
+                {% endif %}
+              </div>
+            </dialog>
+            {% endif %}
+          </div>
+        </section>
+
+        {% if profile.booking_history %}
+        <script>
+          (() => {
+            const openBtn = document.getElementById('openAccountHistoryModalBtn');
+            const modal = document.getElementById('accountHistoryModal');
+            const closeBtn = document.getElementById('closeAccountHistoryModalBtn');
+            if (!openBtn || !modal || !closeBtn) {
+              return;
+            }
+
+            const openModal = () => {
+              if (typeof modal.showModal === 'function') {
+                modal.showModal();
+              } else {
+                modal.setAttribute('open', 'open');
+              }
+            };
+
+            const closeModal = () => {
+              if (typeof modal.close === 'function') {
+                modal.close();
+              } else {
+                modal.removeAttribute('open');
+              }
+            };
+
+            openBtn.addEventListener('click', openModal);
+            closeBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (event) => {
+              if (event.target === modal) {
+                closeModal();
+              }
+            });
+          })();
+        </script>
+        {% endif %}
+{% endblock %}

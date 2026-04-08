@@ -44,6 +44,9 @@
     <a class="btn nav-link {% if request.endpoint == 'menu' %}is-active{% endif %}" href="{{ url_for('menu') }}">
       <span class="nav-link-content"><span class="nav-label">Menu</span></span>
     </a>
+    <a class="btn nav-link {% if request.endpoint == 'my_account' %}is-active{% endif %}" href="{{ url_for('my_account') }}">
+      <span class="nav-link-content"><span class="nav-label">Mon compte</span></span>
+    </a>
 
     {% if is_admin_authenticated %}
     {% set admin_active_tab = active_tab|default('') %}

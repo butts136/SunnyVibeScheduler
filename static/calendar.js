@@ -941,9 +941,7 @@
         month: 'long',
         year: 'numeric',
       }).format(dateObj);
-      const availableIntervalsLabel = displayIntervals
-        .map((interval) => `${formatHour(interval.start)} - ${formatHour(interval.end)}`)
-        .join(' | ');
+      const availableIntervalsLabel = formatRangeLabel(displayIntervals);
       const slotTitles = Array.from(new Set(dateSlots.map((slot) => slot.title).filter(Boolean)));
       const slotTitleLabel = slotTitles.length ? slotTitles.join(' · ') : 'Plage activée';
       const holidayData = getHolidayForDate(dateObj);
@@ -1033,7 +1031,7 @@
     }
 
     const data = getDayData(state.selectedDate);
-    const windowsLabel = data.windows.map((window) => `${formatHour(window.start)} - ${formatHour(window.end)}`).join(' | ');
+    const windowsLabel = formatRangeLabel(data.windows);
     const selectedDateKey = toDateKey(state.selectedDate);
 
     selectedDateLabelEl.textContent = new Intl.DateTimeFormat('fr-CA', {
@@ -1918,7 +1916,28 @@
       return 'Fermé';
     }
 
-    return windows.map((window) => `${hourToClockText(window.start)} - ${hourToClockText(window.end)}`).join(' | ');
+    return formatRangeLabel(windows.map((window) => ({
+      start: window.start,
+      end: window.end,
+    })));
+  }
+
+  function formatRangeLabel(windows) {
+    if (!windows || !windows.length) {
+      return 'Fermé';
+    }
+
+    const sortedWindows = windows
+      .filter((window) => window && Number.isFinite(Number(window.start)) && Number.isFinite(Number(window.end)))
+      .slice()
+      .sort((a, b) => a.start - b.start);
+    const firstWindow = sortedWindows[0];
+    const lastWindow = sortedWindows[sortedWindows.length - 1];
+    if (!firstWindow || !lastWindow) {
+      return 'Fermé';
+    }
+
+    return `${hourToClockText(firstWindow.start)} - ${hourToClockText(lastWindow.end)}`;
   }
 
   function renderBookingRules() {

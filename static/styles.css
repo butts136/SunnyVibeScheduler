@@ -6973,6 +6973,21 @@ img, svg { display: block; max-width: 100%; }
   padding: 1.75rem clamp(1rem, 2.2vw, 2.25rem);
 }
 
+.layout.app-layout > :not(.left-nav):not(.left-nav-toggle):not(.left-nav-backdrop):not(.left-nav-mobile-bar).home-main,
+.layout.app-layout > :not(.left-nav):not(.left-nav-toggle):not(.left-nav-backdrop):not(.left-nav-mobile-bar).calendar-main,
+.layout.app-layout > :not(.left-nav):not(.left-nav-toggle):not(.left-nav-backdrop):not(.left-nav-mobile-bar).my-bookings-main,
+.layout.app-layout > :not(.left-nav):not(.left-nav-toggle):not(.left-nav-backdrop):not(.left-nav-mobile-bar).hours-calendar-main {
+  flex: 0 1 1240px;
+  width: min(100%, 1240px);
+  margin: 0 auto;
+}
+
+.layout.app-layout > :not(.left-nav):not(.left-nav-toggle):not(.left-nav-backdrop):not(.left-nav-mobile-bar).page {
+  flex: 0 1 980px;
+  width: min(100%, 980px);
+  margin: 0 auto;
+}
+
 body.hours-calendar-body {
   overflow-y: auto;
   overflow-x: hidden;
@@ -7232,8 +7247,54 @@ body.admin-body .admin-card {
   margin: 0 auto;
 }
 
+.page,
+.home-main,
+.calendar-main,
+.my-bookings-main,
+.hours-calendar-main {
+  flex: 0 1 1240px;
+}
+
+.layout.app-layout > .home-main,
+.layout.app-layout > .calendar-main,
+.layout.app-layout > .my-bookings-main,
+.layout.app-layout > .hours-calendar-main {
+  flex: 0 1 1240px;
+}
+
+.layout.app-layout > .page {
+  flex: 0 1 980px;
+}
+
 .page {
   max-width: 980px;
+  flex-basis: 980px;
+  display: grid;
+  align-content: safe center;
+  justify-items: center;
+}
+
+.page > .form-card {
+  width: min(100%, 720px);
+}
+
+body.register-body .page > .form-card {
+  width: min(100%, 920px);
+}
+
+.page > .form-card > h1,
+.page > .form-card > h2,
+.page > .form-card > .subtitle {
+  text-align: center;
+}
+
+.page > .form-card > .form-grid,
+.page > .form-card > .config-section-block {
+  width: 100%;
+}
+
+.page > .form-card .actions {
+  justify-content: center;
 }
 
 .card,
@@ -7965,6 +8026,104 @@ input[type="number"].number-input {
   transform: translateX(2px);
 }
 
+.landing-main {
+  gap: 1rem;
+}
+
+.landing-hero-simple {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  padding: clamp(1.1rem, 3vw, 2rem);
+}
+
+.landing-hero-simple h1 {
+  margin: 0;
+  font-size: clamp(2.2rem, 7vw, 4rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.landing-hero-simple .home-lead {
+  max-width: 42rem;
+}
+
+.landing-auth-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.35rem;
+}
+
+.landing-auth-btn {
+  min-height: 48px;
+  min-width: 172px;
+  padding-inline: 1.1rem;
+  font-size: 1rem;
+}
+
+.landing-simple-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.65rem;
+  margin-top: 0.25rem;
+}
+
+.landing-simple-actions .btn {
+  min-height: 42px;
+  min-width: 132px;
+  padding-inline: 0.95rem;
+}
+
+.landing-simple-note {
+  margin: 0.15rem 0 0;
+}
+
+.landing-page-actions {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.7rem;
+  width: min(100%, 980px);
+  margin-top: 0.75rem;
+}
+
+.landing-page-btn {
+  display: grid;
+  gap: 0.24rem;
+  min-height: 96px;
+  align-content: center;
+  text-align: center;
+  text-decoration: none;
+  color: var(--text);
+  padding: 0.82rem 0.72rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(0, 207, 255, 0.1), transparent 52%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.085), rgba(255, 255, 255, 0.03));
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.landing-page-btn:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 207, 255, 0.42);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(0, 207, 255, 0.16), transparent 56%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.035));
+}
+
+.landing-page-btn strong {
+  font-size: 0.98rem;
+}
+
+.landing-page-btn span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.3;
+}
+
 .left-nav-group {
   display: grid;
   gap: 0.45rem;
@@ -7988,6 +8147,8 @@ input[type="number"].number-input {
   display: grid;
   gap: 1rem;
   width: 100%;
+  max-width: 1240px;
+  justify-self: center;
   margin: 0 auto;
   padding-bottom: 0.5rem;
 }
@@ -8204,6 +8365,17 @@ input[type="number"].number-input {
 
 .menu-admin-shell {
   gap: 1rem;
+}
+
+.menu-tabs-hint {
+  display: block;
+  margin: 0.5rem 0 0;
+  padding: 0 0.15rem;
+  color: rgba(248, 250, 252, 0.88);
+  font-size: 0.86rem;
+  line-height: 1.45;
+  font-weight: 700;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.22);
 }
 
 .menu-tab-add-btn {
@@ -9667,7 +9839,42 @@ input[type="number"].number-input {
 }
 
 .users-cards-grid {
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  display: grid;
+  gap: 0.35rem;
+}
+
+.users-table-head {
+  display: grid;
+  grid-template-columns: minmax(180px, 1.35fr) minmax(120px, 0.9fr) minmax(190px, 1.1fr) minmax(120px, 0.8fr) minmax(96px, 0.55fr) minmax(120px, 0.72fr);
+  gap: 0.45rem;
+  margin-top: 0.1rem;
+  padding: 0 0.25rem;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.users-sort-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  text-align: left;
+  padding: 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.users-sort-btn:hover,
+.users-sort-btn.is-active {
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .user-card-btn {
@@ -9676,10 +9883,12 @@ input[type="number"].number-input {
   background: rgba(255, 255, 255, 0.04);
   color: var(--text);
   border-radius: 12px;
-  padding: 0.82rem;
-  text-align: left;
   display: grid;
-  gap: 0.24rem;
+  grid-template-columns: minmax(180px, 1.35fr) minmax(120px, 0.9fr) minmax(190px, 1.1fr) minmax(120px, 0.8fr) minmax(96px, 0.55fr) minmax(120px, 0.72fr);
+  gap: 0.45rem;
+  align-items: center;
+  padding: 0.56rem 0.82rem;
+  text-align: left;
   cursor: pointer;
   transition: border-color 0.18s ease, transform 0.18s ease;
 }
@@ -9746,21 +9955,42 @@ input[type="number"].number-input {
   font-weight: 700;
 }
 
-.user-card-subtitle {
-  color: var(--muted);
+.user-card-cell {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   font-size: 0.84rem;
+}
+
+.user-card-cell--name {
+  font-weight: 700;
+}
+
+.user-card-cell--status .status-pill {
+  display: inline-flex;
+  max-width: 100%;
+}
+
+.user-card-cell--bookings {
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.user-card-cell--reliability {
+  justify-self: start;
 }
 
 .user-card-reliability {
   display: inline-flex;
   align-self: flex-start;
   align-items: center;
-  gap: 0.32rem;
-  padding: 0.3rem 0.55rem;
+  gap: 0.24rem;
+  padding: 0.18rem 0.38rem;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: #f8fafc;
-  font-size: 0.72rem;
+  font-size: 0.6rem;
   font-weight: 800;
   letter-spacing: 0.01em;
   background:
@@ -9781,8 +10011,8 @@ input[type="number"].number-input {
 
 .user-card-reliability::before {
   content: '';
-  width: 0.56rem;
-  height: 0.56rem;
+  width: 0.42rem;
+  height: 0.42rem;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.92);
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
@@ -9790,6 +10020,32 @@ input[type="number"].number-input {
 
 .user-card-reliability.is-empty::before {
   background: rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 1120px) {
+  .users-table-head,
+  .user-card-btn,
+  .admin-account-card {
+    grid-template-columns: minmax(160px, 1.15fr) minmax(110px, 0.8fr) minmax(160px, 1fr) minmax(105px, 0.72fr) minmax(86px, 0.52fr) minmax(110px, 0.66fr);
+  }
+
+  .users-table-head {
+    font-size: 0.62rem;
+  }
+}
+
+@media (max-width: 920px) {
+  .users-table-head,
+  .user-card-btn,
+  .admin-account-card {
+    grid-template-columns: minmax(150px, 1.05fr) minmax(95px, 0.7fr) minmax(145px, 0.95fr) minmax(95px, 0.66fr) minmax(80px, 0.5fr) minmax(100px, 0.62fr);
+    gap: 0.36rem;
+  }
+
+  .user-card-cell,
+  .users-sort-btn {
+    font-size: 0.78rem;
+  }
 }
 
 .user-modal,
@@ -10870,7 +11126,10 @@ body.admin-body.bookings-manager-open .layout.app-layout > .admin-main {
 
 body.admin-body.bookings-manager-open .admin-card {
   min-height: 0;
+  width: 100%;
+  max-width: none;
   flex: 1 1 auto;
+  justify-self: stretch;
   padding: 0;
   gap: 0;
   border-radius: 0;
@@ -11543,6 +11802,167 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
   margin-top: 0.2rem;
 }
 
+.my-account-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.my-account-card,
+.my-account-password-card {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.my-account-bookings-card {
+  grid-column: 1 / -1;
+}
+
+.account-block {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.account-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.account-header-actions .btn {
+  min-height: 38px;
+  padding-inline: 0.9rem;
+}
+
+.account-details-grid {
+  margin-top: 0.15rem;
+}
+
+.account-history-section {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 0.25rem;
+}
+
+.account-booking-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem 0.7rem;
+}
+
+.account-booking-stats > div {
+  display: grid;
+  gap: 0.12rem;
+  padding: 0.62rem 0.7rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.account-booking-stats strong {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.account-history-section h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.account-history-list {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.account-history-list--full {
+  max-height: min(68vh, 42rem);
+  overflow: auto;
+  padding-right: 0.1rem;
+}
+
+.account-history-item {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.72rem 0.78rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.account-history-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.account-history-row strong {
+  font-size: 0.95rem;
+}
+
+.account-history-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.16rem 0.52rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.account-history-status.is-present {
+  background: rgba(34, 197, 94, 0.16);
+  color: #b8ffd2;
+  border-color: rgba(34, 197, 94, 0.34);
+}
+
+.account-history-status.is-no-show {
+  background: rgba(255, 107, 136, 0.16);
+  color: #ffd0dc;
+  border-color: rgba(255, 107, 136, 0.34);
+}
+
+.account-history-status.is-upcoming {
+  background: rgba(234, 179, 8, 0.16);
+  color: #ffe8a3;
+  border-color: rgba(234, 179, 8, 0.34);
+}
+
+.account-history-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.35rem 0.6rem;
+}
+
+.account-history-meta span {
+  display: grid;
+  gap: 0.12rem;
+  font-size: 0.82rem;
+}
+
+.account-password-form {
+  display: grid;
+  gap: 0.78rem;
+}
+
+.account-password-form .config-row {
+  gap: 0.34rem;
+}
+
+.account-history-modal {
+  width: min(940px, calc(100vw - 1.5rem));
+}
+
+.account-history-modal-content {
+  padding-top: 0.2rem;
+}
+
 .my-bookings-main {
   display: grid;
   grid-auto-rows: max-content;
@@ -12019,9 +12439,27 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
   .frequency-limit-grid,
   .blocked-slot-meta,
   .user-details-grid,
+  .account-history-meta,
   .my-booking-meta,
   .booking-item-meta {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .my-account-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .my-account-bookings-card {
+    grid-column: auto;
+  }
+
+  .account-header-actions {
+    justify-content: flex-start;
+  }
+
+  .landing-page-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: min(100%, 620px);
   }
 
   .hours-section-head-split,
@@ -12187,6 +12625,35 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
 }
 
 @media (max-width: 560px) {
+  .landing-hero-simple {
+    padding: 0.95rem;
+    border-radius: 16px;
+  }
+
+  .landing-hero-simple h1 {
+    font-size: clamp(2.3rem, 14vw, 3.6rem);
+  }
+
+  .landing-auth-actions,
+  .landing-simple-actions {
+    grid-template-columns: minmax(0, 1fr);
+    display: grid;
+    width: 100%;
+  }
+
+  .landing-auth-actions .btn,
+  .landing-simple-actions .btn {
+    width: 100%;
+  }
+
+  .landing-page-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .landing-page-btn {
+    min-height: 82px;
+  }
+
   .hours-calendar-main {
     gap: 0.8rem;
   }
@@ -12303,6 +12770,14 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
 
   .settings-section-card {
     padding: 0.85rem 0.9rem;
+  }
+
+  .account-history-item {
+    padding: 0.66rem 0.72rem;
+  }
+
+  .account-history-list--full {
+    max-height: min(72vh, 46rem);
   }
 
   .settings-tab-btn {

@@ -205,7 +205,22 @@
     const adminBookingsDetailsDateLabel = document.getElementById('adminBookingsDetailsDateLabel');
     const bookingManagerPanel = document.getElementById('bookingManagerPanel');
     const bookingManagerMobileTabs = document.querySelectorAll('[data-booking-manager-mobile-tab]');
+    const usersCardsGrid = document.getElementById('usersCardsGrid');
+    const usersSortButtons = document.querySelectorAll('[data-users-sort-key]');
     let pendingBookingDeleteForm = null;
+    const usersSortAttributeMap = {
+      name: 'sortName',
+      username: 'sortUsername',
+      contact: 'sortContact',
+      status: 'sortStatus',
+      bookings: 'sortBookings',
+      reliability: 'sortReliability',
+    };
+    const usersSortCollator = new Intl.Collator('fr', { sensitivity: 'base', numeric: true });
+    let usersSortState = {
+      key: '',
+      direction: 1,
+    };
 
     const escapeHtml = (value) => {
       return String(value || '')
@@ -450,6 +465,54 @@
       return 0;
     };
 
+    const getUsersCardSortValue = (card, key) => {
+      const datasetKey = usersSortAttributeMap[key];
+      if (!datasetKey) {
+        return '';
+      }
+      return String(card.dataset[datasetKey] || '').trim();
+    };
+
+    const compareUsersCardValues = (a, b, key, direction) => {
+      if (key === 'bookings' || key === 'reliability') {
+        const aValue = Number(getUsersCardSortValue(a, key));
+        const bValue = Number(getUsersCardSortValue(b, key));
+        const aSafe = Number.isFinite(aValue) ? aValue : -1;
+        const bSafe = Number.isFinite(bValue) ? bValue : -1;
+        if (aSafe !== bSafe) {
+          return (aSafe - bSafe) * direction;
+        }
+        return 0;
+      }
+
+      const aText = getUsersCardSortValue(a, key);
+      const bText = getUsersCardSortValue(b, key);
+      const byText = usersSortCollator.compare(aText, bText);
+      return byText * direction;
+    };
+
+    const syncUsersSortIndicators = (key, direction) => {
+      usersSortButtons.forEach((button) => {
+        const isActive = button.dataset.usersSortKey === key;
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-sort', isActive ? (direction === -1 ? 'descending' : 'ascending') : 'none');
+      });
+    };
+
+    const sortUsersCards = (key, direction) => {
+      if (!usersCardsGrid || !key) {
+        return;
+      }
+
+      const cards = Array.from(usersCardsGrid.querySelectorAll('.user-card-btn, .admin-account-card'));
+      cards.sort((a, b) => compareUsersCardValues(a, b, key, direction));
+      cards.forEach((card) => {
+        usersCardsGrid.appendChild(card);
+      });
+      usersSortState = { key, direction };
+      syncUsersSortIndicators(key, direction);
+    };
+
     const renderBookingsDetailListForDate = (dateKey) => {
       if (!adminBookingsDetailsList) {
         return;
@@ -660,6 +723,21 @@
         card.click();
       });
     });
+
+    usersSortButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const key = button.dataset.usersSortKey || '';
+        if (!key) {
+          return;
+        }
+        const defaultDirection = button.dataset.sortDefault === 'desc' ? -1 : 1;
+        const direction = usersSortState.key === key ? -usersSortState.direction : defaultDirection;
+        sortUsersCards(key, direction);
+      });
+    });
+    if (usersSortButtons.length) {
+      syncUsersSortIndicators(usersSortState.key, usersSortState.direction);
+    }
 
     bookingManagerMobileTabs.forEach((tab) => {
       tab.addEventListener('click', () => {

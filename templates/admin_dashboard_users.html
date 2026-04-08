@@ -74,6 +74,14 @@
           </label>
 
           {% if users %}
+          <div class="users-table-head">
+            <button type="button" class="users-sort-btn" data-users-sort-key="name" data-sort-default="asc">Nom</button>
+            <button type="button" class="users-sort-btn" data-users-sort-key="username" data-sort-default="asc">Identifiant</button>
+            <button type="button" class="users-sort-btn" data-users-sort-key="contact" data-sort-default="asc">Contact</button>
+            <button type="button" class="users-sort-btn" data-users-sort-key="status" data-sort-default="asc">Statut</button>
+            <button type="button" class="users-sort-btn" data-users-sort-key="bookings" data-sort-default="desc">Réservations</button>
+            <button type="button" class="users-sort-btn" data-users-sort-key="reliability" data-sort-default="desc">Fiabilité</button>
+          </div>
           <div id="usersCardsGrid" class="users-cards-grid">
             {% for user in users %}
             {% if user.is_super_admin_user %}
@@ -81,29 +89,34 @@
               type="button"
               class="user-card-btn{% if user.is_super_admin_user %} is-super-admin-user{% endif %}"
               data-user-id="{{ user.id }}"
+              data-sort-name="{{ user.first_name if user.first_name else 'Sans prénom' }} {{ user.last_name }}"
+              data-sort-username="{{ user.username }}"
+              data-sort-contact="{{ user.email or user.phone or '' }}"
+              data-sort-status="SuperAdmin"
+              data-sort-bookings="{{ user.booking_count }}"
+              data-sort-reliability="{{ user.reliability_rate if user.reliability_rate is not none else -1 }}"
               data-search="{{ user.first_name }} {{ user.last_name }} {{ user.full_name }} {{ user.username }} {{ user.email }} {{ user.phone }}"
             >
-              <span class="user-card-name">{{ user.first_name if user.first_name else 'Sans prénom' }} {{ user.last_name }}</span>
-              <span class="user-card-subtitle">
-                {% if user.is_super_admin_user %}
-                SuperAdmin · Réservations de test · Protégé
-                {% elif user.next_booking_start %}
-                Prochaine réservation: {{ user.next_booking_start }}
-                {% else %}
-                Prochaine réservation: Aucune
-                {% endif %}
+              <span class="user-card-cell user-card-cell--name user-card-name">{{ user.first_name if user.first_name else 'Sans prénom' }} {{ user.last_name }}</span>
+              <span class="user-card-cell user-card-cell--username">{{ user.username or '-' }}</span>
+              <span class="user-card-cell user-card-cell--contact">{{ user.email or user.phone or '-' }}</span>
+              <span class="user-card-cell user-card-cell--status">
+                <span class="status-pill active">SuperAdmin</span>
               </span>
-              <span
-                class="user-card-reliability{% if user.reliability_rate is none %} is-empty{% endif %}"
-                {% if user.reliability_rate is not none %}
-                style="--reliability: {{ user.reliability_rate }};"
-                {% endif %}
-              >
-                {% if user.reliability_rate is not none %}
-                Fiabilité {{ user.reliability_rate }}%
-                {% else %}
-                Fiabilité n/d
-                {% endif %}
+              <span class="user-card-cell user-card-cell--bookings">{{ user.booking_count }}</span>
+              <span class="user-card-cell user-card-cell--reliability">
+                <span
+                  class="user-card-reliability{% if user.reliability_rate is none %} is-empty{% endif %}"
+                  {% if user.reliability_rate is not none %}
+                  style="--reliability: {{ user.reliability_rate }};"
+                  {% endif %}
+                >
+                  {% if user.reliability_rate is not none %}
+                  Fiabilité {{ user.reliability_rate }}%
+                  {% else %}
+                  Fiabilité n/d
+                  {% endif %}
+                </span>
               </span>
             </button>
             {% endif %}
@@ -118,14 +131,25 @@
               data-admin-identifier="{{ account.identifier }}"
               data-admin-display-name="{{ account.display_name }}"
               data-admin-can-delete="{{ '1' if account.can_delete else '0' }}"
+              data-sort-name="{{ account.display_name }}"
+              data-sort-username="{{ account.identifier }}"
+              data-sort-contact=""
+              data-sort-status="Administrateur"
+              data-sort-bookings="0"
+              data-sort-reliability="-1"
               data-search="{{ account.display_name }} {{ account.identifier }} Administrateur Accès complet"
             >
-              <span class="user-card-name">{{ account.display_name }}</span>
-              <span class="user-card-subtitle">
-                Administrateur · Accès complet
-                {% if not account.can_delete %}
-                · Compte actuel
-                {% endif %}
+              <span class="user-card-cell user-card-cell--name user-card-name">{{ account.display_name }}</span>
+              <span class="user-card-cell user-card-cell--username">{{ account.identifier }}</span>
+              <span class="user-card-cell user-card-cell--contact">-</span>
+              <span class="user-card-cell user-card-cell--status">
+                <span class="status-pill active">
+                  Administrateur{% if not account.can_delete %} · Compte actuel{% endif %}
+                </span>
+              </span>
+              <span class="user-card-cell user-card-cell--bookings">0</span>
+              <span class="user-card-cell user-card-cell--reliability">
+                <span class="user-card-reliability is-empty">Fiabilité n/d</span>
               </span>
             </article>
             {% endfor %}
@@ -136,21 +160,34 @@
               type="button"
               class="user-card-btn is-admin-account-user"
               data-user-id="{{ user.id }}"
+              data-sort-name="{{ user.first_name if user.first_name else user.email }} {{ user.last_name }}"
+              data-sort-username="{{ user.username }}"
+              data-sort-contact="{{ user.email or user.phone or '' }}"
+              data-sort-status="Administrateur"
+              data-sort-bookings="{{ user.booking_count }}"
+              data-sort-reliability="{{ user.reliability_rate if user.reliability_rate is not none else -1 }}"
               data-search="{{ user.first_name }} {{ user.last_name }} {{ user.full_name }} {{ user.username }} {{ user.email }} {{ user.phone }} Administrateur Accès complet"
             >
-              <span class="user-card-name">{{ user.first_name if user.first_name else user.email }} {{ user.last_name }}</span>
-              <span class="user-card-subtitle">Administrateur · Accès complet</span>
-              <span
-                class="user-card-reliability{% if user.reliability_rate is none %} is-empty{% endif %}"
-                {% if user.reliability_rate is not none %}
-                style="--reliability: {{ user.reliability_rate }};"
-                {% endif %}
-              >
-                {% if user.reliability_rate is not none %}
-                Fiabilité {{ user.reliability_rate }}%
-                {% else %}
-                Fiabilité n/d
-                {% endif %}
+              <span class="user-card-cell user-card-cell--name user-card-name">{{ user.first_name if user.first_name else user.email }} {{ user.last_name }}</span>
+              <span class="user-card-cell user-card-cell--username">{{ user.username or '-' }}</span>
+              <span class="user-card-cell user-card-cell--contact">{{ user.email or user.phone or '-' }}</span>
+              <span class="user-card-cell user-card-cell--status">
+                <span class="status-pill active">Administrateur</span>
+              </span>
+              <span class="user-card-cell user-card-cell--bookings">{{ user.booking_count }}</span>
+              <span class="user-card-cell user-card-cell--reliability">
+                <span
+                  class="user-card-reliability{% if user.reliability_rate is none %} is-empty{% endif %}"
+                  {% if user.reliability_rate is not none %}
+                  style="--reliability: {{ user.reliability_rate }};"
+                  {% endif %}
+                >
+                  {% if user.reliability_rate is not none %}
+                  Fiabilité {{ user.reliability_rate }}%
+                  {% else %}
+                  Fiabilité n/d
+                  {% endif %}
+                </span>
               </span>
             </button>
             {% endif %}
@@ -162,27 +199,34 @@
               type="button"
               class="user-card-btn"
               data-user-id="{{ user.id }}"
+              data-sort-name="{{ user.first_name if user.first_name else 'Sans prénom' }} {{ user.last_name }}"
+              data-sort-username="{{ user.username }}"
+              data-sort-contact="{{ user.email or user.phone or '' }}"
+              data-sort-status="{{ 'Bloqué' if user.is_blocked else 'Actif' }}"
+              data-sort-bookings="{{ user.booking_count }}"
+              data-sort-reliability="{{ user.reliability_rate if user.reliability_rate is not none else -1 }}"
               data-search="{{ user.first_name }} {{ user.last_name }} {{ user.full_name }} {{ user.username }} {{ user.email }} {{ user.phone }}"
             >
-              <span class="user-card-name">{{ user.first_name if user.first_name else 'Sans prénom' }} {{ user.last_name }}</span>
-              <span class="user-card-subtitle">
-                {% if user.next_booking_start %}
-                Prochaine réservation: {{ user.next_booking_start }}
-                {% else %}
-                Prochaine réservation: Aucune
-                {% endif %}
+              <span class="user-card-cell user-card-cell--name user-card-name">{{ user.first_name if user.first_name else 'Sans prénom' }} {{ user.last_name }}</span>
+              <span class="user-card-cell user-card-cell--username">{{ user.username or '-' }}</span>
+              <span class="user-card-cell user-card-cell--contact">{{ user.email or user.phone or '-' }}</span>
+              <span class="user-card-cell user-card-cell--status">
+                <span class="status-pill {% if user.is_blocked %}blocked{% else %}active{% endif %}">{{ 'Bloqué' if user.is_blocked else 'Actif' }}</span>
               </span>
-              <span
-                class="user-card-reliability{% if user.reliability_rate is none %} is-empty{% endif %}"
-                {% if user.reliability_rate is not none %}
-                style="--reliability: {{ user.reliability_rate }};"
-                {% endif %}
-              >
-                {% if user.reliability_rate is not none %}
-                Fiabilité {{ user.reliability_rate }}%
-                {% else %}
-                Fiabilité n/d
-                {% endif %}
+              <span class="user-card-cell user-card-cell--bookings">{{ user.booking_count }}</span>
+              <span class="user-card-cell user-card-cell--reliability">
+                <span
+                  class="user-card-reliability{% if user.reliability_rate is none %} is-empty{% endif %}"
+                  {% if user.reliability_rate is not none %}
+                  style="--reliability: {{ user.reliability_rate }};"
+                  {% endif %}
+                >
+                  {% if user.reliability_rate is not none %}
+                  Fiabilité {{ user.reliability_rate }}%
+                  {% else %}
+                  Fiabilité n/d
+                  {% endif %}
+                </span>
               </span>
             </button>
             {% endif %}
