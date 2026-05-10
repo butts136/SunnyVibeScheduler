@@ -3296,7 +3296,7 @@ def index():
 
 @app.route('/favicon.ico')
 def favicon():
-    return send_from_directory(STATIC_DIR, 'logo.png', mimetype='image/png')
+    return send_from_directory(STATIC_DIR, 'favicon.ico', mimetype='image/x-icon')
 
 
 @app.route('/horaire')
