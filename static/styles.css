@@ -8781,15 +8781,17 @@ input[type="number"].number-input {
 .nutrition-values-content {
   padding: 0.65rem;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .nutrition-values-content img {
   display: block;
   width: 100%;
-  min-width: 680px;
+  max-width: 100%;
   height: auto;
   border-radius: 10px;
   background: #fff;
+  touch-action: pan-x pan-y pinch-zoom;
 }
 
 .menu-flavor-filter-modal {
@@ -12857,7 +12859,9 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
   }
 
   .nutrition-values-content img {
-    min-width: 620px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
   }
 
   .menu-flavor-filter-list {
