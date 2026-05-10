@@ -28,6 +28,7 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=1)
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_SECURE'] = os.environ.get('FLASK_ENV') == 'production'
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(days=30)
 
 DATA_DIR = Path(__file__).resolve().parent / 'data'
 STATIC_DIR = Path(__file__).resolve().parent / 'static'
@@ -3226,6 +3227,8 @@ def _set_security_headers(response):
     response.headers['X-Frame-Options'] = 'DENY'
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
     response.headers['X-XSS-Protection'] = '1; mode=block'
+    if request.endpoint == 'static' and request.args.get('v'):
+        response.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
     return response
 
 
@@ -5389,22 +5392,44 @@ app.add_url_rule('/admin/dashboard/configuration', endpoint='admin_dashboard_con
 
 if __name__ == '__main__':
     flask_debug_enabled = os.environ.get('FLASK_DEBUG', '').strip().lower() in {'1', 'true', 'yes', 'on'}
+    production_mode = os.environ.get('FLASK_ENV') == 'production'
     port_env_var = 'PORT' if os.environ.get('FLASK_ENV') == 'production' else 'FLASK_RUN_PORT'
     try:
         flask_port = int(os.environ.get(port_env_var, '39048'))
     except ValueError:
         flask_port = 39048
+    flask_host = os.environ.get('FLASK_RUN_HOST', '0.0.0.0')
+    server_name = os.environ.get(
+        'SUNNYVIBE_SERVER',
+        'waitress' if production_mode else 'flask',
+    ).strip().lower()
 
     app.logger.info(
-        'Starting SunnyVibeScheduler on %s:%s debug=%s pid=%s',
-        os.environ.get('FLASK_RUN_HOST', '0.0.0.0'),
+        'Starting SunnyVibeScheduler on %s:%s server=%s debug=%s pid=%s',
+        flask_host,
         flask_port,
+        server_name,
         flask_debug_enabled,
         os.getpid(),
     )
+
+    if server_name == 'waitress':
+        from waitress import serve
+
+        serve(
+            app,
+            host=flask_host,
+            port=flask_port,
+            threads=int(os.environ.get('SUNNYVIBE_WAITRESS_THREADS', '8')),
+            connection_limit=int(os.environ.get('SUNNYVIBE_WAITRESS_CONNECTION_LIMIT', '80')),
+            channel_timeout=int(os.environ.get('SUNNYVIBE_WAITRESS_CHANNEL_TIMEOUT', '30')),
+        )
+        raise SystemExit(0)
+
     app.run(
-        host=os.environ.get('FLASK_RUN_HOST', '0.0.0.0'),
+        host=flask_host,
         port=flask_port,
         debug=flask_debug_enabled,
+        threaded=False,
         use_reloader=flask_debug_enabled,
     )
