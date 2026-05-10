@@ -123,7 +123,7 @@
         {% endif %}
 
         {% if past_bookings %}
-        <details class="past-bookings-details" {% if not upcoming_bookings %}open{% endif %}>
+        <details class="past-bookings-details">
           <summary><span class="caret">&#9662;</span> Réservations passées ({{ past_bookings|length }})</summary>
           <div class="past-bookings-list">
             {% for booking in past_bookings %}
