@@ -49,6 +49,9 @@
             <button class="btn primary public-menu-filter-btn" id="openMenuFlavorFilter" type="button">
               Filtrer par saveurs
             </button>
+            <button class="btn public-menu-nutrition-btn" id="openNutritionValues" type="button">
+              Valeurs nutritives
+            </button>
             <span class="public-menu-filter-status" id="menuFlavorFilterStatus">Toutes les saveurs</span>
           </div>
 
@@ -101,6 +104,35 @@
       </section>
     </main>
   </div>
+
+  <dialog id="menuAdvisoryModal" class="user-modal menu-advisory-modal">
+    <div class="user-modal-head">
+      <h3>Avis important</h3>
+      <button class="btn" id="closeMenuAdvisory" type="button">Fermer</button>
+    </div>
+    <div class="user-modal-content menu-advisory-content">
+      <p>Il est à noter que nous ne pouvons garantir que nos produits, une fois reconstitués au Sunny Vibes Nutrition, seront exempts de quelconque allergène ou intolérance.</p>
+      <p>Il est donc <strong>IMPORTANT</strong> de nous aviser si vous avez des <strong>ALLERGIES</strong> et/ou une <strong>INTOLÉRANCE</strong> dès votre arrivée.</p>
+      <p>De plus, il est aussi <strong>IMPORTANT</strong> de nous aviser si vous êtes <strong>ENCEINTE</strong>, si vous <strong>ALLAITEZ</strong> ou si vous êtes atteint d'une <strong>MALADIE</strong> afin que nous puissions vous conseiller des produits adaptés à votre situation.</p>
+      <div class="modal-actions">
+        <button class="btn primary" id="acknowledgeMenuAdvisory" type="button">J’ai compris</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="nutritionValuesModal" class="user-modal nutrition-values-modal">
+    <div class="user-modal-head">
+      <h3>Valeurs nutritives</h3>
+      <button class="btn" id="closeNutritionValues" type="button">Fermer</button>
+    </div>
+    <div class="user-modal-content nutrition-values-content">
+      <img
+        src="{{ url_for('static', filename='nutrition-values.png', v=styles_version) }}"
+        alt="Tableau des valeurs nutritives des boissons Sunny Vibe Nutrition"
+        loading="lazy"
+      >
+    </div>
+  </dialog>
 
   <dialog id="menuFlavorFilterModal" class="user-modal menu-flavor-filter-modal">
     <div class="user-modal-head">
@@ -347,6 +379,47 @@
 
       syncAvailableFlavorRows();
       applyFilter();
+    }());
+
+    (function initMenuAdvisory() {
+      const modal = document.getElementById('menuAdvisoryModal');
+      const closeButton = document.getElementById('closeMenuAdvisory');
+      const acknowledgeButton = document.getElementById('acknowledgeMenuAdvisory');
+      if (!modal || !closeButton || !acknowledgeButton) {
+        return;
+      }
+
+      const closeModal = () => {
+        modal.close();
+      };
+
+      closeButton.addEventListener('click', closeModal);
+      acknowledgeButton.addEventListener('click', closeModal);
+
+      window.addEventListener('load', () => {
+        window.setTimeout(() => {
+          if (!modal.open) {
+            modal.showModal();
+          }
+        }, 450);
+      });
+    }());
+
+    (function initNutritionValues() {
+      const openButton = document.getElementById('openNutritionValues');
+      const closeButton = document.getElementById('closeNutritionValues');
+      const modal = document.getElementById('nutritionValuesModal');
+      if (!openButton || !closeButton || !modal) {
+        return;
+      }
+
+      openButton.addEventListener('click', () => {
+        modal.showModal();
+      });
+
+      closeButton.addEventListener('click', () => {
+        modal.close();
+      });
     }());
   </script>
 </body>

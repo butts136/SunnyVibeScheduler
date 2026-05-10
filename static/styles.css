@@ -8744,8 +8744,52 @@ input[type="number"].number-input {
   font-weight: 800;
 }
 
+.public-menu-nutrition-btn {
+  min-height: 48px;
+  border-color: rgba(255, 193, 7, 0.36);
+  background: rgba(255, 193, 7, 0.12);
+  color: #ffe1a3;
+}
+
 .public-menu-filter-empty {
   margin-top: 0.55rem;
+}
+
+.menu-advisory-modal {
+  width: min(620px, calc(100vw - 1.25rem));
+}
+
+.menu-advisory-content {
+  gap: 0.8rem;
+}
+
+.menu-advisory-content p {
+  margin: 0;
+  color: rgba(231, 238, 255, 0.9);
+  line-height: 1.55;
+}
+
+.menu-advisory-content strong {
+  color: #ffd36f;
+  font-weight: 950;
+}
+
+.nutrition-values-modal {
+  width: min(980px, calc(100vw - 1.25rem));
+}
+
+.nutrition-values-content {
+  padding: 0.65rem;
+  overflow: auto;
+}
+
+.nutrition-values-content img {
+  display: block;
+  width: 100%;
+  min-width: 680px;
+  height: auto;
+  border-radius: 10px;
+  background: #fff;
 }
 
 .menu-flavor-filter-modal {
@@ -12796,10 +12840,24 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
     font-size: 0.82rem;
   }
 
+  .public-menu-nutrition-btn {
+    width: 100%;
+    min-height: 38px;
+  }
+
   .public-menu-filter-status {
     min-height: 30px;
     padding: 0.2rem 0.55rem;
     font-size: 0.74rem;
+  }
+
+  .menu-advisory-modal,
+  .nutrition-values-modal {
+    width: calc(100vw - 1rem);
+  }
+
+  .nutrition-values-content img {
+    min-width: 620px;
   }
 
   .menu-flavor-filter-list {
