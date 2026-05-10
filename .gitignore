@@ -43,6 +43,7 @@ data/.session-secret
 
 # Temporary/local working files
 TEMP_FILES/
+logs/
 *.tmp
 *.bak
 

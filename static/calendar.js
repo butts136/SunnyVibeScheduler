@@ -85,7 +85,10 @@
   const configuredBookings = sanitizeBookings(window.SUNNYVIBE_BOOKINGS || {});
   const configuredBlockedRules = sanitizeBlockedRules(window.SUNNYVIBE_BLOCKED_RULES || []);
   const configuredActiveSlots = sanitizeActiveSlots(window.SUNNYVIBE_ACTIVE_SLOTS || []);
+  const csrfToken = typeof window.SUNNYVIBE_CSRF_TOKEN === 'string' ? window.SUNNYVIBE_CSRF_TOKEN : '';
   const userCanBook = Boolean(window.SUNNYVIBE_USER_CAN_BOOK);
+  const userCanManageSlots = Boolean(window.SUNNYVIBE_CAN_MANAGE_SLOTS);
+  const activeSlotsUrl = resolveApiUrl(window.SUNNYVIBE_ACTIVE_SLOTS_URL || 'admin/dashboard/active-slots');
 
   if (timelineContainerEl && timelinePlaceHeadersEl) {
     let syncingTimelineScroll = false;
@@ -284,7 +287,10 @@
       try {
         const response = await fetch(createBookingApiUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+          },
           body: JSON.stringify(payload),
         });
 
@@ -991,7 +997,15 @@
     if (!renderedCards) {
       const emptyState = document.createElement('div');
       emptyState.className = 'calendar-mobile-empty-month';
-      emptyState.textContent = 'Aucune plage horaire disponible à venir.';
+      if (userCanManageSlots) {
+        emptyState.classList.add('calendar-mobile-empty-month--with-action');
+        emptyState.innerHTML = `
+          <p>Aucune plage horaire disponible à venir.</p>
+          <a class="btn primary" href="${escapeHtml(activeSlotsUrl)}">Ajouter une plage horaire</a>
+        `;
+      } else {
+        emptyState.textContent = 'Aucune plage horaire disponible à venir.';
+      }
       calendarMobileListEl.appendChild(emptyState);
     }
   }

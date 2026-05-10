@@ -3,6 +3,8 @@ import calendar as pycalendar
 import hashlib
 import hmac
 import json
+import logging
+from logging.handlers import RotatingFileHandler
 import os
 import re
 import secrets
@@ -13,7 +15,8 @@ from pathlib import Path
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError, available_timezones
 
 from cryptography.fernet import Fernet, InvalidToken
-from flask import Flask, jsonify, redirect, render_template, request, session, url_for
+from flask import Flask, jsonify, redirect, render_template, request, send_from_directory, session, url_for
+from werkzeug.exceptions import HTTPException
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
@@ -28,6 +31,7 @@ app.config['SESSION_COOKIE_SECURE'] = os.environ.get('FLASK_ENV') == 'production
 
 DATA_DIR = Path(__file__).resolve().parent / 'data'
 STATIC_DIR = Path(__file__).resolve().parent / 'static'
+LOG_DIR = Path(__file__).resolve().parent / 'logs'
 ADMIN_STORE_PATH = DATA_DIR / 'admin_account.json'
 ADMIN_KEY_PATH = DATA_DIR / 'admin_account.key'
 SUPER_ADMIN_RECOVERY_PATH = DATA_DIR / 'super_admin_account.json'
@@ -75,6 +79,32 @@ VALID_SUNNYGYM_DISPLAY_MODES = {
     SUNNYGYM_DISPLAY_MODE_CALENDAR,
     SUNNYGYM_DISPLAY_MODE_CARDS,
 }
+
+
+def _configure_logging():
+    LOG_DIR.mkdir(exist_ok=True)
+    log_path = LOG_DIR / 'sunnyvibe.log'
+    handler = RotatingFileHandler(
+        log_path,
+        maxBytes=1_000_000,
+        backupCount=3,
+        encoding='utf-8',
+    )
+    handler.setLevel(logging.INFO)
+    handler.setFormatter(
+        logging.Formatter('%(asctime)s %(levelname)s [%(name)s] %(message)s')
+    )
+
+    app.logger.setLevel(logging.INFO)
+    if not any(
+        isinstance(existing, RotatingFileHandler)
+        and getattr(existing, 'baseFilename', '') == str(log_path)
+        for existing in app.logger.handlers
+    ):
+        app.logger.addHandler(handler)
+
+
+_configure_logging()
 
 
 def _static_asset_version(filename):
@@ -3199,6 +3229,22 @@ def _set_security_headers(response):
     return response
 
 
+@app.errorhandler(Exception)
+def _log_unhandled_exception(error):
+    if isinstance(error, HTTPException):
+        return error
+
+    app.logger.exception(
+        'Unhandled exception on %s %s',
+        request.method,
+        request.path,
+        exc_info=error,
+    )
+    if request.path.startswith('/api/'):
+        return jsonify({'ok': False, 'error': 'Erreur serveur.'}), 500
+    raise error
+
+
 def _generate_csrf_token():
     if 'csrf_token' not in session:
         session['csrf_token'] = secrets.token_hex(32)
@@ -3207,6 +3253,11 @@ def _generate_csrf_token():
 
 def _validate_csrf_token():
     token = request.form.get('csrf_token', '')
+    if not token:
+        token = request.headers.get('X-CSRFToken', '') or request.headers.get('X-CSRF-Token', '')
+    if not token and request.is_json:
+        payload = request.get_json(silent=True) or {}
+        token = str(payload.get('csrf_token', ''))
     expected = session.get('csrf_token', '')
     if not token or not expected or not hmac.compare_digest(token, expected):
         return False
@@ -3238,6 +3289,11 @@ def index():
         'index.html',
         home_modified_schedule_dates=_build_upcoming_modified_schedule_dates(special_dates, limit=3),
     )
+
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(STATIC_DIR, 'logo.png', mimetype='image/png')
 
 
 @app.route('/horaire')
@@ -3866,6 +3922,9 @@ def create_booking():
 
     if session.get('user_id') and session.get('must_change_password'):
         return jsonify({'ok': False, 'error': 'Vous devez d’abord changer votre mot de passe.'}), 403
+
+    if not _validate_csrf_token():
+        return jsonify({'ok': False, 'error': 'Jeton de sécurité invalide. Veuillez réessayer.'}), 400
 
     payload = request.get_json(silent=True) or request.form
     date_text = str(payload.get('date', '')).strip()
@@ -5330,11 +5389,19 @@ app.add_url_rule('/admin/dashboard/configuration', endpoint='admin_dashboard_con
 
 if __name__ == '__main__':
     flask_debug_enabled = os.environ.get('FLASK_DEBUG', '').strip().lower() in {'1', 'true', 'yes', 'on'}
+    port_env_var = 'PORT' if os.environ.get('FLASK_ENV') == 'production' else 'FLASK_RUN_PORT'
     try:
-        flask_port = int(os.environ.get('PORT', os.environ.get('FLASK_RUN_PORT', '39048')))
+        flask_port = int(os.environ.get(port_env_var, '39048'))
     except ValueError:
         flask_port = 39048
 
+    app.logger.info(
+        'Starting SunnyVibeScheduler on %s:%s debug=%s pid=%s',
+        os.environ.get('FLASK_RUN_HOST', '0.0.0.0'),
+        flask_port,
+        flask_debug_enabled,
+        os.getpid(),
+    )
     app.run(
         host=os.environ.get('FLASK_RUN_HOST', '0.0.0.0'),
         port=flask_port,

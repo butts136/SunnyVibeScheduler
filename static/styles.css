@@ -10061,6 +10061,8 @@ input[type="number"].number-input {
 
 .calendar-day-modal {
   width: min(980px, calc(100vw - 2rem));
+  max-height: min(92vh, 860px);
+  overflow: hidden;
 }
 
 .user-modal-head,
@@ -10547,6 +10549,17 @@ input[type="number"].number-input {
   border-radius: 12px;
 }
 
+.calendar-mobile-empty-month--with-action {
+  display: grid;
+  justify-items: center;
+  gap: 0.7rem;
+  padding: 1rem;
+}
+
+.calendar-mobile-empty-month--with-action p {
+  margin: 0;
+}
+
 .day-panel {
   display: grid;
   gap: 0.72rem;
@@ -10616,10 +10629,14 @@ input[type="number"].number-input {
 .timeline-place-headers {
   --capacity: 1;
   display: grid;
-  grid-template-columns: repeat(var(--capacity), minmax(0, 1fr));
-  gap: 0.45rem;
-  margin-left: 58px;
-  width: calc(100% - 58px);
+  grid-template-columns: 58px minmax(0, 1fr);
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.timeline-place-headers::-webkit-scrollbar {
+  display: none;
 }
 
 .timeline-place-chip {
@@ -10635,11 +10652,20 @@ input[type="number"].number-input {
 }
 
 .timeline-place-axis {
-  display: none;
+  display: block;
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  width: 58px;
+  min-width: 58px;
+  background: linear-gradient(90deg, rgba(10, 15, 29, 0.98), rgba(10, 15, 29, 0.72));
 }
 
 .timeline-place-track {
-  display: contents;
+  display: grid;
+  grid-template-columns: repeat(var(--capacity), minmax(0, 1fr));
+  gap: 0.45rem;
+  min-width: max(260px, calc(var(--capacity) * 96px));
 }
 
 .timeline-place-headers--integrated {
@@ -10692,6 +10718,7 @@ input[type="number"].number-input {
   background: rgba(0, 0, 0, 0.14);
   padding: 0.45rem;
   overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .timeline-track {
@@ -10743,6 +10770,9 @@ input[type="number"].number-input {
   gap: 0.08rem;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.17);
+  min-height: 30px;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.22);
+  color: rgba(255, 255, 255, 0.94);
 }
 
 .timeline-reservation-time {
@@ -10753,6 +10783,10 @@ input[type="number"].number-input {
 .timeline-reservation-label {
   font-size: 0.76rem;
   font-weight: 700;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .timeline-reservation.booking {
@@ -11734,6 +11768,8 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
 .calendar-day-modal-panel {
   margin: 0;
   padding: 0.8rem;
+  max-height: calc(min(92vh, 860px) - 1.6rem);
+  overflow: auto;
 }
 
 .calendar-day-modal-open {
@@ -11742,6 +11778,13 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
 
 .booking-modal {
   max-width: 760px;
+  max-height: min(92vh, 820px);
+  overflow: hidden;
+}
+
+.booking-modal .user-modal-content {
+  max-height: calc(min(92vh, 820px) - 64px);
+  overflow: auto;
 }
 
 .booking-rules {
@@ -12621,6 +12664,41 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
   .booking-modal,
   .calendar-day-modal {
     width: calc(100vw - 1rem);
+  }
+
+  .calendar-day-modal-panel {
+    padding: 0.65rem;
+  }
+
+  .booking-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .timeline-place-headers {
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+
+  .timeline-place-axis {
+    width: 48px;
+    min-width: 48px;
+  }
+
+  .timeline-place-track,
+  .timeline-track {
+    min-width: max(240px, calc(var(--capacity) * 86px));
+  }
+
+  .timeline-track {
+    margin-left: 48px;
+  }
+
+  .time-marker {
+    left: -48px;
+  }
+
+  .timeline-legend {
+    margin-left: 48px;
+    width: calc(100% - 48px);
   }
 }
 

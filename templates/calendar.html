@@ -159,7 +159,10 @@
     window.SUNNYVIBE_BLOCKED_RULES = {{ blocked_slots_json|tojson }};
     window.SUNNYVIBE_ACTIVE_SLOTS = {{ active_slots_json|tojson }};
     window.SUNNYVIBE_USER_CAN_BOOK = {{ user_can_book|tojson }};
+    window.SUNNYVIBE_CAN_MANAGE_SLOTS = {{ is_admin_authenticated|tojson }};
     window.SUNNYVIBE_API_BOOKINGS_URL = {{ url_for('create_booking')|tojson }};
+    window.SUNNYVIBE_ACTIVE_SLOTS_URL = {{ url_for('admin_dashboard_active_slots')|tojson }};
+    window.SUNNYVIBE_CSRF_TOKEN = {{ csrf_token|tojson }};
     window.SUNNYVIBE_TODAY_KEY = {{ current_day_key|tojson }};
     window.SUNNYVIBE_TIMEZONE = {{ reservation_timezone_name|tojson }};
   </script>
