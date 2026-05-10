@@ -4323,6 +4323,7 @@ def admin_dashboard():
     invitation_config = _load_invitation_config()
     menu_payload = _load_menu_payload()
     menu_categories = menu_payload.get('categories', [])
+    menu_settings = menu_payload.get('settings', {})
     valid_menu_category_keys = {item.get('key') for item in menu_categories if item.get('key')}
     ordered_menu_category_keys = [item.get('key') for item in menu_categories if item.get('key')]
     ordered_menu_product_category_keys = [item.get('key') for item in menu_categories if item.get('key') and item.get('key') != 'all']
