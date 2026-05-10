@@ -12905,6 +12905,26 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
     min-height: 38px;
   }
 
+  .menu-advisory-banner {
+    margin: 0.55rem 0 0.75rem;
+    padding: 0.75rem 0.8rem;
+  }
+
+  .menu-advisory-banner__inner {
+    gap: 0.6rem;
+  }
+
+  .menu-advisory-banner__icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  .menu-advisory-banner p {
+    font-size: 0.78rem;
+    line-height: 1.42;
+    margin-bottom: 0.45rem;
+  }
+
   .menu-tab-settings-btn {
     min-width: 38px;
     padding-inline: 0.7rem;

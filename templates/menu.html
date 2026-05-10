@@ -18,6 +18,19 @@
           <h1 id="menuTitle">Menu</h1>
         </header>
 
+        {% if menu_settings.disclaimer_mode == 'header' %}
+        <div class="menu-advisory-banner">
+          <div class="menu-advisory-banner__inner">
+            <img class="menu-advisory-banner__icon" src="{{ url_for('static', filename='disclaimer-exclamation.png', v=styles_version) }}" alt="" aria-hidden="true">
+            <div class="menu-advisory-banner__body">
+              {% for disclaimer_text in menu_settings.disclaimer_texts or [] %}
+              <p>{{ disclaimer_text }}</p>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
         <div class="settings-shell public-menu-shell">
           <div class="settings-tabs-wrap">
             <div class="settings-tabs" id="publicMenuTabs">
@@ -54,19 +67,6 @@
             </button>
             <span class="public-menu-filter-status" id="menuFlavorFilterStatus">Toutes les saveurs</span>
           </div>
-
-          {% if menu_settings.disclaimer_mode == 'header' %}
-          <div class="menu-advisory-banner">
-            <div class="menu-advisory-banner__inner">
-              <img class="menu-advisory-banner__icon" src="{{ url_for('static', filename='disclaimer-exclamation.png', v=styles_version) }}" alt="" aria-hidden="true">
-              <div class="menu-advisory-banner__body">
-                {% for disclaimer_text in menu_settings.disclaimer_texts or [] %}
-                <p>{{ disclaimer_text }}</p>
-                {% endfor %}
-              </div>
-            </div>
-          </div>
-          {% endif %}
 
           <div class="settings-tab-panels">
             {% for category in menu_categories %}
