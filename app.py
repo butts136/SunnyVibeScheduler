@@ -941,6 +941,9 @@ def _save_special_dates(special_dates):
 def _default_menu_payload():
     return {
         'updated_at': None,
+        'settings': {
+            'disclaimer_mode': 'popup',
+        },
         'categories': [
             {'key': category_key, 'label': category_label}
             for category_key, category_label in MENU_CATEGORY_OPTIONS
@@ -1000,6 +1003,15 @@ def _normalize_menu_payload(raw_payload):
     payload = _default_menu_payload()
     if not isinstance(raw_payload, dict):
         return payload
+
+    raw_settings = raw_payload.get('settings', {})
+    if isinstance(raw_settings, dict):
+        disclaimer_mode = str(raw_settings.get('disclaimer_mode', 'popup')).strip().lower()
+        if disclaimer_mode not in {'disabled', 'header', 'popup'}:
+            disclaimer_mode = 'popup'
+        payload['settings'] = {
+            'disclaimer_mode': disclaimer_mode,
+        }
 
     raw_categories = raw_payload.get('categories', [])
     normalized_categories = []
@@ -1066,6 +1078,18 @@ def _normalize_menu_payload(raw_payload):
     payload['items'] = normalized_items
     payload['updated_at'] = raw_payload.get('updated_at')
     return payload
+
+
+def _save_menu_settings(menu_settings):
+    payload = _load_menu_payload()
+    payload['settings'] = {
+        'disclaimer_mode': 'popup',
+    }
+    if isinstance(menu_settings, dict):
+        disclaimer_mode = str(menu_settings.get('disclaimer_mode', 'popup')).strip().lower()
+        if disclaimer_mode in {'disabled', 'header', 'popup'}:
+            payload['settings']['disclaimer_mode'] = disclaimer_mode
+    _save_menu_payload(payload)
 
 
 def _sync_menu_ingredients_from_items(menu_payload):
@@ -3322,9 +3346,11 @@ def horaire():
 @app.route('/menu')
 def menu():
     menu_payload = _load_menu_payload()
+    menu_settings = menu_payload.get('settings', {})
     return render_template(
         'menu.html',
         menu_payload=menu_payload,
+        menu_settings=menu_settings,
         menu_categories=menu_payload.get('categories', []),
         menu_items_by_category=_group_menu_items_by_category(menu_payload),
         menu_ingredients=sorted(menu_payload.get('ingredients', []), key=str.casefold),
@@ -5025,6 +5051,7 @@ def admin_dashboard():
             'rename_menu_product',
             'update_menu_product_flavors',
             'delete_menu_product',
+            'save_menu_settings',
         }:
             active_tab = 'menu-panel'
             candidate_menu_payload = _normalize_menu_payload(menu_payload)
@@ -5117,7 +5144,20 @@ def admin_dashboard():
                         }
                         menu_active_category = 'all'
                         menu_product_form['category'] = ordered_menu_product_category_keys[0] if ordered_menu_product_category_keys else ''
-                        success_message = 'Onglet du menu supprimé.'
+                    success_message = 'Onglet du menu supprimé.'
+
+            if admin_action == 'save_menu_settings':
+                requested_mode = request.form.get('menu_disclaimer_mode', 'popup').strip().lower()
+                if requested_mode not in {'disabled', 'header', 'popup'}:
+                    errors.append("Mode de disclaimer invalide.")
+                else:
+                    candidate_menu_payload['settings'] = {
+                        'disclaimer_mode': requested_mode,
+                    }
+                    _save_menu_payload(candidate_menu_payload)
+                    menu_payload = _load_menu_payload()
+                    menu_settings = menu_payload.get('settings', {})
+                    success_message = 'Paramètres du menu enregistrés.'
 
             if admin_action == 'add_menu_product':
                 product_category = request.form.get('menu_product_category', '').strip()
@@ -5351,6 +5391,7 @@ def admin_dashboard():
         invitation_config=invitation_config,
         invitation_codes=invitation_codes,
         menu_payload=menu_payload,
+        menu_settings=menu_settings,
         menu_categories=menu_categories,
         menu_items_by_category=_group_menu_items_by_category(menu_payload),
         menu_active_category=menu_active_category,

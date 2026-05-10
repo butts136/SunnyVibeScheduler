@@ -8704,6 +8704,31 @@ input[type="number"].number-input {
   gap: 0.7rem;
 }
 
+.menu-advisory-banner {
+  margin: 0.85rem 0 1rem;
+  padding: 0.95rem 1rem;
+  border: 1px solid rgba(255, 211, 111, 0.25);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255, 211, 111, 0.12), rgba(255, 255, 255, 0.03));
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.16);
+}
+
+.menu-advisory-banner p {
+  margin: 0 0 0.7rem;
+  color: rgba(231, 238, 255, 0.92);
+  line-height: 1.55;
+}
+
+.menu-advisory-banner p:last-child {
+  margin-bottom: 0;
+}
+
+.menu-tab-settings-btn {
+  min-width: 46px;
+  padding-inline: 0.9rem;
+  font-size: 1.05rem;
+}
+
 .menu-search-field {
   display: grid;
   gap: 0.38rem;
@@ -12845,6 +12870,11 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
   .public-menu-nutrition-btn {
     width: 100%;
     min-height: 38px;
+  }
+
+  .menu-tab-settings-btn {
+    min-width: 38px;
+    padding-inline: 0.7rem;
   }
 
   .public-menu-filter-status {

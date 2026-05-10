@@ -35,7 +35,7 @@
             </div>
           </div>
 
-          <div class="public-menu-filterbar">
+        <div class="public-menu-filterbar">
             <label class="menu-search-field public-menu-search-field">
               <span class="menu-search-label">Recherche</span>
               <input
@@ -54,6 +54,14 @@
             </button>
             <span class="public-menu-filter-status" id="menuFlavorFilterStatus">Toutes les saveurs</span>
           </div>
+
+          {% if menu_settings.disclaimer_mode == 'header' %}
+          <div class="menu-advisory-banner">
+            <p>Il est à noter que nous ne pouvons garantir que nos produits, une fois reconstitués au Sunny Vibes Nutrition, seront exempts de quelconque allergène ou intolérance.</p>
+            <p>Il est donc <strong>IMPORTANT</strong> de nous aviser si vous avez des <strong>ALLERGIES</strong> et/ou une <strong>INTOLÉRANCE</strong> dès votre arrivée.</p>
+            <p>De plus, il est aussi <strong>IMPORTANT</strong> de nous aviser si vous êtes <strong>ENCEINTE</strong>, si vous <strong>ALLAITEZ</strong> ou si vous êtes atteint d'une <strong>MALADIE</strong> afin que nous puissions vous conseiller des produits adaptés à votre situation.</p>
+          </div>
+          {% endif %}
 
           <div class="settings-tab-panels">
             {% for category in menu_categories %}
@@ -105,6 +113,7 @@
     </main>
   </div>
 
+  {% if menu_settings.disclaimer_mode != 'disabled' %}
   <dialog id="menuAdvisoryModal" class="user-modal menu-advisory-modal">
     <div class="user-modal-head">
       <h3>Avis important</h3>
@@ -119,6 +128,7 @@
       </div>
     </div>
   </dialog>
+  {% endif %}
 
   <dialog id="nutritionValuesModal" class="user-modal nutrition-values-modal">
     <div class="user-modal-head">
@@ -385,7 +395,8 @@
       const modal = document.getElementById('menuAdvisoryModal');
       const closeButton = document.getElementById('closeMenuAdvisory');
       const acknowledgeButton = document.getElementById('acknowledgeMenuAdvisory');
-      if (!modal || !closeButton || !acknowledgeButton) {
+      const disclaimerMode = {{ (menu_settings.disclaimer_mode or 'popup')|tojson }};
+      if (disclaimerMode !== 'popup' || !modal || !closeButton || !acknowledgeButton) {
         return;
       }
 

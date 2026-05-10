@@ -25,6 +25,15 @@
                 >
                   +
                 </button>
+                <button
+                  class="settings-tab-btn menu-tab-settings-btn"
+                  id="openMenuSettingsBtn"
+                  type="button"
+                  aria-label="Paramètres"
+                  title="Paramètres"
+                >
+                  ⚙
+                </button>
               </div>
               <p class="subtitle menu-tabs-hint">
                 Effectuez un clique droit ou un clique long sur mobile pour modifier un onglet ou un produit.
@@ -274,6 +283,31 @@
           </div>
         </dialog>
 
+        <dialog id="menuSettingsModal" class="user-modal menu-tab-modal">
+          <div class="user-modal-head">
+            <h3>Paramètres du menu</h3>
+            <button type="button" class="btn" data-close-menu-modal="settings">Fermer</button>
+          </div>
+          <div class="user-modal-content">
+            <form method="post" class="menu-tab-modal-form" id="menuSettingsForm">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <input type="hidden" name="admin_action" value="save_menu_settings">
+              <label class="menu-admin-field">
+                <span>Disclaimer allergènes</span>
+                <select class="menu-glow-input" name="menu_disclaimer_mode" id="menuDisclaimerModeSelect">
+                  <option value="disabled"{% if menu_settings.disclaimer_mode == 'disabled' %} selected{% endif %}>Désactivé</option>
+                  <option value="header"{% if menu_settings.disclaimer_mode == 'header' %} selected{% endif %}>En-tête</option>
+                  <option value="popup"{% if menu_settings.disclaimer_mode == 'popup' or not menu_settings.disclaimer_mode %} selected{% endif %}>Popup</option>
+                </select>
+              </label>
+              <p class="subtitle">Désactivé masque l’avis. En-tête l’affiche au-dessus du menu. Popup le montre au chargement.</p>
+              <div class="modal-actions">
+                <button class="btn primary" type="submit">Enregistrer</button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+
         <dialog id="editMenuProductFlavorsModal" class="user-modal menu-tab-modal menu-product-modal">
           <div class="user-modal-head">
             <h3>Modifier les saveurs</h3>
@@ -354,12 +388,14 @@
             const renameModal = document.getElementById('renameMenuTabModal');
             const deleteModal = document.getElementById('deleteMenuTabModal');
             const productModal = document.getElementById('addMenuProductModal');
+            const settingsModal = document.getElementById('menuSettingsModal');
             const addNameInput = document.getElementById('addMenuTabNameInput');
             const productNameInput = document.getElementById('menuProductNameInput');
             const renameNameInput = document.getElementById('renameMenuTabNameInput');
             const renameKeyInput = document.getElementById('renameMenuTabKeyInput');
             const deleteKeyInput = document.getElementById('deleteMenuTabKeyInput');
             const deleteMessage = document.getElementById('deleteMenuTabMessage');
+            const settingsButton = document.getElementById('openMenuSettingsBtn');
             const closeMenuModalButtons = document.querySelectorAll('[data-close-menu-modal]');
 
             if (!tabsContainer || !indicator || !hoverIndicator || !tabs.length || !panels.length) {
@@ -458,6 +494,10 @@
               openModal(deleteModal);
             };
 
+            const openSettingsModal = () => {
+              openModal(settingsModal);
+            };
+
             if (addButton && addModal && addNameInput) {
               addButton.addEventListener('click', () => {
                 addNameInput.value = '';
@@ -482,6 +522,8 @@
                 });
               });
             });
+
+            settingsButton?.addEventListener('click', openSettingsModal);
 
             if (contextMenu) {
               contextMenu.addEventListener('click', (event) => {
@@ -515,6 +557,9 @@
                 }
                 if (target === 'product') {
                   closeModal(productModal);
+                }
+                if (target === 'settings') {
+                  closeModal(settingsModal);
                 }
               });
             });
