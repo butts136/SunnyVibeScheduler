@@ -302,7 +302,37 @@
               </label>
               <p class="subtitle">Désactivé masque l’avis. En-tête l’affiche au-dessus du menu. Popup le montre au chargement.</p>
               <div class="modal-actions">
+                <button class="btn" id="openMenuDisclaimerEditor" type="button">Éditer le disclaimer</button>
                 <button class="btn primary" type="submit">Enregistrer</button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+
+        <dialog id="menuDisclaimerEditorModal" class="user-modal menu-tab-modal">
+          <div class="user-modal-head">
+            <h3>Éditer le disclaimer</h3>
+            <button type="button" class="btn" data-close-menu-modal="disclaimer">Fermer</button>
+          </div>
+          <div class="user-modal-content">
+            <form method="post" class="menu-tab-modal-form" id="menuDisclaimerEditorForm">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <input type="hidden" name="admin_action" value="save_menu_disclaimer">
+              <label class="menu-admin-field">
+                <span>Paragraphe 1</span>
+                <textarea class="menu-glow-input menu-disclaimer-textarea" name="menu_disclaimer_text_1" rows="4">{{ menu_settings.disclaimer_texts[0] if menu_settings.disclaimer_texts else '' }}</textarea>
+              </label>
+              <label class="menu-admin-field">
+                <span>Paragraphe 2</span>
+                <textarea class="menu-glow-input menu-disclaimer-textarea" name="menu_disclaimer_text_2" rows="4">{{ menu_settings.disclaimer_texts[1] if menu_settings.disclaimer_texts|length > 1 else '' }}</textarea>
+              </label>
+              <label class="menu-admin-field">
+                <span>Paragraphe 3</span>
+                <textarea class="menu-glow-input menu-disclaimer-textarea" name="menu_disclaimer_text_3" rows="4">{{ menu_settings.disclaimer_texts[2] if menu_settings.disclaimer_texts|length > 2 else '' }}</textarea>
+              </label>
+              <div class="modal-actions">
+                <button type="button" class="btn" data-close-menu-modal="disclaimer">Annuler</button>
+                <button type="submit" class="btn primary">Enregistrer le texte</button>
               </div>
             </form>
           </div>
@@ -389,6 +419,7 @@
             const deleteModal = document.getElementById('deleteMenuTabModal');
             const productModal = document.getElementById('addMenuProductModal');
             const settingsModal = document.getElementById('menuSettingsModal');
+            const disclaimerModal = document.getElementById('menuDisclaimerEditorModal');
             const addNameInput = document.getElementById('addMenuTabNameInput');
             const productNameInput = document.getElementById('menuProductNameInput');
             const renameNameInput = document.getElementById('renameMenuTabNameInput');
@@ -396,6 +427,7 @@
             const deleteKeyInput = document.getElementById('deleteMenuTabKeyInput');
             const deleteMessage = document.getElementById('deleteMenuTabMessage');
             const settingsButton = document.getElementById('openMenuSettingsBtn');
+            const disclaimerButton = document.getElementById('openMenuDisclaimerEditor');
             const closeMenuModalButtons = document.querySelectorAll('[data-close-menu-modal]');
 
             if (!tabsContainer || !indicator || !hoverIndicator || !tabs.length || !panels.length) {
@@ -498,6 +530,10 @@
               openModal(settingsModal);
             };
 
+            const openDisclaimerModal = () => {
+              openModal(disclaimerModal);
+            };
+
             if (addButton && addModal && addNameInput) {
               addButton.addEventListener('click', () => {
                 addNameInput.value = '';
@@ -524,6 +560,7 @@
             });
 
             settingsButton?.addEventListener('click', openSettingsModal);
+            disclaimerButton?.addEventListener('click', openDisclaimerModal);
 
             if (contextMenu) {
               contextMenu.addEventListener('click', (event) => {
@@ -560,6 +597,9 @@
                 }
                 if (target === 'settings') {
                   closeModal(settingsModal);
+                }
+                if (target === 'disclaimer') {
+                  closeModal(disclaimerModal);
                 }
               });
             });

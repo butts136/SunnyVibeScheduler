@@ -8707,10 +8707,27 @@ input[type="number"].number-input {
 .menu-advisory-banner {
   margin: 0.85rem 0 1rem;
   padding: 0.95rem 1rem;
-  border: 1px solid rgba(255, 211, 111, 0.25);
+  border: 1px solid rgba(203, 64, 64, 0.35);
   border-radius: 14px;
-  background: linear-gradient(180deg, rgba(255, 211, 111, 0.12), rgba(255, 255, 255, 0.03));
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.16);
+  background: linear-gradient(180deg, rgba(203, 64, 64, 0.12), rgba(255, 255, 255, 0.03));
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+}
+
+.menu-advisory-banner__inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+
+.menu-advisory-banner__icon {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  margin-top: 0.15rem;
+}
+
+.menu-advisory-banner__body {
+  min-width: 0;
 }
 
 .menu-advisory-banner p {
@@ -8721,6 +8738,17 @@ input[type="number"].number-input {
 
 .menu-advisory-banner p:last-child {
   margin-bottom: 0;
+}
+
+.menu-advisory-content__icon-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.menu-advisory-content__icon {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 auto;
 }
 
 .menu-tab-settings-btn {
@@ -8797,6 +8825,11 @@ input[type="number"].number-input {
 .menu-advisory-content strong {
   color: #ffd36f;
   font-weight: 950;
+}
+
+.menu-disclaimer-textarea {
+  min-height: 7.5rem;
+  resize: vertical;
 }
 
 .nutrition-values-modal {

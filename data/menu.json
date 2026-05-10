@@ -1,5 +1,13 @@
 {
-  "updated_at": "2026-04-06T05:11:42.801900+00:00",
+  "updated_at": "2026-05-10T20:32:34.256732+00:00",
+  "settings": {
+    "disclaimer_mode": "popup",
+    "disclaimer_texts": [
+      "Il est \u00e0 noter que nous ne pouvons garantir que nos produits, une fois reconstitu\u00e9s au Sunny Vibes Nutrition, seront exempts de quelconque allerg\u00e8ne ou intol\u00e9rance.",
+      "Il est donc IMPORTANT de nous aviser si vous avez des ALLERGIES et/ou une INTOL\u00c9RANCE d\u00e8s votre arriv\u00e9e.",
+      "De plus, il est aussi IMPORTANT de nous aviser si vous \u00eates ENCEINTE, si vous ALLAITEZ ou si vous \u00eates atteint d'une MALADIE afin que nous puissions vous conseiller des produits adapt\u00e9s \u00e0 votre situation."
+    ]
+  },
   "categories": [
     {
       "key": "all",
@@ -7,7 +15,7 @@
     },
     {
       "key": "tea_bombs",
-      "label": "Bombe à thé"
+      "label": "Bombe \u00e0 th\u00e9"
     },
     {
       "key": "shakes",
@@ -15,11 +23,11 @@
     },
     {
       "key": "protein_juices",
-      "label": "Jus protéiné"
+      "label": "Jus prot\u00e9in\u00e9"
     },
     {
       "key": "protein_coffees",
-      "label": "Café protéiné"
+      "label": "Caf\u00e9 prot\u00e9in\u00e9"
     },
     {
       "key": "kids_juices",
@@ -35,19 +43,19 @@
     }
   ],
   "ingredients": [
-    "Aloès",
+    "Alo\u00e8s",
     "Ananas",
     "Ananas-orange",
     "Arachide",
     "Banane",
-    "Barbe à papa",
+    "Barbe \u00e0 papa",
     "Best Defense",
     "Bleuet",
     "Blue Blast",
     "Blue Blast Sour",
     "Blue Blast Surette",
     "Bubblegum",
-    "Café",
+    "Caf\u00e9",
     "Canneberge",
     "Cantaloup",
     "Caramel",
@@ -55,14 +63,14 @@
     "Cerise ou Cerise surette",
     "Cerise Sour",
     "Cerise surette",
-    "Chaï",
+    "Cha\u00ef",
     "Chocolat",
-    "Choisissez votre bombe a thé et nous ajoutons la protéine de baie / pêche mangue",
+    "Choisissez votre bombe a th\u00e9 et nous ajoutons la prot\u00e9ine de baie / p\u00eache mangue",
     "Citron",
     "Coconut",
     "Concombre lime",
     "Cookie and cream",
-    "Crème",
+    "Cr\u00e8me",
     "Fibre",
     "Fraise",
     "Fraise-kiwi",
@@ -73,15 +81,15 @@
     "Fruit de la passion",
     "Fruit du dragon",
     "Graham",
-    "Gâteau au fromage",
-    "Immunité essentielle",
+    "G\u00e2teau au fromage",
+    "Immunit\u00e9 essentielle",
     "Jus cantaloup",
     "Jus cerise",
     "Jus de votre choix",
     "Jus framboise bleue",
     "Jus orange pineapple",
-    "Jus protéiné baies sauvages",
-    "Jus protéiné pêche mangue",
+    "Jus prot\u00e9in\u00e9 baies sauvages",
+    "Jus prot\u00e9in\u00e9 p\u00eache mangue",
     "Kiwi",
     "Lift off lime",
     "Lift off orange",
@@ -91,44 +99,44 @@
     "Mangue",
     "Margarita",
     "Melon d'eau",
-    "Mûres",
+    "M\u00fbres",
     "Orange",
     "Orange et lemonade",
     "Orange Pineapple",
-    "Oréo",
+    "Or\u00e9o",
     "Pacanes",
     "Pacanes- Cannelle",
     "Pamplemousse",
-    "Piña Colada",
-    "Piña Colada ou Raisin blanc et Punch aux fruits",
+    "Pi\u00f1a Colada",
+    "Pi\u00f1a Colada ou Raisin blanc et Punch aux fruits",
     "Pomegrenade",
     "Pomme verte",
     "Praline",
     "Probio",
     "Probio et H3O",
     "Probiotique",
-    "Protéine baies sauvages",
-    "Protéine baies sauvages et jus Limonade",
-    "Protéine pêche mangue",
-    "Protéine pêche mangue et jus Cerise surette",
+    "Prot\u00e9ine baies sauvages",
+    "Prot\u00e9ine baies sauvages et jus Limonade",
+    "Prot\u00e9ine p\u00eache mangue",
+    "Prot\u00e9ine p\u00eache mangue et jus Cerise surette",
     "Punch aux fruits",
-    "Pâte à biscuit",
-    "Pêche",
+    "P\u00e2te \u00e0 biscuit",
+    "P\u00eache",
     "Rainbow Candy",
     "Raisin",
     "Raisin blanc",
     "Reese",
     "Sirop de votre choix",
-    "Thé",
-    "Thé citron et aloès mandarine",
-    "Thé framboise et aloès mandarine",
-    "Thé pomegrenade et aloès canneberge",
-    "Thé pêche et aloès mangue",
+    "Th\u00e9",
+    "Th\u00e9 citron et alo\u00e8s mandarine",
+    "Th\u00e9 framboise et alo\u00e8s mandarine",
+    "Th\u00e9 pomegrenade et alo\u00e8s canneberge",
+    "Th\u00e9 p\u00eache et alo\u00e8s mangue",
     "Triple chocolat",
     "Tropical",
     "Vanille",
-    "Électrolyte",
-    "Érable"
+    "\u00c9lectrolyte",
+    "\u00c9rable"
   ],
   "items": [
     {
@@ -177,7 +185,7 @@
       "price": "",
       "ingredients": [
         "Cerise",
-        "Pêche",
+        "P\u00eache",
         "Fraise"
       ],
       "is_active": true
@@ -253,7 +261,7 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Barbe à papa",
+        "Barbe \u00e0 papa",
         "Framboise bleue"
       ],
       "is_active": true
@@ -317,7 +325,7 @@
       "ingredients": [
         "Bleuet",
         "Fraise-kiwi",
-        "Barbe à papa"
+        "Barbe \u00e0 papa"
       ],
       "is_active": true
     },
@@ -328,7 +336,7 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Mûres",
+        "M\u00fbres",
         "Bleuet",
         "Framboise bleue"
       ],
@@ -354,7 +362,7 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Mûres",
+        "M\u00fbres",
         "Cerise surette",
         "Limonade"
       ],
@@ -379,7 +387,7 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Piña Colada",
+        "Pi\u00f1a Colada",
         "Framboise bleue"
       ],
       "is_active": true
@@ -429,8 +437,8 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Thé",
-        "Aloès",
+        "Th\u00e9",
+        "Alo\u00e8s",
         "Fibre",
         "Probiotique"
       ],
@@ -438,7 +446,7 @@
     },
     {
       "id": "tea_bombs_025_boreale",
-      "name": "Boréale",
+      "name": "Bor\u00e9ale",
       "category": "tea_bombs",
       "description": "",
       "price": "",
@@ -456,7 +464,7 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Barbe à papa",
+        "Barbe \u00e0 papa",
         "Framboise bleue",
         "Fraise"
       ],
@@ -464,13 +472,13 @@
     },
     {
       "id": "tea_bombs_027_calin_fruite",
-      "name": "Calin Fruité",
+      "name": "Calin Fruit\u00e9",
       "category": "tea_bombs",
       "description": "",
       "price": "",
       "ingredients": [
         "Punch aux fruits",
-        "Pêche",
+        "P\u00eache",
         "Framboise rouge"
       ],
       "is_active": true
@@ -532,7 +540,7 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Piña Colada",
+        "Pi\u00f1a Colada",
         "Ananas"
       ],
       "is_active": true
@@ -595,7 +603,7 @@
       "price": "",
       "ingredients": [
         "Cerise",
-        "Barbe à papa",
+        "Barbe \u00e0 papa",
         "Framboise bleue"
       ],
       "is_active": true
@@ -634,7 +642,7 @@
       "price": "",
       "ingredients": [
         "Cerise surette",
-        "Barbe à papa",
+        "Barbe \u00e0 papa",
         "Raisin blanc"
       ],
       "is_active": true
@@ -654,7 +662,7 @@
     },
     {
       "id": "tea_bombs_042_emilie_s_drink",
-      "name": "Émilie's drink",
+      "name": "\u00c9milie's drink",
       "category": "tea_bombs",
       "description": "",
       "price": "",
@@ -692,13 +700,13 @@
     },
     {
       "id": "tea_bombs_045_explosion_fruitee",
-      "name": "Explosion fruitée",
+      "name": "Explosion fruit\u00e9e",
       "category": "tea_bombs",
       "description": "",
       "price": "",
       "ingredients": [
         "Fraise",
-        "Pêche",
+        "P\u00eache",
         "Ananas"
       ],
       "is_active": true
@@ -743,7 +751,7 @@
     },
     {
       "id": "tea_bombs_049_foret_enchante",
-      "name": "Forêt Enchanté",
+      "name": "For\u00eat Enchant\u00e9",
       "category": "tea_bombs",
       "description": "",
       "price": "",
@@ -810,7 +818,7 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Piña Colada",
+        "Pi\u00f1a Colada",
         "Framboise bleue",
         "Cerise"
       ],
@@ -849,7 +857,7 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Mûres",
+        "M\u00fbres",
         "Framboise bleue surette",
         "Pomme verte"
       ],
@@ -945,14 +953,14 @@
     },
     {
       "id": "tea_bombs_065_j_ai_la_peche",
-      "name": "J'ai la pêche",
+      "name": "J'ai la p\u00eache",
       "category": "tea_bombs",
       "description": "",
       "price": "",
       "ingredients": [
         "Limonade",
         "Melon d'eau",
-        "Pêche"
+        "P\u00eache"
       ],
       "is_active": true
     },
@@ -963,7 +971,7 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Barbe à papa",
+        "Barbe \u00e0 papa",
         "Raisin blanc",
         "Rainbow Candy"
       ],
@@ -1003,7 +1011,7 @@
       "price": "",
       "ingredients": [
         "Raisin",
-        "Piña Colada",
+        "Pi\u00f1a Colada",
         "Framboise rouge"
       ],
       "is_active": true
@@ -1041,7 +1049,7 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Barbe à papa",
+        "Barbe \u00e0 papa",
         "Pomme verte",
         "Rainbow Candy"
       ],
@@ -1118,8 +1126,8 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Thé",
-        "Aloès",
+        "Th\u00e9",
+        "Alo\u00e8s",
         "Probiotique",
         "Framboise rouge",
         "Limonade"
@@ -1209,13 +1217,13 @@
       "price": "",
       "ingredients": [
         "Mangue",
-        "Pêche"
+        "P\u00eache"
       ],
       "is_active": true
     },
     {
       "id": "tea_bombs_086_mere_noel",
-      "name": "Mère-Noël",
+      "name": "M\u00e8re-No\u00ebl",
       "category": "tea_bombs",
       "description": "",
       "price": "",
@@ -1298,7 +1306,7 @@
       "price": "",
       "ingredients": [
         "Fraise-kiwi",
-        "Piña Colada"
+        "Pi\u00f1a Colada"
       ],
       "is_active": true
     },
@@ -1323,7 +1331,7 @@
       "price": "",
       "ingredients": [
         "Cerise",
-        "Pêche",
+        "P\u00eache",
         "Limonade rose",
         "Orange"
       ],
@@ -1336,7 +1344,7 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Mûres",
+        "M\u00fbres",
         "Cerise",
         "Punch aux fruits"
       ],
@@ -1374,7 +1382,7 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Barbe à papa",
+        "Barbe \u00e0 papa",
         "Fraise"
       ],
       "is_active": true
@@ -1488,13 +1496,13 @@
       "price": "",
       "ingredients": [
         "Cerise",
-        "Pêche"
+        "P\u00eache"
       ],
       "is_active": true
     },
     {
       "id": "tea_bombs_108_pere_noel",
-      "name": "Père-Noël",
+      "name": "P\u00e8re-No\u00ebl",
       "category": "tea_bombs",
       "description": "",
       "price": "",
@@ -1563,7 +1571,7 @@
       "price": "",
       "ingredients": [
         "Pomme verte",
-        "Mûres",
+        "M\u00fbres",
         "Framboise bleue surette",
         "Cerise surette"
       ],
@@ -1584,7 +1592,7 @@
     },
     {
       "id": "tea_bombs_115_ptit_dej",
-      "name": "Ptit déj",
+      "name": "Ptit d\u00e9j",
       "category": "tea_bombs",
       "description": "",
       "price": "",
@@ -1647,7 +1655,7 @@
     },
     {
       "id": "tea_bombs_120_rac_a_banane",
-      "name": "Rac à banane",
+      "name": "Rac \u00e0 banane",
       "category": "tea_bombs",
       "description": "",
       "price": "",
@@ -1665,7 +1673,7 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Barbe à papa",
+        "Barbe \u00e0 papa",
         "Cantaloup",
         "Mangue"
       ],
@@ -1673,7 +1681,7 @@
     },
     {
       "id": "tea_bombs_122_reine_elizabeth",
-      "name": "Reine Élizabeth",
+      "name": "Reine \u00c9lizabeth",
       "category": "tea_bombs",
       "description": "",
       "price": "",
@@ -1685,7 +1693,7 @@
     },
     {
       "id": "tea_bombs_123_la_riviere",
-      "name": "La Rivière",
+      "name": "La Rivi\u00e8re",
       "category": "tea_bombs",
       "description": "",
       "price": "",
@@ -1762,7 +1770,7 @@
     },
     {
       "id": "tea_bombs_129_sang_the",
-      "name": "Sang'thé",
+      "name": "Sang'th\u00e9",
       "category": "tea_bombs",
       "description": "",
       "price": "",
@@ -1844,7 +1852,7 @@
       "price": "",
       "ingredients": [
         "Framboise bleue",
-        "Pêche"
+        "P\u00eache"
       ],
       "is_active": true
     },
@@ -1893,7 +1901,7 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Mûres",
+        "M\u00fbres",
         "Framboise bleue surette",
         "Limonade"
       ],
@@ -1901,13 +1909,13 @@
     },
     {
       "id": "tea_bombs_140_speciale_rentree",
-      "name": "Spéciale rentrée",
+      "name": "Sp\u00e9ciale rentr\u00e9e",
       "category": "tea_bombs",
       "description": "",
       "price": "",
       "ingredients": [
         "Fraise-kiwi",
-        "Piña Colada",
+        "Pi\u00f1a Colada",
         "Pomme verte"
       ],
       "is_active": true
@@ -1947,8 +1955,8 @@
       "ingredients": [
         "Best Defense",
         "Probio",
-        "Immunité essentielle",
-        "Électrolyte",
+        "Immunit\u00e9 essentielle",
+        "\u00c9lectrolyte",
         "Jus de votre choix"
       ],
       "is_active": true
@@ -1987,7 +1995,7 @@
       "ingredients": [
         "Framboise bleue surette",
         "Rainbow Candy",
-        "Barbe à papa"
+        "Barbe \u00e0 papa"
       ],
       "is_active": true
     },
@@ -1998,7 +2006,7 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Pêche",
+        "P\u00eache",
         "Limonade rose"
       ],
       "is_active": true
@@ -2073,28 +2081,28 @@
       "price": "",
       "ingredients": [
         "Mangue",
-        "Pêche",
+        "P\u00eache",
         "Fruit de la passion"
       ],
       "is_active": true
     },
     {
       "id": "tea_bombs_154_tempete_d_ete",
-      "name": "Tempête d'été",
+      "name": "Temp\u00eate d'\u00e9t\u00e9",
       "category": "tea_bombs",
       "description": "",
       "price": "",
       "ingredients": [
         "Framboise bleue",
         "Melon d'eau",
-        "Barbe à papa",
+        "Barbe \u00e0 papa",
         "Fraise-kiwi"
       ],
       "is_active": true
     },
     {
       "id": "tea_bombs_155_tete_a_claque",
-      "name": "Tête à Claque",
+      "name": "T\u00eate \u00e0 Claque",
       "category": "tea_bombs",
       "description": "",
       "price": "",
@@ -2112,7 +2120,7 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Mûres",
+        "M\u00fbres",
         "Framboise bleue surette",
         "Cerise surette",
         "Pomme verte",
@@ -2155,7 +2163,7 @@
       "price": "",
       "ingredients": [
         "Cerise",
-        "Pêche",
+        "P\u00eache",
         "Pomme verte"
       ],
       "is_active": true
@@ -2180,7 +2188,7 @@
       "price": "",
       "ingredients": [
         "Orange Pineapple",
-        "Pêche",
+        "P\u00eache",
         "Fraise"
       ],
       "is_active": true
@@ -2258,7 +2266,7 @@
       "ingredients": [
         "Fraise",
         "Limonade",
-        "Pêche"
+        "P\u00eache"
       ],
       "is_active": true
     },
@@ -2272,7 +2280,7 @@
         "Punch aux fruits",
         "Cerise",
         "Cantaloup",
-        "Pêche"
+        "P\u00eache"
       ],
       "is_active": true
     },
@@ -2286,7 +2294,7 @@
         "Punch aux fruits",
         "Cerise",
         "Orange",
-        "Pêche"
+        "P\u00eache"
       ],
       "is_active": true
     },
@@ -2298,7 +2306,7 @@
       "price": "",
       "ingredients": [
         "Framboise bleue",
-        "Pêche",
+        "P\u00eache",
         "Fruit de la passion"
       ],
       "is_active": true
@@ -2343,7 +2351,7 @@
     },
     {
       "id": "tea_bombs_174_le_fruite",
-      "name": "Le Fruité",
+      "name": "Le Fruit\u00e9",
       "category": "tea_bombs",
       "description": "",
       "price": "",
@@ -2361,7 +2369,7 @@
       "price": "",
       "ingredients": [
         "Fraise-kiwi",
-        "Pêche",
+        "P\u00eache",
         "Framboise bleue",
         "Limonade rose"
       ],
@@ -2415,9 +2423,9 @@
       "price": "",
       "ingredients": [
         "Cerise",
-        "Pêche",
+        "P\u00eache",
         "Fruit de la passion",
-        "Piña Colada"
+        "Pi\u00f1a Colada"
       ],
       "is_active": true
     },
@@ -2441,14 +2449,14 @@
       "price": "",
       "ingredients": [
         "Cerise",
-        "Barbe à papa",
-        "Piña Colada"
+        "Barbe \u00e0 papa",
+        "Pi\u00f1a Colada"
       ],
       "is_active": true
     },
     {
       "id": "tea_bombs_182_mon_cheri",
-      "name": "Mon chéri",
+      "name": "Mon ch\u00e9ri",
       "category": "tea_bombs",
       "description": "",
       "price": "",
@@ -2491,7 +2499,7 @@
       "price": "",
       "ingredients": [
         "Bleuet",
-        "Piña Colada ou Raisin blanc et Punch aux fruits"
+        "Pi\u00f1a Colada ou Raisin blanc et Punch aux fruits"
       ],
       "is_active": true
     },
@@ -2504,13 +2512,13 @@
       "ingredients": [
         "Bleuet",
         "Blue Blast",
-        "Barbe à papa"
+        "Barbe \u00e0 papa"
       ],
       "is_active": true
     },
     {
       "id": "tea_bombs_187_chill_d_ete",
-      "name": "Chill d'été",
+      "name": "Chill d'\u00e9t\u00e9",
       "category": "tea_bombs",
       "description": "",
       "price": "",
@@ -2602,7 +2610,7 @@
       "ingredients": [
         "Framboise bleue",
         "Fraise",
-        "Barbe à papa"
+        "Barbe \u00e0 papa"
       ],
       "is_active": true
     },
@@ -2634,13 +2642,13 @@
     },
     {
       "id": "tea_bombs_196_la_fraiche",
-      "name": "La Fraîche",
+      "name": "La Fra\u00eeche",
       "category": "tea_bombs",
       "description": "",
       "price": "",
       "ingredients": [
         "Fraise",
-        "Pêche"
+        "P\u00eache"
       ],
       "is_active": true
     },
@@ -2665,7 +2673,7 @@
       "price": "",
       "ingredients": [
         "Rainbow Candy",
-        "Piña Colada",
+        "Pi\u00f1a Colada",
         "Ananas"
       ],
       "is_active": true
@@ -2691,26 +2699,26 @@
       "price": "",
       "ingredients": [
         "Raisin",
-        "Barbe à papa"
+        "Barbe \u00e0 papa"
       ],
       "is_active": true
     },
     {
       "id": "tea_bombs_201_le_deli",
-      "name": "Le Déli",
+      "name": "Le D\u00e9li",
       "category": "tea_bombs",
       "description": "",
       "price": "",
       "ingredients": [
         "Cerise surette",
         "Fraise-kiwi",
-        "Barbe à papa"
+        "Barbe \u00e0 papa"
       ],
       "is_active": true
     },
     {
       "id": "tea_bombs_202_grenier_d_eric",
-      "name": "Grenier d'Éric",
+      "name": "Grenier d'\u00c9ric",
       "category": "tea_bombs",
       "description": "",
       "price": "",
@@ -2729,7 +2737,7 @@
       "price": "",
       "ingredients": [
         "Cerise surette",
-        "Barbe à papa"
+        "Barbe \u00e0 papa"
       ],
       "is_active": true
     },
@@ -2740,7 +2748,7 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Barbe à papa",
+        "Barbe \u00e0 papa",
         "Fruit de la passion",
         "Melon d'eau"
       ],
@@ -2773,7 +2781,7 @@
     },
     {
       "id": "tea_bombs_207_douceur_rose",
-      "name": "Douceur Rosé",
+      "name": "Douceur Ros\u00e9",
       "category": "tea_bombs",
       "description": "",
       "price": "",
@@ -2841,7 +2849,7 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Mûres",
+        "M\u00fbres",
         "Blue Blast Sour",
         "Limonade",
         "Pomme verte"
@@ -2855,7 +2863,7 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Pêche",
+        "P\u00eache",
         "Litchi"
       ],
       "is_active": true
@@ -2949,14 +2957,14 @@
     },
     {
       "id": "tea_bombs_221_bibi_et_melo",
-      "name": "Bibi et Mélo",
+      "name": "Bibi et M\u00e9lo",
       "category": "tea_bombs",
       "description": "",
       "price": "",
       "ingredients": [
         "Blue Blast",
         "Bleuet",
-        "Pêche",
+        "P\u00eache",
         "Ananas"
       ],
       "is_active": true
@@ -2969,7 +2977,7 @@
       "price": "",
       "ingredients": [
         "Limonade rose",
-        "Barbe à papa"
+        "Barbe \u00e0 papa"
       ],
       "is_active": true
     },
@@ -2982,7 +2990,7 @@
       "ingredients": [
         "Framboise bleue",
         "Framboise rouge",
-        "Barbe à papa"
+        "Barbe \u00e0 papa"
       ],
       "is_active": true
     },
@@ -3007,7 +3015,7 @@
       "price": "",
       "ingredients": [
         "Litchi",
-        "Piña Colada",
+        "Pi\u00f1a Colada",
         "Concombre lime",
         "Framboise bleue surette"
       ],
@@ -3020,7 +3028,7 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Pêche",
+        "P\u00eache",
         "Litchi",
         "Mangue"
       ],
@@ -3054,14 +3062,14 @@
     },
     {
       "id": "shakes_002_oreo",
-      "name": "Oréo",
+      "name": "Or\u00e9o",
       "category": "shakes",
       "description": "",
       "price": "",
       "ingredients": [
         "Vanille",
         "Chocolat",
-        "Oréo"
+        "Or\u00e9o"
       ],
       "is_active": true
     },
@@ -3123,7 +3131,7 @@
       "price": "",
       "ingredients": [
         "Chocolat",
-        "Pâte à biscuit"
+        "P\u00e2te \u00e0 biscuit"
       ],
       "is_active": true
     },
@@ -3134,21 +3142,21 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Café",
+        "Caf\u00e9",
         "Praline",
-        "Crème",
+        "Cr\u00e8me",
         "Chocolat"
       ],
       "is_active": true
     },
     {
       "id": "shakes_009_feuille_d_erable",
-      "name": "Feuille D'érable",
+      "name": "Feuille D'\u00e9rable",
       "category": "shakes",
       "description": "",
       "price": "",
       "ingredients": [
-        "Érable"
+        "\u00c9rable"
       ],
       "is_active": true
     },
@@ -3204,14 +3212,14 @@
     },
     {
       "id": "shakes_014_chai",
-      "name": "Chaï",
+      "name": "Cha\u00ef",
       "category": "shakes",
       "description": "",
       "price": "",
       "ingredients": [
         "Vanille",
         "Cookie and cream",
-        "Chaï"
+        "Cha\u00ef"
       ],
       "is_active": true
     },
@@ -3223,20 +3231,20 @@
       "price": "",
       "ingredients": [
         "Vanille",
-        "Gâteau au fromage",
+        "G\u00e2teau au fromage",
         "Graham"
       ],
       "is_active": true
     },
     {
       "id": "shakes_016_erable_et_pacanes",
-      "name": "Érable et pacanes",
+      "name": "\u00c9rable et pacanes",
       "category": "shakes",
       "description": "",
       "price": "",
       "ingredients": [
         "Vanille",
-        "Érable",
+        "\u00c9rable",
         "Pacanes"
       ],
       "is_active": true
@@ -3248,19 +3256,19 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Protéine baies sauvages",
+        "Prot\u00e9ine baies sauvages",
         "Jus framboise bleue"
       ],
       "is_active": true
     },
     {
       "id": "protein_juices_002_bombe_a_the_avec_jus_proteine",
-      "name": "Bombe à thé avec jus protéiné",
+      "name": "Bombe \u00e0 th\u00e9 avec jus prot\u00e9in\u00e9",
       "category": "protein_juices",
       "description": "",
       "price": "",
       "ingredients": [
-        "Choisissez votre bombe a thé et nous ajoutons la protéine de baie / pêche mangue"
+        "Choisissez votre bombe a th\u00e9 et nous ajoutons la prot\u00e9ine de baie / p\u00eache mangue"
       ],
       "is_active": true
     },
@@ -3271,7 +3279,7 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Protéine pêche mangue",
+        "Prot\u00e9ine p\u00eache mangue",
         "Jus orange pineapple"
       ],
       "is_active": true
@@ -3283,7 +3291,7 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Protéine baies sauvages",
+        "Prot\u00e9ine baies sauvages",
         "Jus cerise",
         "Fraise",
         "Melon d'eau"
@@ -3297,9 +3305,9 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Protéine pêche mangue",
+        "Prot\u00e9ine p\u00eache mangue",
         "Jus cantaloup",
-        "Pêche"
+        "P\u00eache"
       ],
       "is_active": true
     },
@@ -3310,8 +3318,8 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Jus protéiné baies sauvages",
-        "Barbe à papa"
+        "Jus prot\u00e9in\u00e9 baies sauvages",
+        "Barbe \u00e0 papa"
       ],
       "is_active": true
     },
@@ -3322,8 +3330,8 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Jus protéiné pêche mangue",
-        "Pêche",
+        "Jus prot\u00e9in\u00e9 p\u00eache mangue",
+        "P\u00eache",
         "Mangue",
         "Orange Pineapple",
         "Cantaloup"
@@ -3337,7 +3345,7 @@
       "description": "",
       "price": "",
       "ingredients": [
-        "Jus protéiné baies sauvages",
+        "Jus prot\u00e9in\u00e9 baies sauvages",
         "Cerise",
         "Fruit de la passion",
         "Orange"
@@ -3346,12 +3354,12 @@
     },
     {
       "id": "protein_juices_009_bresil_tropical_punch",
-      "name": "Brésil Tropical Punch",
+      "name": "Br\u00e9sil Tropical Punch",
       "category": "protein_juices",
       "description": "",
       "price": "",
       "ingredients": [
-        "Jus protéiné pêche mangue",
+        "Jus prot\u00e9in\u00e9 p\u00eache mangue",
         "Pomegrenade",
         "Orange et lemonade"
       ],
@@ -3368,7 +3376,7 @@
     },
     {
       "id": "protein_coffees_001_melange_maison",
-      "name": "Mélange maison",
+      "name": "M\u00e9lange maison",
       "category": "protein_coffees",
       "description": "",
       "price": "",
@@ -3474,7 +3482,7 @@
     },
     {
       "id": "extras_001_collagene",
-      "name": "Collagène",
+      "name": "Collag\u00e8ne",
       "category": "extras",
       "description": "",
       "price": "",
@@ -3501,7 +3509,7 @@
     },
     {
       "id": "extras_004_proteine",
-      "name": "Protéine",
+      "name": "Prot\u00e9ine",
       "category": "extras",
       "description": "",
       "price": "",
@@ -3528,7 +3536,7 @@
     },
     {
       "id": "extras_007_electrolytes_h3o",
-      "name": "Électrolytes H3O",
+      "name": "\u00c9lectrolytes H3O",
       "category": "extras",
       "description": "",
       "price": "",
@@ -3537,7 +3545,7 @@
     },
     {
       "id": "extras_008_immunite_essentielle",
-      "name": "Immunité essentielle",
+      "name": "Immunit\u00e9 essentielle",
       "category": "extras",
       "description": "",
       "price": "",
@@ -3546,15 +3554,15 @@
     },
     {
       "id": "hangover_001_hangover_peche_mangue",
-      "name": "Hangover Pêche mangue",
+      "name": "Hangover P\u00eache mangue",
       "category": "hangover",
       "description": "",
       "price": "",
       "ingredients": [
         "Lift off lime",
-        "Thé pêche et aloès mangue",
+        "Th\u00e9 p\u00eache et alo\u00e8s mangue",
         "Probio et H3O",
-        "Protéine pêche mangue"
+        "Prot\u00e9ine p\u00eache mangue"
       ],
       "is_active": true
     },
@@ -3566,9 +3574,9 @@
       "price": "",
       "ingredients": [
         "Lift off lime",
-        "Thé framboise et aloès mandarine",
+        "Th\u00e9 framboise et alo\u00e8s mandarine",
         "Probio et H3O",
-        "Protéine baies sauvages"
+        "Prot\u00e9ine baies sauvages"
       ],
       "is_active": true
     },
@@ -3580,9 +3588,9 @@
       "price": "",
       "ingredients": [
         "Lift off orange",
-        "Thé citron et aloès mandarine",
+        "Th\u00e9 citron et alo\u00e8s mandarine",
         "Probio et H3O",
-        "Protéine baies sauvages et jus Limonade"
+        "Prot\u00e9ine baies sauvages et jus Limonade"
       ],
       "is_active": true
     },
@@ -3594,9 +3602,9 @@
       "price": "",
       "ingredients": [
         "Lift off lime",
-        "Thé pomegrenade et aloès canneberge",
+        "Th\u00e9 pomegrenade et alo\u00e8s canneberge",
         "Probio et H3O",
-        "Protéine pêche mangue et jus Cerise surette"
+        "Prot\u00e9ine p\u00eache mangue et jus Cerise surette"
       ],
       "is_active": true
     }

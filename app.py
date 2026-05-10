@@ -41,6 +41,11 @@ DATABASE_PATH = DATA_DIR / 'sunnyvibe.db'
 RESERVATION_CONFIG_PATH = DATA_DIR / 'reservation_config.json'
 INVITATION_CONFIG_PATH = DATA_DIR / 'invitation_config.json'
 MENU_PATH = DATA_DIR / 'menu.json'
+DEFAULT_MENU_DISCLAIMER_TEXTS = [
+    "Il est à noter que nous ne pouvons garantir que nos produits, une fois reconstitués au Sunny Vibes Nutrition, seront exempts de quelconque allergène ou intolérance.",
+    "Il est donc IMPORTANT de nous aviser si vous avez des ALLERGIES et/ou une INTOLÉRANCE dès votre arrivée.",
+    "De plus, il est aussi IMPORTANT de nous aviser si vous êtes ENCEINTE, si vous ALLAITEZ ou si vous êtes atteint d'une MALADIE afin que nous puissions vous conseiller des produits adaptés à votre situation.",
+]
 SUPER_ADMIN_IDENTIFIER = 'butts136'
 SUPER_ADMIN_DISPLAY_NAME = 'Butts136'
 SUPER_ADMIN_IDENTIFIERS = {SUPER_ADMIN_IDENTIFIER}
@@ -943,6 +948,7 @@ def _default_menu_payload():
         'updated_at': None,
         'settings': {
             'disclaimer_mode': 'popup',
+            'disclaimer_texts': list(DEFAULT_MENU_DISCLAIMER_TEXTS),
         },
         'categories': [
             {'key': category_key, 'label': category_label}
@@ -955,6 +961,15 @@ def _default_menu_payload():
 
 def _normalize_menu_label(value):
     return re.sub(r'\s+', ' ', str(value or '').strip())
+
+
+def _normalize_menu_disclaimer_texts(raw_texts):
+    normalized_texts = []
+    values = raw_texts if isinstance(raw_texts, list) else []
+    for index in range(3):
+        text = _normalize_menu_label(values[index]) if index < len(values) else ''
+        normalized_texts.append(text or DEFAULT_MENU_DISCLAIMER_TEXTS[index])
+    return normalized_texts
 
 
 def _slugify_menu_category_key(label):
@@ -1009,8 +1024,10 @@ def _normalize_menu_payload(raw_payload):
         disclaimer_mode = str(raw_settings.get('disclaimer_mode', 'popup')).strip().lower()
         if disclaimer_mode not in {'disabled', 'header', 'popup'}:
             disclaimer_mode = 'popup'
+        disclaimer_texts = _normalize_menu_disclaimer_texts(raw_settings.get('disclaimer_texts', []))
         payload['settings'] = {
             'disclaimer_mode': disclaimer_mode,
+            'disclaimer_texts': disclaimer_texts,
         }
 
     raw_categories = raw_payload.get('categories', [])
@@ -1082,13 +1099,15 @@ def _normalize_menu_payload(raw_payload):
 
 def _save_menu_settings(menu_settings):
     payload = _load_menu_payload()
-    payload['settings'] = {
-        'disclaimer_mode': 'popup',
-    }
+    payload_settings = dict(payload.get('settings', {}))
+    payload_settings['disclaimer_mode'] = 'popup'
+    payload_settings['disclaimer_texts'] = list(DEFAULT_MENU_DISCLAIMER_TEXTS)
     if isinstance(menu_settings, dict):
         disclaimer_mode = str(menu_settings.get('disclaimer_mode', 'popup')).strip().lower()
         if disclaimer_mode in {'disabled', 'header', 'popup'}:
-            payload['settings']['disclaimer_mode'] = disclaimer_mode
+            payload_settings['disclaimer_mode'] = disclaimer_mode
+        payload_settings['disclaimer_texts'] = _normalize_menu_disclaimer_texts(menu_settings.get('disclaimer_texts', []))
+    payload['settings'] = payload_settings
     _save_menu_payload(payload)
 
 
@@ -5053,6 +5072,7 @@ def admin_dashboard():
             'update_menu_product_flavors',
             'delete_menu_product',
             'save_menu_settings',
+            'save_menu_disclaimer',
         }:
             active_tab = 'menu-panel'
             candidate_menu_payload = _normalize_menu_payload(menu_payload)
@@ -5152,13 +5172,27 @@ def admin_dashboard():
                 if requested_mode not in {'disabled', 'header', 'popup'}:
                     errors.append("Mode de disclaimer invalide.")
                 else:
-                    candidate_menu_payload['settings'] = {
-                        'disclaimer_mode': requested_mode,
-                    }
+                    candidate_settings = dict(candidate_menu_payload.get('settings', {}))
+                    candidate_settings['disclaimer_mode'] = requested_mode
+                    candidate_menu_payload['settings'] = candidate_settings
                     _save_menu_payload(candidate_menu_payload)
                     menu_payload = _load_menu_payload()
                     menu_settings = menu_payload.get('settings', {})
                     success_message = 'Paramètres du menu enregistrés.'
+
+            if admin_action == 'save_menu_disclaimer':
+                disclaimer_texts = [
+                    request.form.get('menu_disclaimer_text_1', ''),
+                    request.form.get('menu_disclaimer_text_2', ''),
+                    request.form.get('menu_disclaimer_text_3', ''),
+                ]
+                candidate_settings = dict(candidate_menu_payload.get('settings', {}))
+                candidate_settings['disclaimer_texts'] = _normalize_menu_disclaimer_texts(disclaimer_texts)
+                candidate_menu_payload['settings'] = candidate_settings
+                _save_menu_payload(candidate_menu_payload)
+                menu_payload = _load_menu_payload()
+                menu_settings = menu_payload.get('settings', {})
+                success_message = 'Disclaimer mis à jour.'
 
             if admin_action == 'add_menu_product':
                 product_category = request.form.get('menu_product_category', '').strip()

@@ -57,9 +57,14 @@
 
           {% if menu_settings.disclaimer_mode == 'header' %}
           <div class="menu-advisory-banner">
-            <p>Il est à noter que nous ne pouvons garantir que nos produits, une fois reconstitués au Sunny Vibes Nutrition, seront exempts de quelconque allergène ou intolérance.</p>
-            <p>Il est donc <strong>IMPORTANT</strong> de nous aviser si vous avez des <strong>ALLERGIES</strong> et/ou une <strong>INTOLÉRANCE</strong> dès votre arrivée.</p>
-            <p>De plus, il est aussi <strong>IMPORTANT</strong> de nous aviser si vous êtes <strong>ENCEINTE</strong>, si vous <strong>ALLAITEZ</strong> ou si vous êtes atteint d'une <strong>MALADIE</strong> afin que nous puissions vous conseiller des produits adaptés à votre situation.</p>
+            <div class="menu-advisory-banner__inner">
+              <img class="menu-advisory-banner__icon" src="{{ url_for('static', filename='disclaimer-exclamation.png', v=styles_version) }}" alt="" aria-hidden="true">
+              <div class="menu-advisory-banner__body">
+                {% for disclaimer_text in menu_settings.disclaimer_texts or [] %}
+                <p>{{ disclaimer_text }}</p>
+                {% endfor %}
+              </div>
+            </div>
           </div>
           {% endif %}
 
@@ -120,9 +125,12 @@
       <button class="btn" id="closeMenuAdvisory" type="button">Fermer</button>
     </div>
     <div class="user-modal-content menu-advisory-content">
-      <p>Il est à noter que nous ne pouvons garantir que nos produits, une fois reconstitués au Sunny Vibes Nutrition, seront exempts de quelconque allergène ou intolérance.</p>
-      <p>Il est donc <strong>IMPORTANT</strong> de nous aviser si vous avez des <strong>ALLERGIES</strong> et/ou une <strong>INTOLÉRANCE</strong> dès votre arrivée.</p>
-      <p>De plus, il est aussi <strong>IMPORTANT</strong> de nous aviser si vous êtes <strong>ENCEINTE</strong>, si vous <strong>ALLAITEZ</strong> ou si vous êtes atteint d'une <strong>MALADIE</strong> afin que nous puissions vous conseiller des produits adaptés à votre situation.</p>
+      <div class="menu-advisory-content__icon-wrap">
+        <img class="menu-advisory-content__icon" src="{{ url_for('static', filename='disclaimer-exclamation.png', v=styles_version) }}" alt="" aria-hidden="true">
+      </div>
+      {% for disclaimer_text in menu_settings.disclaimer_texts or [] %}
+      <p>{{ disclaimer_text }}</p>
+      {% endfor %}
       <div class="modal-actions">
         <button class="btn primary" id="acknowledgeMenuAdvisory" type="button">J’ai compris</button>
       </div>
