@@ -1,9 +1,10 @@
 {
-  "updated_at": "2026-04-05T21:54:03.779298+00:00",
+  "updated_at": "2026-05-16T18:35:24.133665+00:00",
   "reservation_config": {
     "timezone": "America/Montreal",
     "availability_mode": "active_slots",
     "week_start_day": "monday",
+    "warning_display_count": 4,
     "sunnygym_display_mode": "cards",
     "max_simultaneous_bookings": 3,
     "min_duration_minutes": 30,

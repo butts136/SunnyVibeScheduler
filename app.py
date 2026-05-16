@@ -4313,7 +4313,7 @@ def admin_dashboard():
         return redirect(url_for('admin_dashboard_bookings'))
 
     errors = []
-    success_message = None
+    success_message = session.pop('admin_success_message', None)
     temporary_password_notice = None
     generated_invitation_code_notice = None
     invitation_mode_default = 'unique'
@@ -4631,7 +4631,8 @@ def admin_dashboard():
             if not errors:
                 _save_reservation_config(candidate_config)
                 reservation_config = _load_reservation_config()
-                success_message = 'Configuration des réservations mise à jour.'
+                session['admin_success_message'] = 'Configuration des réservations mise à jour.'
+                return redirect(url_for('admin_dashboard_configuration'))
             else:
                 reservation_config = _normalize_reservation_config(candidate_config)
 
