@@ -10444,6 +10444,12 @@ input[type="number"].number-input {
   font-size: 0.78rem;
 }
 
+.day-cell .booking-count-label {
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
 .day-cell .day-state-pill {
   display: inline-flex;
   align-items: center;
@@ -10629,6 +10635,7 @@ input[type="number"].number-input {
 
 .calendar-mobile-day-card .calendar-mobile-weekday,
 .calendar-mobile-day-card .calendar-mobile-date,
+.calendar-mobile-day-card .calendar-mobile-bookings,
 .calendar-mobile-day-card .calendar-mobile-hours,
 .calendar-mobile-day-card .calendar-mobile-state,
 .calendar-mobile-day-card .calendar-mobile-holiday {
@@ -10644,6 +10651,11 @@ input[type="number"].number-input {
 .calendar-mobile-day-card .calendar-mobile-state {
   font-weight: 700;
   font-size: 0.83rem;
+}
+
+.calendar-mobile-day-card .calendar-mobile-bookings {
+  font-weight: 800;
+  font-size: 0.88rem;
 }
 
 .calendar-mobile-day-card .calendar-mobile-holiday {
@@ -11091,16 +11103,27 @@ body.admin-body #bookings-panel .bookings-overview-stat strong {
 }
 
 body.admin-body #bookings-panel .bookings-overview-list {
-  display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 0.6rem;
-  max-height: min(70vh, 840px);
-  overflow: auto;
+  max-height: none;
+  overflow: visible;
   padding-right: 0.15rem;
 }
 
 body.admin-body #bookings-panel .bookings-overview-list.is-desktop-cards {
   display: grid;
+  max-height: min(70vh, 840px);
+  overflow: auto;
+}
+
+body.admin-body #bookings-panel .bookings-overview-calendar .calendar-legend {
+  display: none;
+}
+
+@media (max-width: 980px) {
+  body.admin-body #bookings-panel .bookings-overview-list {
+    display: grid;
+  }
 }
 
 body.admin-body #bookings-panel .bookings-overview-card {

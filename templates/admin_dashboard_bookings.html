@@ -3,11 +3,7 @@
 {% block admin_panel %}
         <section id="bookings-panel" class="admin-section tab-panel {% if active_tab == 'bookings-panel' %}is-active{% endif %}">
           <section id="bookingsOverviewPanel" class="bookings-overview-panel">
-            <div id="calendarMobileList" class="calendar-mobile-list bookings-overview-list" aria-label="Liste des plages disponibles"></div>
-          </section>
-
-          <section class="bookings-calendar-bootstrap" hidden aria-hidden="true">
-            <section class="calendar-panel">
+            <section class="calendar-panel bookings-overview-calendar">
               <div class="calendar-panel-head">
                 <h1>SunnyGym</h1>
                 <p class="subtitle">Gestion interne.</p>
@@ -31,6 +27,7 @@
                 </div>
 
                 <div id="calendarGrid" class="day-grid" role="grid" aria-label="Calendrier mensuel"></div>
+                <div id="calendarMobileList" class="calendar-mobile-list bookings-overview-list" aria-label="Liste des dates"></div>
               </div>
 
               <div class="calendar-legend">

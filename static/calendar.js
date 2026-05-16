@@ -109,13 +109,15 @@
   const createBookingApiUrl = resolveApiUrl(window.SUNNYVIBE_API_BOOKINGS_URL || 'api/bookings');
   const timeInputDirection = new WeakMap();
   const previousTimeValue = new WeakMap();
+  const isActiveSlotsAvailabilityMode = configuredReservationConfig.availability_mode === 'active_slots';
+  const isBookingsDashboardCardOverview = isBookingsDashboardPage && isActiveSlotsAvailabilityMode;
   const isCardsAvailabilityMode = (
-    configuredReservationConfig.availability_mode === 'active_slots'
+    isActiveSlotsAvailabilityMode
     && configuredReservationConfig.sunnygym_display_mode === 'cards'
   );
   const isSunnygymCardsMode = (
     Boolean(calendarMobileListEl)
-    && (isCardsAvailabilityMode || isBookingsDashboardPage)
+    && (isCardsAvailabilityMode || isBookingsDashboardCardOverview)
     && (isCalendarPage || isAdminMode || isBookingsDashboardPage)
   );
   let bookingsDashboardMode = isBookingsDashboardPage ? 'overview' : '';
@@ -719,6 +721,7 @@
       const hoursLabel = formatWindowsLabel(dayData.windows);
       const isClosedDay = dayData.totalMinutes === 0;
       const bookingCount = getBookingCountForDate(cellDate);
+      const bookingCountText = bookingCount === 1 ? '1 réservation' : `${bookingCount} réservations`;
       const dayStateText = showFinishedBadge
         ? 'Terminé'
         : (isClosedDay
@@ -726,12 +729,20 @@
           : (isAdminMode
             ? `${bookingCount} rés.`
             : (dayData.hasPartialReservations ? 'Partiel' : (dayData.hasAvailability ? 'Disponible' : 'Complet'))));
-      cellBtn.innerHTML = `
-        <div class="date-label">${escapeHtml(dateLabel)}</div>
-        <div class="hours-label">${escapeHtml(hoursLabel)}</div>
-        <div class="day-state-pill">${escapeHtml(dayStateText)}</div>
-        ${holidayData ? `<div class="holiday-name">${escapeHtml(holidayData.name)}</div><div class="holiday-alert">${escapeHtml(holidayData.alert)}</div>` : ''}
-      `;
+      if (isBookingsDashboardPage) {
+        cellBtn.innerHTML = `
+          <div class="date-label">${escapeHtml(dateLabel)}</div>
+          <div class="booking-count-label">${escapeHtml(bookingCountText)}</div>
+          <div class="hours-label">${escapeHtml(hoursLabel)}</div>
+        `;
+      } else {
+        cellBtn.innerHTML = `
+          <div class="date-label">${escapeHtml(dateLabel)}</div>
+          <div class="hours-label">${escapeHtml(hoursLabel)}</div>
+          <div class="day-state-pill">${escapeHtml(dayStateText)}</div>
+          ${holidayData ? `<div class="holiday-name">${escapeHtml(holidayData.name)}</div><div class="holiday-alert">${escapeHtml(holidayData.alert)}</div>` : ''}
+        `;
+      }
 
       if (isClosedDay) {
         cellBtn.classList.add('full');
@@ -811,6 +822,7 @@
       const holidayData = getHolidayForDate(cellDate);
       const isClosedDay = dayData.totalMinutes === 0;
       const bookingCount = getBookingCountForDate(cellDate);
+      const bookingCountText = bookingCount === 1 ? '1 réservation' : `${bookingCount} réservations`;
       const dayStateText = isClosedDay
         ? 'Fermé'
         : (isAdminMode
@@ -850,13 +862,22 @@
         card.classList.add('holiday');
       }
 
-      card.innerHTML = `
-        <p class="calendar-mobile-weekday">${escapeHtml(dateWeekday)}</p>
-        <p class="calendar-mobile-date">${escapeHtml(dateLong)}</p>
-        <p class="calendar-mobile-hours">${escapeHtml(hoursLabel)}</p>
-        <p class="calendar-mobile-state">${escapeHtml(dayStateText)}</p>
-        ${holidayData ? `<p class="calendar-mobile-holiday">${escapeHtml(holidayData.name)}</p>` : ''}
-      `;
+      if (isBookingsDashboardPage) {
+        card.innerHTML = `
+          <p class="calendar-mobile-weekday">${escapeHtml(dateWeekday)}</p>
+          <p class="calendar-mobile-date">${escapeHtml(dateLong)}</p>
+          <p class="calendar-mobile-bookings">${escapeHtml(bookingCountText)}</p>
+          <p class="calendar-mobile-hours">${escapeHtml(hoursLabel)}</p>
+        `;
+      } else {
+        card.innerHTML = `
+          <p class="calendar-mobile-weekday">${escapeHtml(dateWeekday)}</p>
+          <p class="calendar-mobile-date">${escapeHtml(dateLong)}</p>
+          <p class="calendar-mobile-hours">${escapeHtml(hoursLabel)}</p>
+          <p class="calendar-mobile-state">${escapeHtml(dayStateText)}</p>
+          ${holidayData ? `<p class="calendar-mobile-holiday">${escapeHtml(holidayData.name)}</p>` : ''}
+        `;
+      }
 
       if (isPast) {
         card.disabled = true;
