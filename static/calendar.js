@@ -1169,24 +1169,33 @@
     const trackContentHeight = spanMinutes * timelineMinuteHeight;
     const trackHeight = trackContentHeight + timelineHeaderHeight + mobileTimelineEndInset;
     const tickStepMinutes = chooseTimelineStepMinutes(spanMinutes, trackHeight, isMobileBookingsManager);
+    const safeCapacity = Math.max(Number(data.capacity) || 1, 1);
 
     const timelineTrackEl = document.createElement('div');
     timelineTrackEl.className = 'timeline-track';
     timelineTrackEl.style.height = `${trackHeight}px`;
-    timelineTrackEl.style.setProperty('--capacity', String(Math.max(data.capacity, 1)));
+    timelineTrackEl.style.setProperty('--capacity', String(safeCapacity));
     if (usesIntegratedTimelineHeaders && timelineContainerEl) {
-      const hasHorizontalOverflow = data.capacity > 4;
+      const hasHorizontalOverflow = safeCapacity > 4;
       timelineContainerEl.dataset.horizontalOverflow = hasHorizontalOverflow ? 'true' : 'false';
       if (isMobileBookingsManager) {
-        const timelineGridWidth = getMobileTimelineGridWidth(data.capacity, timelineContainerEl.clientWidth);
+        const timelineGridWidth = getMobileTimelineGridWidth(safeCapacity, timelineContainerEl.clientWidth);
         timelineTrackEl.style.width = `${timelineGridWidth}px`;
         timelineTrackEl.style.minWidth = `${timelineGridWidth}px`;
       }
       const integratedHeaders = document.createElement('div');
       integratedHeaders.className = 'timeline-place-headers timeline-place-headers--integrated';
       integratedHeaders.style.height = `${timelineHeaderHeight}px`;
-      populateTimelinePlaceHeaders(integratedHeaders, data.capacity);
+      populateTimelinePlaceHeaders(integratedHeaders, safeCapacity);
       timelineTrackEl.appendChild(integratedHeaders);
+    }
+
+    for (let placeIndex = 1; placeIndex < safeCapacity; placeIndex += 1) {
+      const columnDividerEl = document.createElement('div');
+      columnDividerEl.className = 'timeline-place-divider';
+      columnDividerEl.style.left = `${(placeIndex / safeCapacity) * 100}%`;
+      columnDividerEl.style.top = `${timelineHeaderHeight}px`;
+      timelineTrackEl.appendChild(columnDividerEl);
     }
 
     let lastRenderedMinute = startMinutes - tickStepMinutes;
@@ -1195,7 +1204,7 @@
       const offsetMinutes = minute - startMinutes;
       const isHourTick = minute % 60 === 0;
       const markerEl = document.createElement('div');
-      markerEl.className = `time-marker ${isHourTick ? 'is-hour' : 'is-subtick'}`;
+      markerEl.className = `time-marker ${isHourTick ? 'is-hour' : 'is-subtick'}${minute === endMinutes ? ' is-end' : ''}`;
       markerEl.style.top = `${timelineHeaderHeight + (offsetMinutes * timelineMinuteHeight)}px`;
       markerEl.textContent = formatHour(minute / 60);
       timelineTrackEl.appendChild(markerEl);
@@ -1212,27 +1221,32 @@
       const offsetMinutes = endMinutes - startMinutes;
       const isHourTick = endMinutes % 60 === 0;
       const markerEl = document.createElement('div');
-      markerEl.className = `time-marker ${isHourTick ? 'is-hour' : 'is-subtick'}`;
+      markerEl.className = `time-marker ${isHourTick ? 'is-hour' : 'is-subtick'} is-end`;
       markerEl.style.top = `${timelineHeaderHeight + (offsetMinutes * timelineMinuteHeight)}px`;
       markerEl.textContent = formatHour(endMinutes / 60);
       timelineTrackEl.appendChild(markerEl);
     }
+
+    const endDividerEl = document.createElement('div');
+    endDividerEl.className = 'time-divider is-hour is-end';
+    endDividerEl.style.top = `${timelineHeaderHeight + trackContentHeight}px`;
+    timelineTrackEl.appendChild(endDividerEl);
 
     const reservationsLayerEl = document.createElement('div');
     reservationsLayerEl.className = 'timeline-reservations-layer';
     if (isAdminMode) {
       reservationsLayerEl.classList.add('admin-interactive');
     }
-    reservationsLayerEl.style.setProperty('--capacity', String(Math.max(data.capacity, 1)));
+    reservationsLayerEl.style.setProperty('--capacity', String(safeCapacity));
 
-    const placements = buildReservationPlacementsForDate(state.selectedDate, data.capacity);
+    const placements = buildReservationPlacementsForDate(state.selectedDate, safeCapacity);
     placements.forEach((placement) => {
       const itemEl = document.createElement('article');
       itemEl.className = `timeline-reservation ${placement.kind}`;
       itemEl.style.top = `${timelineHeaderHeight + ((placement.startMinutes - startMinutes) * timelineMinuteHeight)}px`;
       itemEl.style.height = `${(placement.endMinutes - placement.startMinutes) * timelineMinuteHeight}px`;
-      itemEl.style.left = `${((placement.columnStart - 1) / data.capacity) * 100}%`;
-      itemEl.style.width = `${(placement.columnSpan / data.capacity) * 100}%`;
+      itemEl.style.left = `${((placement.columnStart - 1) / safeCapacity) * 100}%`;
+      itemEl.style.width = `${(placement.columnSpan / safeCapacity) * 100}%`;
       if (placement.bookingId) {
         itemEl.dataset.bookingId = String(placement.bookingId);
       }
@@ -2586,9 +2600,9 @@
     dayPanelEl.hidden = false;
     dayPanelEl.removeAttribute('hidden');
 
-    if (typeof dayPanelModalEl.showModal === 'function') {
+    if (typeof dayPanelModalEl.show === 'function') {
       if (!dayPanelModalEl.open) {
-        dayPanelModalEl.showModal();
+        dayPanelModalEl.show();
       }
     } else {
       dayPanelModalEl.setAttribute('open', 'open');

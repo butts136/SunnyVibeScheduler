@@ -10221,6 +10221,10 @@ input[type="number"].number-input {
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
+.calendar-day-modal-head {
+  justify-content: flex-end;
+}
+
 .calendar-day-modal-close {
   appearance: none;
   border: 0;
@@ -10913,15 +10917,7 @@ input[type="number"].number-input {
   min-width: max(260px, calc(var(--capacity) * 96px));
   margin-left: 58px;
   border-radius: 14px;
-  background:
-    repeating-linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0.035) 0,
-      rgba(255, 255, 255, 0.035) calc((100% / var(--capacity)) - 1px),
-      rgba(255, 255, 255, 0.11) calc((100% / var(--capacity)) - 1px),
-      rgba(255, 255, 255, 0.11) calc(100% / var(--capacity))
-    ),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012));
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
@@ -10934,12 +10930,32 @@ input[type="number"].number-input {
   z-index: 2;
 }
 
+.time-marker.is-end {
+  transform: translateY(-100%);
+}
+
 .time-divider {
   position: absolute;
   left: 0;
   right: 0;
   border-top: 1px dashed rgba(255, 255, 255, 0.12);
   z-index: 1;
+}
+
+.time-divider.is-end {
+  border-top-style: solid;
+  border-top-color: rgba(255, 255, 255, 0.18);
+}
+
+.timeline-place-divider {
+  position: absolute;
+  bottom: 0;
+  width: 2px;
+  transform: translateX(-1px);
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+  z-index: 2;
 }
 
 .timeline-reservations-layer {
@@ -12030,8 +12046,15 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
 }
 
 body.calendar-body.calendar-day-modal-open .calendar-day-modal {
-  width: 100vw;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 280px;
+  z-index: 1000;
+  width: calc(100vw - 280px);
   max-width: none;
+  margin: 0;
   height: 100vh;
   height: 100dvh;
   max-height: none;
@@ -12110,6 +12133,15 @@ body.calendar-body.calendar-day-modal-open .timeline-place-headers--integrated .
 
 body.calendar-body.calendar-day-modal-open .timeline-place-headers--integrated .timeline-place-chip:last-child {
   border-radius: 0 10px 10px 0;
+}
+
+@media (max-width: 980px) {
+  body.calendar-body.calendar-day-modal-open .calendar-day-modal {
+    top: calc(3.55rem + env(safe-area-inset-top, 0px));
+    left: 0;
+    width: 100vw;
+    height: calc(100dvh - 3.55rem - env(safe-area-inset-top, 0px));
+  }
 }
 
 .booking-modal {
