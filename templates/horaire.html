@@ -12,6 +12,19 @@
   <div class="layout app-layout">
     {% include '_left_nav.html' %}
     <main class="hours-calendar-main">
+      {% if modified_schedule_dates %}
+      <section class="home-floating-notice" aria-label="Modification temporaire des horaires">
+        <p class="home-floating-notice-title">Horaire modifié exceptionnellement</p>
+        {% for item in modified_schedule_dates %}
+        <p class="home-floating-notice-line">
+          <strong>{{ item.weekday_label }}, {{ item.date_label }}</strong>
+          <span>{{ item.hours_text }}</span>
+          <span>{{ item.reason }}</span>
+        </p>
+        {% endfor %}
+      </section>
+      {% endif %}
+
       <header class="hours-page-intro">
         <h1>Horaires</h1>
       </header>
@@ -37,31 +50,6 @@
           {% endfor %}
         </div>
       </section>
-
-      {% if modified_schedule_dates %}
-      <section class="hours-modified-panel card form-card" aria-label="Horaires spéciaux configurés">
-        <div class="hours-panel-head">
-          <div>
-            <p class="hours-panel-kicker">Horaire spécial</p>
-            <h2>Dates avec dérogation</h2>
-          </div>
-        </div>
-
-        <div class="hours-modified-list">
-          {% for item in modified_schedule_dates %}
-          <article class="hours-modified-card{% if item.is_closed %} is-closed{% endif %}">
-            <div class="hours-modified-main">
-              <p class="hours-special-date">{{ item.weekday_label }}, {{ item.date_label }}</p>
-              <p class="hours-special-title">{{ item.reason }}</p>
-            </div>
-            <div class="hours-modified-side">
-              <p class="hours-modified-hours">{{ item.hours_text }}</p>
-            </div>
-          </article>
-          {% endfor %}
-        </div>
-      </section>
-      {% endif %}
 
       <section class="hours-special-panel card form-card" aria-label="Prochaines dates spéciales">
         <div class="hours-panel-head">
