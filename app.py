@@ -4329,7 +4329,6 @@ def admin_dashboard():
         'admin_dashboard_opening_hours': 'opening-hours-panel',
         'admin_dashboard_invitations': 'invitation-codes-panel',
         'admin_dashboard_users': 'users-panel',
-        'admin_dashboard_configuration': 'configuration-panel',
     }
     active_tab = endpoint_to_tab.get(request.endpoint, request.args.get('tab', 'bookings-panel'))
     if active_tab not in {
@@ -4338,7 +4337,6 @@ def admin_dashboard():
         'active-slots-panel',
         'menu-panel',
         'users-panel',
-        'configuration-panel',
         'settings-panel',
         'invitation-codes-panel',
     }:
@@ -4501,7 +4499,7 @@ def admin_dashboard():
                     success_message = 'Horaire spécial supprimé.'
 
         if admin_action == 'save_reservation_config':
-            active_tab = 'configuration-panel'
+            active_tab = 'settings-panel'
             raw_timezone = request.form.get('reservation_timezone', '').strip()
             raw_availability_mode = request.form.get('availability_mode', '').strip().lower()
             raw_week_start_day = request.form.get('week_start_day', '').strip().lower()
@@ -4631,8 +4629,8 @@ def admin_dashboard():
             if not errors:
                 _save_reservation_config(candidate_config)
                 reservation_config = _load_reservation_config()
-                session['admin_success_message'] = 'Configuration des réservations mise à jour.'
-                return redirect(url_for('admin_dashboard_configuration'))
+                session['admin_success_message'] = 'Paramètres enregistrés.'
+                return redirect(url_for('admin_dashboard_settings'))
             else:
                 reservation_config = _normalize_reservation_config(candidate_config)
 
@@ -5384,7 +5382,6 @@ def admin_dashboard():
         'bookings-panel': 'Réservations',
         'active-slots-panel': blocked_slots_page_title,
         'menu-panel': 'Menu',
-        'configuration-panel': 'Configuration des réservations',
         'settings-panel': 'Paramètres',
         'invitation-codes-panel': 'Invitations',
         'users-panel': 'Gestion des comptes',
@@ -5395,7 +5392,6 @@ def admin_dashboard():
         'bookings-panel': 'admin_dashboard_bookings.html',
         'active-slots-panel': 'admin_dashboard_active_slots.html',
         'menu-panel': 'admin_dashboard_menu.html',
-        'configuration-panel': 'admin_dashboard_configuration.html',
         'settings-panel': 'admin_dashboard_settings.html',
         'invitation-codes-panel': 'admin_dashboard_invitations.html',
         'users-panel': 'admin_dashboard_users.html',
@@ -5473,7 +5469,6 @@ app.add_url_rule('/admin/dashboard/settings', endpoint='admin_dashboard_settings
 app.add_url_rule('/admin/dashboard/opening-hours', endpoint='admin_dashboard_opening_hours', view_func=admin_dashboard, methods=['GET', 'POST'])
 app.add_url_rule('/admin/dashboard/invitations', endpoint='admin_dashboard_invitations', view_func=admin_dashboard, methods=['GET', 'POST'])
 app.add_url_rule('/admin/dashboard/users', endpoint='admin_dashboard_users', view_func=admin_dashboard, methods=['GET', 'POST'])
-app.add_url_rule('/admin/dashboard/configuration', endpoint='admin_dashboard_configuration', view_func=admin_dashboard, methods=['GET', 'POST'])
 
 
 if __name__ == '__main__':

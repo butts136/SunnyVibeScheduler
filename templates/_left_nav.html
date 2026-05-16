@@ -50,7 +50,7 @@
 
     {% if is_admin_authenticated %}
     {% set admin_active_tab = active_tab|default('') %}
-    {% set is_admin_dashboard_page = admin_active_tab in ['bookings-panel', 'active-slots-panel', 'menu-panel', 'settings-panel', 'opening-hours-panel', 'invitation-codes-panel', 'users-panel', 'configuration-panel'] %}
+    {% set is_admin_dashboard_page = admin_active_tab in ['bookings-panel', 'active-slots-panel', 'menu-panel', 'settings-panel', 'opening-hours-panel', 'invitation-codes-panel', 'users-panel'] %}
     {% if reservation_config is defined and reservation_config %}
       {% set dashboard_availability_mode = reservation_config.availability_mode|default('opening_hours') %}
     {% else %}
