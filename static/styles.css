@@ -11209,6 +11209,11 @@ body.admin-body #bookings-panel .bookings-calendar-bootstrap[hidden] {
   display: none !important;
 }
 
+body.admin-body #bookings-panel .bookings-overview-panel[hidden],
+body.admin-body #bookings-panel .bookings-overview-panel[hidden] * {
+  display: none !important;
+}
+
 body.admin-body #bookings-panel .booking-manager-panel[hidden],
 body.admin-body #bookings-panel .booking-manager-panel[hidden] * {
   display: none !important;
