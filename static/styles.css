@@ -84,6 +84,17 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
+
+html.menu-document {
+  scrollbar-gutter: stable;
+}
+
+@supports not (scrollbar-gutter: stable) {
+  html.menu-document {
+    overflow-y: scroll;
+  }
+}
+
 body {
   margin: 0;
   color: var(--text);
