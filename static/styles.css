@@ -12002,6 +12002,48 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
   overflow: hidden;
 }
 
+body.calendar-body.calendar-day-modal-open .calendar-day-modal {
+  width: 100vw;
+  max-width: none;
+  height: 100vh;
+  height: 100dvh;
+  max-height: none;
+  border: 0;
+  border-radius: 0;
+}
+
+body.calendar-body.calendar-day-modal-open .calendar-day-modal-panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  min-height: 0;
+  padding: clamp(0.7rem, 1.4vw, 1rem);
+  overflow: hidden;
+}
+
+body.calendar-body.calendar-day-modal-open .calendar-day-modal-head,
+body.calendar-body.calendar-day-modal-open .day-panel-head,
+body.calendar-body.calendar-day-modal-open .day-summary,
+body.calendar-body.calendar-day-modal-open .timeline-legend,
+body.calendar-body.calendar-day-modal-open .booking-actions,
+body.calendar-body.calendar-day-modal-open .calendar-day-modal-panel > .subtitle {
+  flex: 0 0 auto;
+}
+
+body.calendar-body.calendar-day-modal-open .timeline-container {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+body.calendar-body.calendar-day-modal-open .timeline-track {
+  min-height: 100%;
+}
+
 .booking-modal {
   max-width: 760px;
   max-height: min(92vh, 820px);

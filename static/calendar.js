@@ -2593,6 +2593,9 @@
       dayPanelModalEl.setAttribute('open', 'open');
     }
     document.body.classList.add('calendar-day-modal-open');
+    window.requestAnimationFrame(() => {
+      renderSelectedDayPanel();
+    });
   }
 
   function closeDayPanelModal() {
