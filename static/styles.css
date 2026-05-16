@@ -10221,6 +10221,33 @@ input[type="number"].number-input {
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
+.calendar-day-modal-close {
+  appearance: none;
+  border: 0;
+  border-radius: 10px;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(220, 38, 38, 0.95);
+  color: #fff;
+  font-size: 1.2rem;
+  line-height: 1;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(220, 38, 38, 0.22);
+}
+
+.calendar-day-modal-close:hover {
+  background: rgba(239, 68, 68, 0.98);
+}
+
+.calendar-day-modal-close:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.85);
+  outline-offset: 2px;
+}
+
 .user-modal-content {
   padding: 0.95rem;
   display: grid;
