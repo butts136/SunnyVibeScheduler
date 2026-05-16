@@ -122,6 +122,7 @@
     && (isCalendarPage || isAdminMode || isBookingsDashboardPage)
   );
   let bookingsDashboardMode = isBookingsDashboardPage ? 'overview' : '';
+  let dayPanelRerenderFrame = 0;
 
   if (calendarPanelEl) {
     calendarPanelEl.classList.toggle('cards-mode', isSunnygymCardsMode);
@@ -2219,6 +2220,34 @@
     });
   }
 
+  function scheduleDayPanelRerender() {
+    const sunnygymPanelOpen = Boolean(usesDayPanelModal && dayPanelModalEl && dayPanelModalEl.open && state.selectedDate);
+    const bookingsManagerOpen = Boolean(isBookingsDashboardPage && bookingsDashboardMode === 'manager' && state.selectedDate);
+    if (!sunnygymPanelOpen && !bookingsManagerOpen) {
+      return;
+    }
+
+    if (dayPanelRerenderFrame) {
+      window.cancelAnimationFrame(dayPanelRerenderFrame);
+    }
+
+    dayPanelRerenderFrame = window.requestAnimationFrame(() => {
+      dayPanelRerenderFrame = 0;
+      if (isBookingsDashboardPage && bookingsDashboardMode === 'manager') {
+        syncBookingsManagerViewportHeight();
+      }
+      if (
+        state.selectedDate
+        && (
+          (usesDayPanelModal && dayPanelModalEl && dayPanelModalEl.open)
+          || (isBookingsDashboardPage && bookingsDashboardMode === 'manager')
+        )
+      ) {
+        renderSelectedDayPanel();
+      }
+    });
+  }
+
   function syncBookingsManagerViewportHeight() {
     if (!isBookingsDashboardPage || bookingsDashboardMode !== 'manager' || !bookingManagerGridEl) {
       return;
@@ -2690,7 +2719,16 @@
   window.addEventListener('resize', () => {
     if (isBookingsDashboardPage && bookingsDashboardMode === 'manager') {
       syncBookingsManagerViewportHeight();
-      scheduleBookingsManagerRerender();
     }
+    scheduleDayPanelRerender();
   });
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', scheduleDayPanelRerender);
+  }
+  if (timelineContainerEl && typeof ResizeObserver === 'function') {
+    const timelineResizeObserver = new ResizeObserver(() => {
+      scheduleDayPanelRerender();
+    });
+    timelineResizeObserver.observe(timelineContainerEl);
+  }
 })();
