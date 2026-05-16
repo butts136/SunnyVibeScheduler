@@ -1114,9 +1114,10 @@
       && mobileBookingsManagerQuery.matches
     );
     const isBookingsManager = isBookingsDashboardPage && bookingsDashboardMode === 'manager';
-    renderTimelinePlaceHeaders(data.capacity, !isBookingsManager);
+    const usesIntegratedTimelineHeaders = isBookingsManager || usesDayPanelModal;
+    renderTimelinePlaceHeaders(data.capacity, !usesIntegratedTimelineHeaders);
     const timelineHourHeight = isMobileBookingsManager ? 72 : HOUR_HEIGHT;
-    const timelineHeaderHeight = isBookingsManager ? (isMobileBookingsManager ? 24 : 34) : 0;
+    const timelineHeaderHeight = usesIntegratedTimelineHeaders ? (isMobileBookingsManager ? 24 : 34) : 0;
     const mobileTimelineEndInset = isMobileBookingsManager ? 18 : 0;
     const mobileTimelineNoScrollLimitMinutes = 240;
     let timelineScale = 1;
@@ -1173,7 +1174,7 @@
     timelineTrackEl.className = 'timeline-track';
     timelineTrackEl.style.height = `${trackHeight}px`;
     timelineTrackEl.style.setProperty('--capacity', String(Math.max(data.capacity, 1)));
-    if (isBookingsManager && timelineContainerEl) {
+    if (usesIntegratedTimelineHeaders && timelineContainerEl) {
       const hasHorizontalOverflow = data.capacity > 4;
       timelineContainerEl.dataset.horizontalOverflow = hasHorizontalOverflow ? 'true' : 'false';
       if (isMobileBookingsManager) {
