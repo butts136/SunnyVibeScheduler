@@ -1113,9 +1113,10 @@
       && mobileBookingsManagerQuery
       && mobileBookingsManagerQuery.matches
     );
-    renderTimelinePlaceHeaders(data.capacity, !isMobileBookingsManager);
+    const isBookingsManager = isBookingsDashboardPage && bookingsDashboardMode === 'manager';
+    renderTimelinePlaceHeaders(data.capacity, !isBookingsManager);
     const timelineHourHeight = isMobileBookingsManager ? 72 : HOUR_HEIGHT;
-    const mobileTimelineHeaderHeight = isMobileBookingsManager ? 24 : 0;
+    const timelineHeaderHeight = isBookingsManager ? (isMobileBookingsManager ? 24 : 34) : 0;
     const mobileTimelineEndInset = isMobileBookingsManager ? 18 : 0;
     const mobileTimelineNoScrollLimitMinutes = 240;
     let timelineScale = 1;
@@ -1159,28 +1160,30 @@
       }
     }
     let timelineMinuteHeight = (timelineHourHeight * timelineScale) / 60;
-    if (isMobileBookingsManager && availableHeight > mobileTimelineHeaderHeight) {
-      const availableTrackHeight = Math.max(availableHeight - mobileTimelineHeaderHeight - mobileTimelineEndInset, 1);
+    if (isMobileBookingsManager && availableHeight > timelineHeaderHeight) {
+      const availableTrackHeight = Math.max(availableHeight - timelineHeaderHeight - mobileTimelineEndInset, 1);
       const visibleSpanMinutes = Math.max(1, Math.min(spanMinutes, mobileTimelineNoScrollLimitMinutes));
       timelineMinuteHeight = availableTrackHeight / visibleSpanMinutes;
     }
     const trackContentHeight = spanMinutes * timelineMinuteHeight;
-    const trackHeight = trackContentHeight + mobileTimelineHeaderHeight + mobileTimelineEndInset;
+    const trackHeight = trackContentHeight + timelineHeaderHeight + mobileTimelineEndInset;
     const tickStepMinutes = chooseTimelineStepMinutes(spanMinutes, trackHeight, isMobileBookingsManager);
 
     const timelineTrackEl = document.createElement('div');
     timelineTrackEl.className = 'timeline-track';
     timelineTrackEl.style.height = `${trackHeight}px`;
     timelineTrackEl.style.setProperty('--capacity', String(Math.max(data.capacity, 1)));
-    if (isMobileBookingsManager && timelineContainerEl) {
+    if (isBookingsManager && timelineContainerEl) {
       const hasHorizontalOverflow = data.capacity > 4;
       timelineContainerEl.dataset.horizontalOverflow = hasHorizontalOverflow ? 'true' : 'false';
-      const timelineGridWidth = getMobileTimelineGridWidth(data.capacity, timelineContainerEl.clientWidth);
-      timelineTrackEl.style.width = `${timelineGridWidth}px`;
-      timelineTrackEl.style.minWidth = `${timelineGridWidth}px`;
+      if (isMobileBookingsManager) {
+        const timelineGridWidth = getMobileTimelineGridWidth(data.capacity, timelineContainerEl.clientWidth);
+        timelineTrackEl.style.width = `${timelineGridWidth}px`;
+        timelineTrackEl.style.minWidth = `${timelineGridWidth}px`;
+      }
       const integratedHeaders = document.createElement('div');
       integratedHeaders.className = 'timeline-place-headers timeline-place-headers--integrated';
-      integratedHeaders.style.height = `${mobileTimelineHeaderHeight}px`;
+      integratedHeaders.style.height = `${timelineHeaderHeight}px`;
       populateTimelinePlaceHeaders(integratedHeaders, data.capacity);
       timelineTrackEl.appendChild(integratedHeaders);
     }
@@ -1192,14 +1195,14 @@
       const isHourTick = minute % 60 === 0;
       const markerEl = document.createElement('div');
       markerEl.className = `time-marker ${isHourTick ? 'is-hour' : 'is-subtick'}`;
-      markerEl.style.top = `${mobileTimelineHeaderHeight + (offsetMinutes * timelineMinuteHeight)}px`;
+      markerEl.style.top = `${timelineHeaderHeight + (offsetMinutes * timelineMinuteHeight)}px`;
       markerEl.textContent = formatHour(minute / 60);
       timelineTrackEl.appendChild(markerEl);
 
       if (minute < endMinutes) {
         const dividerEl = document.createElement('div');
         dividerEl.className = `time-divider ${isHourTick ? 'is-hour' : 'is-subtick'}`;
-        dividerEl.style.top = `${mobileTimelineHeaderHeight + (offsetMinutes * timelineMinuteHeight)}px`;
+        dividerEl.style.top = `${timelineHeaderHeight + (offsetMinutes * timelineMinuteHeight)}px`;
         timelineTrackEl.appendChild(dividerEl);
       }
     }
@@ -1209,7 +1212,7 @@
       const isHourTick = endMinutes % 60 === 0;
       const markerEl = document.createElement('div');
       markerEl.className = `time-marker ${isHourTick ? 'is-hour' : 'is-subtick'}`;
-      markerEl.style.top = `${mobileTimelineHeaderHeight + (offsetMinutes * timelineMinuteHeight)}px`;
+      markerEl.style.top = `${timelineHeaderHeight + (offsetMinutes * timelineMinuteHeight)}px`;
       markerEl.textContent = formatHour(endMinutes / 60);
       timelineTrackEl.appendChild(markerEl);
     }
@@ -1225,7 +1228,7 @@
     placements.forEach((placement) => {
       const itemEl = document.createElement('article');
       itemEl.className = `timeline-reservation ${placement.kind}`;
-      itemEl.style.top = `${mobileTimelineHeaderHeight + ((placement.startMinutes - startMinutes) * timelineMinuteHeight)}px`;
+      itemEl.style.top = `${timelineHeaderHeight + ((placement.startMinutes - startMinutes) * timelineMinuteHeight)}px`;
       itemEl.style.height = `${(placement.endMinutes - placement.startMinutes) * timelineMinuteHeight}px`;
       itemEl.style.left = `${((placement.columnStart - 1) / data.capacity) * 100}%`;
       itemEl.style.width = `${(placement.columnSpan / data.capacity) * 100}%`;

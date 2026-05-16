@@ -46,14 +46,18 @@ DEFAULT_MENU_DISCLAIMER_TEXTS = [
     "Il est donc IMPORTANT de nous aviser si vous avez des ALLERGIES et/ou une INTOLÉRANCE dès votre arrivée.",
     "De plus, il est aussi IMPORTANT de nous aviser si vous êtes ENCEINTE, si vous ALLAITEZ ou si vous êtes atteint d'une MALADIE afin que nous puissions vous conseiller des produits adaptés à votre situation.",
 ]
-SUPER_ADMIN_IDENTIFIER = 'butts136'
-SUPER_ADMIN_DISPLAY_NAME = 'Butts136'
+SUPER_ADMIN_IDENTIFIER = os.environ.get('SUNNYVIBE_SUPER_ADMIN_IDENTIFIER', 'butts136').strip().lower() or 'butts136'
+SUPER_ADMIN_DISPLAY_NAME = os.environ.get('SUNNYVIBE_SUPER_ADMIN_DISPLAY_NAME', 'Butts136').strip() or 'Butts136'
 SUPER_ADMIN_IDENTIFIERS = {SUPER_ADMIN_IDENTIFIER}
-SUPER_ADMIN_USER_EMAIL = 'butts136@sunnyvibe.local'
-SUPER_ADMIN_USER_FULL_NAME = 'Butts136 SuperAdmin'
-SUPER_ADMIN_BOOTSTRAP_SALT = 'r8Lt5Yr27augWpc8IR36pA=='
-SUPER_ADMIN_BOOTSTRAP_HASH = 'FvvcQI9GBk1m1hRJ9q27Sbq4Jb4xOmHf1fZpWbaz2oE='
-SUPER_ADMIN_RECOVERY_SIGNATURE_KEY = 'be5954dcc7dec12af5c99dc8f5ebf6f2ae90d0ef8480322d6b1719b58848a313'
+SUPER_ADMIN_USER_EMAIL = os.environ.get('SUNNYVIBE_SUPER_ADMIN_USER_EMAIL', 'butts136@sunnyvibe.local').strip().lower()
+SUPER_ADMIN_USER_FULL_NAME = os.environ.get('SUNNYVIBE_SUPER_ADMIN_USER_FULL_NAME', f'{SUPER_ADMIN_DISPLAY_NAME} SuperAdmin').strip()
+SUPER_ADMIN_BOOTSTRAP_SALT = os.environ.get('SUNNYVIBE_SUPER_ADMIN_BOOTSTRAP_SALT', '').strip()
+SUPER_ADMIN_BOOTSTRAP_HASH = os.environ.get('SUNNYVIBE_SUPER_ADMIN_BOOTSTRAP_HASH', '').strip()
+SUPER_ADMIN_RECOVERY_SIGNATURE_KEY = (
+    os.environ.get('SUNNYVIBE_SUPER_ADMIN_RECOVERY_SIGNATURE_KEY')
+    or os.environ.get('FLASK_SECRET_KEY')
+    or app.config['SECRET_KEY']
+)
 
 DAY_CONFIG = [
     ('monday', 'Lundi', 1),
@@ -2912,6 +2916,9 @@ def _sanitize_admin_account_record(raw_record):
 
 
 def _bootstrap_super_admin_account():
+    if not SUPER_ADMIN_BOOTSTRAP_SALT or not SUPER_ADMIN_BOOTSTRAP_HASH:
+        return None
+
     return {
         'identifier': SUPER_ADMIN_IDENTIFIER,
         'password_salt': SUPER_ADMIN_BOOTSTRAP_SALT,
@@ -2968,6 +2975,8 @@ def _save_super_admin_recovery_account(account):
     )
     if not candidate:
         candidate = _bootstrap_super_admin_account()
+    if not candidate:
+        return None
 
     SUPER_ADMIN_RECOVERY_PATH.write_text(
         json.dumps(
@@ -2987,6 +2996,8 @@ def _save_super_admin_recovery_account(account):
 
 def _super_admin_recovery_account():
     account = _load_super_admin_recovery_account() or _bootstrap_super_admin_account()
+    if not account:
+        return None
     _save_super_admin_recovery_account(account)
     return account
 
@@ -3004,8 +3015,10 @@ def _merge_super_admin_account(accounts):
         merged_accounts.append(account)
 
     if not found_super_admin:
-        merged_accounts.append(_super_admin_recovery_account())
-        changed = True
+        recovery_account = _super_admin_recovery_account()
+        if recovery_account:
+            merged_accounts.append(recovery_account)
+            changed = True
 
     return merged_accounts, changed
 

@@ -11050,6 +11050,28 @@ body.admin-body #bookings-panel .timeline-place-chip:last-child {
   border-radius: 0 999px 999px 0;
 }
 
+body.admin-body.bookings-manager-open #bookings-panel .timeline-place-headers--integrated {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 8;
+  width: 100%;
+  overflow: hidden;
+  padding: 4px 0;
+  border-radius: 14px 14px 0 0;
+  background: linear-gradient(180deg, rgba(7, 12, 25, 0.98), rgba(7, 12, 25, 0.84));
+  backdrop-filter: blur(10px);
+}
+
+body.admin-body.bookings-manager-open #bookings-panel .timeline-place-headers--integrated .timeline-place-track {
+  width: 100%;
+  min-width: 0;
+}
+
+body.admin-body.bookings-manager-open #bookings-panel .timeline-place-headers--integrated .timeline-place-chip {
+  min-height: 24px;
+}
+
 body.admin-body #bookings-panel .timeline-track {
   min-width: max(360px, calc(var(--capacity) * 132px));
 }
