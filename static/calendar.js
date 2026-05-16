@@ -1683,19 +1683,36 @@
     }
 
     if (configuredReservationConfig.availability_mode === 'opening_hours_with_overrides') {
+      const manualWindows = configuredActiveSlots
+        .filter((item) => item.date === dateKey)
+        .map((item) => ({
+          start: timeTextToHour(item.start),
+          end: timeTextToHour(item.end),
+        }));
       const specialDay = configuredSpecialDates.find((item) => item.date === dateKey);
       if (specialDay) {
         if (specialDay.closed) {
-          return [];
+          return mergeTimeWindows(manualWindows);
         }
 
-        return [
+        return mergeTimeWindows([
           {
             start: timeTextToHour(specialDay.start),
             end: timeTextToHour(specialDay.end),
           },
-        ];
+          ...manualWindows,
+        ]);
       }
+
+      const weekday = String(date.getDay());
+      const regularWindows = configuredOpeningHours[weekday] || [];
+      return mergeTimeWindows([
+        ...regularWindows.map((window) => ({
+          start: timeTextToHour(window.start),
+          end: timeTextToHour(window.end),
+        })),
+        ...manualWindows,
+      ]);
     }
 
     const weekday = String(date.getDay());
@@ -1973,7 +1990,7 @@
     if (configuredReservationConfig.availability_mode === 'active_slots') {
       lines.push('Disponibilités basées sur les plages activées par l’administrateur');
     } else if (configuredReservationConfig.availability_mode === 'opening_hours_with_overrides') {
-      lines.push('Disponibilités basées sur les heures d’ouverture avec dérogations ponctuelles');
+      lines.push('Disponibilités basées sur les heures d’ouverture avec plages manuelles ajoutées');
     } else {
       lines.push('Disponibilités basées sur les heures d’ouverture régulières');
     }

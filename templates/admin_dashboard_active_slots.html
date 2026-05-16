@@ -2,22 +2,32 @@
 
 {% block admin_panel %}
         {% set is_active_slots_mode = reservation_config.availability_mode == 'active_slots' %}
+        {% set is_hybrid_availability_mode = reservation_config.availability_mode == 'opening_hours_with_overrides' %}
+        {% set uses_active_slot_windows = is_active_slots_mode or is_hybrid_availability_mode %}
         <section id="active-slots-panel" class="admin-section tab-panel {% if active_tab == 'active-slots-panel' %}is-active{% endif %}">
-          <h2>{% if is_active_slots_mode %}Ajouter une plage horaire{% else %}Blocages horaires{% endif %}</h2>
+          <h2>{% if is_active_slots_mode %}Ajouter une plage horaire{% elif is_hybrid_availability_mode %}Dérogations et blocages horaires{% else %}Blocages horaires{% endif %}</h2>
           <p class="subtitle">
             {% if is_active_slots_mode %}
             Créez des plages réservables sans passer par les heures d'ouverture.
+            {% elif is_hybrid_availability_mode %}
+            Ajoutez des plages réservables au calendrier basé sur les heures d'ouverture, ou bloquez une indisponibilité.
             {% else %}
             Bloquez une période ponctuelle, répétitive ou liée à un férié.
             {% endif %}
           </p>
 
-          {% if is_active_slots_mode %}
+          {% if uses_active_slot_windows %}
           <section class="config-section-block active-slots-hero">
             <div class="active-slots-hero__head">
               <div>
-                <h3>Plages activées</h3>
-                <p class="field-help">Chaque plage apparaît dans SunnyGym avec son titre et sa période.</p>
+                <h3>{% if is_hybrid_availability_mode %}Dérogations réservables{% else %}Plages activées{% endif %}</h3>
+                <p class="field-help">
+                  {% if is_hybrid_availability_mode %}
+                  Chaque plage s'ajoute aux heures d'ouverture régulières dans le calendrier SunnyGym.
+                  {% else %}
+                  Chaque plage apparaît dans SunnyGym avec son titre et sa période.
+                  {% endif %}
+                </p>
               </div>
             </div>
 
@@ -242,7 +252,9 @@
               {% endif %}
             </div>
           </section>
-          {% else %}
+          {% endif %}
+
+          {% if not is_active_slots_mode %}
           <section class="config-section-block active-slots-hero">
             <div class="active-slots-hero__head">
               <div>
@@ -452,7 +464,7 @@
           {% endif %}
         </section>
 
-        {% if is_active_slots_mode %}
+        {% if uses_active_slot_windows %}
         <script>
           (function initActiveSlotsDatePicker() {
             const field = document.querySelector('#active-slots-panel [data-calendar-field]');

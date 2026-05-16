@@ -6999,11 +6999,13 @@ img, svg { display: block; max-width: 100%; }
   margin: 0 auto;
 }
 
+body.home-body,
 body.hours-calendar-body {
   overflow-y: auto;
   overflow-x: hidden;
 }
 
+body.home-body .layout.app-layout,
 body.hours-calendar-body .layout.app-layout {
   height: auto;
   min-height: 100vh;
@@ -7012,6 +7014,7 @@ body.hours-calendar-body .layout.app-layout {
   align-items: flex-start;
 }
 
+body.home-body .layout.app-layout > :not(.left-nav):not(.left-nav-toggle):not(.left-nav-backdrop):not(.left-nav-mobile-bar),
 body.hours-calendar-body .layout.app-layout > :not(.left-nav):not(.left-nav-toggle):not(.left-nav-backdrop):not(.left-nav-mobile-bar) {
   height: auto;
   max-height: none;
@@ -7088,6 +7091,7 @@ body.menu-body .layout.app-layout > :not(.left-nav):not(.left-nav-toggle):not(.l
 }
 
 body.with-left-nav,
+body.home-body,
 body.calendar-body,
 body.admin-body,
 body.hours-calendar-body,
@@ -7595,6 +7599,11 @@ input[type="number"].number-input {
 
 .calendar-shell-single {
   grid-template-columns: minmax(0, 1fr);
+}
+
+.calendar-shell-single .calendar-panel {
+  min-width: 0;
+  width: 100%;
 }
 
 .calendar-mobile-list {
@@ -8296,6 +8305,7 @@ input[type="number"].number-input {
 .settings-section-card {
   display: grid;
   gap: 1rem;
+  min-width: 0;
   padding: 1rem 1.1rem;
   border-radius: 18px;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -8317,6 +8327,7 @@ input[type="number"].number-input {
   grid-template-columns: minmax(0, 1.35fr) minmax(220px, 360px);
   gap: 1rem;
   align-items: center;
+  min-width: 0;
   padding: 0.9rem 0;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -8333,6 +8344,7 @@ input[type="number"].number-input {
 .settings-option-copy {
   display: grid;
   gap: 0.2rem;
+  min-width: 0;
 }
 
 .settings-option-copy label {
@@ -8348,7 +8360,14 @@ input[type="number"].number-input {
   display: grid;
   justify-self: end;
   width: 100%;
+  min-width: 0;
   max-width: 360px;
+}
+
+.settings-option-control select,
+.settings-option-control input {
+  width: 100%;
+  min-width: 0;
 }
 
 .settings-option-control-small {
@@ -9154,11 +9173,14 @@ input[type="number"].number-input {
 .opening-hours-shell {
   display: grid;
   gap: 0.9rem;
+  min-width: 0;
 }
 
 .opening-hours-card {
   display: grid;
   gap: 0.85rem;
+  min-width: 0;
+  overflow: visible;
 }
 
 .opening-hours-card-head {
@@ -9189,6 +9211,7 @@ input[type="number"].number-input {
   grid-template-columns: minmax(90px, 1fr) minmax(90px, 130px) minmax(0, 2fr);
   align-items: center;
   gap: 0.7rem;
+  min-width: 0;
 }
 
 .day-label {
@@ -9207,6 +9230,14 @@ input[type="number"].number-input {
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   gap: 0.48rem;
+  min-width: 0;
+}
+
+.opening-hours-time-range input,
+.opening-special-grid input,
+.opening-special-grid select {
+  width: 100%;
+  min-width: 0;
 }
 
 .opening-special-time-row.is-disabled {
@@ -10392,6 +10423,7 @@ input[type="number"].number-input {
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 12px;
   min-height: 108px;
+  min-width: 0;
   text-align: left;
   background: rgba(255, 255, 255, 0.03);
   color: var(--text);
@@ -12771,6 +12803,10 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
     padding: 0.46rem;
   }
 
+  .calendar-main .calendar-panel {
+    overflow: visible;
+  }
+
   .calendar-legend {
     gap: 0.45rem 0.75rem;
   }
@@ -12845,6 +12881,59 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
 
   .landing-page-btn {
     min-height: 82px;
+  }
+
+  body.home-body .layout.app-layout > .home-main {
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .landing-hero-simple {
+    gap: 0.75rem;
+  }
+
+  .landing-auth-actions {
+    gap: 0.55rem;
+  }
+
+  .landing-page-actions {
+    gap: 0.55rem;
+    margin-top: 0.35rem;
+  }
+
+  .calendar-main {
+    padding-inline: 0.75rem;
+  }
+
+  .calendar-nav {
+    gap: 0.35rem;
+  }
+
+  .month-label {
+    font-size: 1.05rem;
+    line-height: 1.15;
+  }
+
+  .day-grid,
+  .weekdays {
+    gap: 0.28rem;
+  }
+
+  .day-cell {
+    min-height: 82px;
+    padding: 0.36rem;
+    border-radius: 10px;
+  }
+
+  .day-cell .date-label {
+    font-size: 0.76rem;
+  }
+
+  .day-cell .hours-label,
+  .day-cell .day-state-pill,
+  .day-cell .holiday-name,
+  .day-cell .holiday-alert {
+    font-size: 0.62rem;
+    line-height: 1.2;
   }
 
   .hours-calendar-main {
@@ -13004,6 +13093,32 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
 
   .settings-section-card {
     padding: 0.85rem 0.9rem;
+    border-radius: 14px;
+  }
+
+  .settings-form .settings-tabs-wrap {
+    overflow-x: visible;
+    overflow-y: visible;
+  }
+
+  .settings-form .settings-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    min-width: 0;
+    overflow: visible;
+  }
+
+  .settings-form .settings-tabs-indicator,
+  .settings-form .settings-tabs-hover-indicator {
+    display: none;
+  }
+
+  .settings-form .settings-tab-btn {
+    flex: 1 1 190px;
+    min-width: 0;
+    white-space: normal;
+    line-height: 1.15;
   }
 
   .account-history-item {
@@ -13021,6 +13136,45 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
 
   .settings-inline-fields {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .opening-hours-card {
+    padding: 0.82rem 0.88rem !important;
+  }
+
+  .opening-hours-row.row-grid {
+    gap: 0.55rem;
+    padding: 0.65rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .opening-hours-row.row-grid:first-of-type {
+    border-top: 0;
+  }
+
+  .opening-hours-time-range {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.38rem;
+  }
+
+  .opening-hours-time-range .time-separator {
+    justify-self: center;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .special-date-item {
+    padding: 0.75rem 0.8rem;
+    border-radius: 14px;
+  }
+
+  .special-date-side {
+    width: 100%;
+  }
+
+  .special-date-side .inline-form,
+  .special-date-side .btn {
+    width: 100%;
   }
 }
 

@@ -56,7 +56,13 @@
     {% else %}
       {% set dashboard_availability_mode = admin_availability_mode|default('opening_hours') %}
     {% endif %}
-    {% set blocked_slots_tab_label = "Ajouter une plage horaire" if dashboard_availability_mode == 'active_slots' else "Blocages horaires" %}
+    {% if dashboard_availability_mode == 'active_slots' %}
+      {% set blocked_slots_tab_label = "Ajouter une plage horaire" %}
+    {% elif dashboard_availability_mode == 'opening_hours_with_overrides' %}
+      {% set blocked_slots_tab_label = "Dérogations horaires" %}
+    {% else %}
+      {% set blocked_slots_tab_label = "Blocages horaires" %}
+    {% endif %}
     <div class="left-nav-group dashboard-nav-group nav-group">
       <button
         id="adminDashboardToggle"

@@ -118,7 +118,7 @@ _configure_logging()
 def _static_asset_version(filename):
     asset_path = STATIC_DIR / filename
     try:
-        return int(asset_path.stat().st_mtime)
+        return asset_path.stat().st_mtime_ns
     except OSError:
         return 1
 
@@ -1584,6 +1584,7 @@ def _windows_for_date_minutes(date_obj, opening_hours=None, special_dates=None):
     if opening_hours is None:
         opening_hours = _load_opening_hours()
 
+    windows = []
     if availability_mode == AVAILABILITY_MODE_OPENING_HOURS_WITH_OVERRIDES:
         if special_dates is None:
             special_dates = _load_special_dates()
@@ -1591,14 +1592,18 @@ def _windows_for_date_minutes(date_obj, opening_hours=None, special_dates=None):
         special_day = _special_date_for_date(date_obj, special_dates)
         if special_day:
             if special_day.get('closed', False):
-                return []
+                windows = []
+            else:
+                start_minutes = _time_text_to_minutes(str(special_day.get('start', '')))
+                end_minutes = _time_text_to_minutes(str(special_day.get('end', '')))
+                if start_minutes is not None and end_minutes is not None and end_minutes > start_minutes:
+                    windows = [(start_minutes, end_minutes)]
+        else:
+            day_key = _python_weekday_to_day_key(date_obj.weekday())
+            windows = _day_windows_minutes(day_key, opening_hours)
 
-            start_minutes = _time_text_to_minutes(str(special_day.get('start', '')))
-            end_minutes = _time_text_to_minutes(str(special_day.get('end', '')))
-            if start_minutes is None or end_minutes is None or end_minutes <= start_minutes:
-                return []
-
-            return [(start_minutes, end_minutes)]
+        manual_windows = _load_active_slot_windows_for_date(date_obj)
+        return _merge_windows_minutes([*windows, *manual_windows])
 
     day_key = _python_weekday_to_day_key(date_obj.weekday())
     return _day_windows_minutes(day_key, opening_hours)
@@ -4052,8 +4057,7 @@ def sunnygym():
     bookings_by_date = _load_bookings_for_calendar()
     blocked_slot_rules = _load_blocked_slot_rules()
     active_slot_rules = _load_active_slot_rules()
-    calendar_js_path = Path(__file__).resolve().parent / 'static' / 'calendar.js'
-    calendar_js_version = int(calendar_js_path.stat().st_mtime) if calendar_js_path.exists() else 1
+    calendar_js_version = _static_asset_version('calendar.js')
     current_now_local = _now_in_reservation_timezone(reservation_config)
 
     return render_template(
@@ -5365,14 +5369,15 @@ def admin_dashboard():
     bookings_by_date = _load_bookings_for_calendar()
     blocked_slot_rules = _load_blocked_slot_rules()
     active_slot_rules = _load_active_slot_rules()
-    calendar_js_path = Path(__file__).resolve().parent / 'static' / 'calendar.js'
-    calendar_js_version = int(calendar_js_path.stat().st_mtime) if calendar_js_path.exists() else 1
+    calendar_js_version = _static_asset_version('calendar.js')
     current_now_local = _now_in_reservation_timezone(reservation_config)
-    blocked_slots_page_title = (
-        'Ajouter une plage horaire'
-        if reservation_config.get('availability_mode') == AVAILABILITY_MODE_ACTIVE_SLOTS
-        else 'Blocages horaires'
-    )
+    availability_mode = reservation_config.get('availability_mode')
+    if availability_mode == AVAILABILITY_MODE_ACTIVE_SLOTS:
+        blocked_slots_page_title = 'Ajouter une plage horaire'
+    elif availability_mode == AVAILABILITY_MODE_OPENING_HOURS_WITH_OVERRIDES:
+        blocked_slots_page_title = 'Dérogations horaires'
+    else:
+        blocked_slots_page_title = 'Blocages horaires'
     page_title_by_tab = {
         'opening-hours-panel': "Heures d'ouverture",
         'bookings-panel': 'Réservations',
