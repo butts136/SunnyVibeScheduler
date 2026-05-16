@@ -1169,7 +1169,7 @@
       const baseHeight = (spanMinutes * timelineHourHeight) / 60;
       if (availableHeight > 0 && baseHeight > 0) {
         const availableTrackHeight = Math.max(availableHeight - timelineHeaderHeight - mobileTimelineEndInset, 0);
-        if (isMobileTimelineGrid) {
+        if (isMobileBookingsManager) {
           const mobileMaxScale = spanMinutes > mobileTimelineNoScrollLimitMinutes ? 1 : 1.15;
           timelineScale = Math.min(mobileMaxScale, Math.max(1, availableTrackHeight / baseHeight));
         } else {
@@ -1178,7 +1178,7 @@
       }
     }
     let timelineMinuteHeight = (timelineHourHeight * timelineScale) / 60;
-    if (isMobileTimelineGrid && availableHeight > timelineHeaderHeight) {
+    if (isMobileBookingsManager && availableHeight > timelineHeaderHeight) {
       const availableTrackHeight = Math.max(availableHeight - timelineHeaderHeight - mobileTimelineEndInset, 1);
       const visibleSpanMinutes = Math.max(1, Math.min(spanMinutes, mobileTimelineNoScrollLimitMinutes));
       timelineMinuteHeight = availableTrackHeight / visibleSpanMinutes;
