@@ -12103,10 +12103,17 @@ body.calendar-body.calendar-day-modal-open .calendar-day-modal-panel > .subtitle
 
 body.calendar-body.calendar-day-modal-open .timeline-container {
   flex: 1 1 auto;
+  width: 100%;
   min-height: 0;
+  padding: 0.6rem;
   overflow-x: auto;
   overflow-y: auto;
   overscroll-behavior: contain;
+  touch-action: pan-x pan-y pinch-zoom;
+}
+
+body.calendar-body.calendar-day-modal-open .timeline-container[data-horizontal-overflow="false"] {
+  overflow-x: hidden;
 }
 
 body.calendar-body.calendar-day-modal-open .day-panel > .timeline-place-headers:not(.timeline-place-headers--integrated) {
@@ -12147,11 +12154,31 @@ body.calendar-body.calendar-day-modal-open .timeline-place-headers--integrated .
 
 body.calendar-body.calendar-day-modal-open .timeline-place-headers--integrated .timeline-place-chip:first-child {
   border-left: 1px solid rgba(255, 255, 255, 0.11);
-  border-radius: 10px 0 0 10px;
+  border-radius: 999px 0 0 999px;
 }
 
 body.calendar-body.calendar-day-modal-open .timeline-place-headers--integrated .timeline-place-chip:last-child {
-  border-radius: 0 10px 10px 0;
+  border-radius: 0 999px 999px 0;
+}
+
+body.calendar-body.calendar-day-modal-open .time-marker.is-hour {
+  color: rgba(229, 231, 235, 0.95);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+body.calendar-body.calendar-day-modal-open .time-marker.is-subtick {
+  color: rgba(163, 170, 183, 0.72);
+  font-size: 0.72rem;
+}
+
+body.calendar-body.calendar-day-modal-open .time-divider.is-hour {
+  border-top-color: rgba(255, 255, 255, 0.18);
+}
+
+body.calendar-body.calendar-day-modal-open .time-divider.is-subtick {
+  border-top-color: rgba(255, 255, 255, 0.08);
+  border-top-style: dotted;
 }
 
 @media (max-width: 980px) {
@@ -12160,6 +12187,69 @@ body.calendar-body.calendar-day-modal-open .timeline-place-headers--integrated .
     left: 0;
     width: 100vw;
     height: calc(100dvh - 3.55rem - env(safe-area-inset-top, 0px));
+  }
+}
+
+@media (max-width: 780px) {
+  body.calendar-body.calendar-day-modal-open .calendar-day-modal-panel {
+    padding: 0.65rem;
+  }
+
+  body.calendar-body.calendar-day-modal-open .day-panel {
+    padding: 0 0.15rem;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    min-height: 0;
+    height: 100%;
+    gap: 0;
+  }
+
+  body.calendar-body.calendar-day-modal-open .timeline-legend {
+    display: none;
+  }
+
+  body.calendar-body.calendar-day-modal-open .timeline-container {
+    padding: 0.35rem 0 0.65rem;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    overflow-y: auto;
+    overflow-x: auto;
+  }
+
+  body.calendar-body.calendar-day-modal-open .timeline-place-headers--integrated {
+    overflow: visible;
+    background: linear-gradient(180deg, rgba(7, 12, 25, 0.98), rgba(7, 12, 25, 0.86));
+  }
+
+  body.calendar-body.calendar-day-modal-open .timeline-place-headers--integrated .timeline-place-track {
+    width: 100%;
+  }
+
+  body.calendar-body.calendar-day-modal-open .timeline-track {
+    width: calc(100% - 42px);
+    min-width: calc(100% - 42px);
+    margin-left: 42px;
+  }
+
+  body.calendar-body.calendar-day-modal-open .time-marker {
+    left: -42px;
+    font-size: 0.62rem;
+  }
+
+  body.calendar-body.calendar-day-modal-open .timeline-reservation {
+    border-radius: 8px;
+    padding: 0.2rem 0.24rem;
+  }
+
+  body.calendar-body.calendar-day-modal-open .timeline-reservation-time {
+    font-size: 0.66rem;
+  }
+
+  body.calendar-body.calendar-day-modal-open .timeline-reservation-label {
+    font-size: 0.68rem;
   }
 }
 

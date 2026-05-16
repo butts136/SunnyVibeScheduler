@@ -1116,18 +1116,18 @@
     const displayStartMinutes = Math.floor(startMinutes / 60) * 60;
     const displayEndMinutes = Math.ceil(endMinutes / 60) * 60;
     const spanMinutes = Math.max(displayEndMinutes - displayStartMinutes, 1);
-    const isMobileBookingsManager = Boolean(
-      isBookingsDashboardPage
-      && bookingsDashboardMode === 'manager'
+    const isBookingsManager = isBookingsDashboardPage && bookingsDashboardMode === 'manager';
+    const usesIntegratedTimelineHeaders = isBookingsManager || usesDayPanelModal;
+    const isMobileTimelineGrid = Boolean(
+      usesIntegratedTimelineHeaders
       && mobileBookingsManagerQuery
       && mobileBookingsManagerQuery.matches
     );
-    const isBookingsManager = isBookingsDashboardPage && bookingsDashboardMode === 'manager';
-    const usesIntegratedTimelineHeaders = isBookingsManager || usesDayPanelModal;
+    const isMobileBookingsManager = Boolean(isBookingsManager && isMobileTimelineGrid);
     renderTimelinePlaceHeaders(data.capacity, !usesIntegratedTimelineHeaders);
-    const timelineHourHeight = isMobileBookingsManager ? 72 : HOUR_HEIGHT;
-    const timelineHeaderHeight = usesIntegratedTimelineHeaders ? (isMobileBookingsManager ? 24 : 34) : 0;
-    const mobileTimelineEndInset = isMobileBookingsManager ? 18 : 0;
+    const timelineHourHeight = isMobileTimelineGrid ? 72 : (usesIntegratedTimelineHeaders ? 32 : HOUR_HEIGHT);
+    const timelineHeaderHeight = usesIntegratedTimelineHeaders ? (isMobileTimelineGrid ? 24 : 34) : 0;
+    const mobileTimelineEndInset = isMobileTimelineGrid ? 18 : 0;
     const mobileTimelineNoScrollLimitMinutes = 240;
     let timelineScale = 1;
     let availableHeight = 0;
@@ -1169,7 +1169,7 @@
       const baseHeight = (spanMinutes * timelineHourHeight) / 60;
       if (availableHeight > 0 && baseHeight > 0) {
         const availableTrackHeight = Math.max(availableHeight - timelineHeaderHeight - mobileTimelineEndInset, 0);
-        if (isMobileBookingsManager) {
+        if (isMobileTimelineGrid) {
           const mobileMaxScale = spanMinutes > mobileTimelineNoScrollLimitMinutes ? 1 : 1.15;
           timelineScale = Math.min(mobileMaxScale, Math.max(1, availableTrackHeight / baseHeight));
         } else {
@@ -1178,14 +1178,14 @@
       }
     }
     let timelineMinuteHeight = (timelineHourHeight * timelineScale) / 60;
-    if (isMobileBookingsManager && availableHeight > timelineHeaderHeight) {
+    if (isMobileTimelineGrid && availableHeight > timelineHeaderHeight) {
       const availableTrackHeight = Math.max(availableHeight - timelineHeaderHeight - mobileTimelineEndInset, 1);
       const visibleSpanMinutes = Math.max(1, Math.min(spanMinutes, mobileTimelineNoScrollLimitMinutes));
       timelineMinuteHeight = availableTrackHeight / visibleSpanMinutes;
     }
     const trackContentHeight = spanMinutes * timelineMinuteHeight;
     const trackHeight = trackContentHeight + timelineHeaderHeight + mobileTimelineEndInset;
-    const tickStepMinutes = chooseTimelineStepMinutes(spanMinutes, trackHeight, isMobileBookingsManager);
+    const tickStepMinutes = chooseTimelineStepMinutes(spanMinutes, trackHeight, isMobileTimelineGrid);
     const safeCapacity = Math.max(Number(data.capacity) || 1, 1);
 
     const timelineTrackEl = document.createElement('div');
@@ -1195,7 +1195,7 @@
     if (usesIntegratedTimelineHeaders && timelineContainerEl) {
       const hasHorizontalOverflow = safeCapacity > 4;
       timelineContainerEl.dataset.horizontalOverflow = hasHorizontalOverflow ? 'true' : 'false';
-      if (isMobileBookingsManager) {
+      if (isMobileTimelineGrid) {
         const timelineGridWidth = getMobileTimelineGridWidth(safeCapacity, timelineContainerEl.clientWidth);
         timelineTrackEl.style.width = `${timelineGridWidth}px`;
         timelineTrackEl.style.minWidth = `${timelineGridWidth}px`;
