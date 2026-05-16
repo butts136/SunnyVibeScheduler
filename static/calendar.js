@@ -1682,18 +1682,20 @@
       return mergeTimeWindows(windows);
     }
 
-    const specialDay = configuredSpecialDates.find((item) => item.date === dateKey);
-    if (specialDay) {
-      if (specialDay.closed) {
-        return [];
-      }
+    if (configuredReservationConfig.availability_mode === 'opening_hours_with_overrides') {
+      const specialDay = configuredSpecialDates.find((item) => item.date === dateKey);
+      if (specialDay) {
+        if (specialDay.closed) {
+          return [];
+        }
 
-      return [
-        {
-          start: timeTextToHour(specialDay.start),
-          end: timeTextToHour(specialDay.end),
-        },
-      ];
+        return [
+          {
+            start: timeTextToHour(specialDay.start),
+            end: timeTextToHour(specialDay.end),
+          },
+        ];
+      }
     }
 
     const weekday = String(date.getDay());
@@ -1861,7 +1863,7 @@
     };
 
     return {
-      availability_mode: ['opening_hours', 'active_slots'].includes(availabilityMode)
+      availability_mode: ['opening_hours', 'active_slots', 'opening_hours_with_overrides'].includes(availabilityMode)
         ? availabilityMode
         : defaults.availability_mode,
       sunnygym_display_mode: ['calendar', 'cards'].includes(sunnygymDisplayMode)
@@ -1970,8 +1972,10 @@
     }
     if (configuredReservationConfig.availability_mode === 'active_slots') {
       lines.push('Disponibilités basées sur les plages activées par l’administrateur');
+    } else if (configuredReservationConfig.availability_mode === 'opening_hours_with_overrides') {
+      lines.push('Disponibilités basées sur les heures d’ouverture avec dérogations ponctuelles');
     } else {
-      lines.push('Disponibilités basées sur les heures d’ouverture');
+      lines.push('Disponibilités basées sur les heures d’ouverture régulières');
     }
 
     if (configuredReservationConfig.fixed_time_only) {

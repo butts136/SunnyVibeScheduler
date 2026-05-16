@@ -17,10 +17,11 @@
               <div class="reservation-config-grid">
                 <div class="config-row config-option">
                   <label for="availability_mode">Mode des disponibilités</label>
-                  <p class="field-help">Mode 1 = heures d'ouverture + blocages. Mode 2 = uniquement les plages activées dans l'onglet "Ajouter une plage horaire".</p>
+                  <p class="field-help">Mode 1 = heures d'ouverture régulières + blocages. Mode 2 = uniquement les plages activées. Mode 3 = heures d'ouverture + dérogations d'une journée.</p>
                   <select id="availability_mode" name="availability_mode" required>
-                    <option value="opening_hours" {% if reservation_config.availability_mode == 'opening_hours' %}selected{% endif %}>Mode 1: Heures d'ouverture</option>
+                    <option value="opening_hours" {% if reservation_config.availability_mode == 'opening_hours' %}selected{% endif %}>Mode 1: Heures d'ouverture régulières</option>
                     <option value="active_slots" {% if reservation_config.availability_mode == 'active_slots' %}selected{% endif %}>Mode 2: Plages activées</option>
+                    <option value="opening_hours_with_overrides" {% if reservation_config.availability_mode == 'opening_hours_with_overrides' %}selected{% endif %}>Mode 3: Heures d'ouverture + dérogations</option>
                   </select>
                 </div>
 

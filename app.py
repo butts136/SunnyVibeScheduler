@@ -69,9 +69,11 @@ VALID_SLOT_INTERVALS = {15, 30, 60}
 DEFAULT_RESERVATION_TIMEZONE = 'America/Toronto'
 AVAILABILITY_MODE_OPENING_HOURS = 'opening_hours'
 AVAILABILITY_MODE_ACTIVE_SLOTS = 'active_slots'
+AVAILABILITY_MODE_OPENING_HOURS_WITH_OVERRIDES = 'opening_hours_with_overrides'
 VALID_AVAILABILITY_MODES = {
     AVAILABILITY_MODE_OPENING_HOURS,
     AVAILABILITY_MODE_ACTIVE_SLOTS,
+    AVAILABILITY_MODE_OPENING_HOURS_WITH_OVERRIDES,
 }
 WEEK_START_SUNDAY = 'sunday'
 WEEK_START_MONDAY = 'monday'
@@ -1581,20 +1583,22 @@ def _windows_for_date_minutes(date_obj, opening_hours=None, special_dates=None):
 
     if opening_hours is None:
         opening_hours = _load_opening_hours()
-    if special_dates is None:
-        special_dates = _load_special_dates()
 
-    special_day = _special_date_for_date(date_obj, special_dates)
-    if special_day:
-        if special_day.get('closed', False):
-            return []
+    if availability_mode == AVAILABILITY_MODE_OPENING_HOURS_WITH_OVERRIDES:
+        if special_dates is None:
+            special_dates = _load_special_dates()
 
-        start_minutes = _time_text_to_minutes(str(special_day.get('start', '')))
-        end_minutes = _time_text_to_minutes(str(special_day.get('end', '')))
-        if start_minutes is None or end_minutes is None or end_minutes <= start_minutes:
-            return []
+        special_day = _special_date_for_date(date_obj, special_dates)
+        if special_day:
+            if special_day.get('closed', False):
+                return []
 
-        return [(start_minutes, end_minutes)]
+            start_minutes = _time_text_to_minutes(str(special_day.get('start', '')))
+            end_minutes = _time_text_to_minutes(str(special_day.get('end', '')))
+            if start_minutes is None or end_minutes is None or end_minutes <= start_minutes:
+                return []
+
+            return [(start_minutes, end_minutes)]
 
     day_key = _python_weekday_to_day_key(date_obj.weekday())
     return _day_windows_minutes(day_key, opening_hours)
