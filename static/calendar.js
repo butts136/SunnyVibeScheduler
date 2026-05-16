@@ -1122,7 +1122,14 @@
     const mobileTimelineNoScrollLimitMinutes = 240;
     let timelineScale = 1;
     let availableHeight = 0;
-    if (isBookingsDashboardPage && bookingsDashboardMode === 'manager' && timelineContainerEl) {
+    const shouldFitTimelineToAvailableHeight = Boolean(
+      timelineContainerEl
+      && (
+        (isBookingsDashboardPage && bookingsDashboardMode === 'manager')
+        || usesDayPanelModal
+      )
+    );
+    if (shouldFitTimelineToAvailableHeight) {
       if (isMobileBookingsManager) {
         const targetRect = bookingManagerGridEl
           ? bookingManagerGridEl.getBoundingClientRect()
@@ -1152,11 +1159,12 @@
       availableHeight = Math.max(timelineContainerEl.clientHeight - verticalPadding, 0);
       const baseHeight = (spanMinutes * timelineHourHeight) / 60;
       if (availableHeight > 0 && baseHeight > 0) {
+        const availableTrackHeight = Math.max(availableHeight - timelineHeaderHeight - mobileTimelineEndInset, 0);
         if (isMobileBookingsManager) {
           const mobileMaxScale = spanMinutes > mobileTimelineNoScrollLimitMinutes ? 1 : 1.15;
-          timelineScale = Math.min(mobileMaxScale, Math.max(1, availableHeight / baseHeight));
+          timelineScale = Math.min(mobileMaxScale, Math.max(1, availableTrackHeight / baseHeight));
         } else {
-          timelineScale = availableHeight / baseHeight;
+          timelineScale = Math.max(1, availableTrackHeight / baseHeight);
         }
       }
     }
