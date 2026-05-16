@@ -1104,9 +1104,18 @@
       return;
     }
 
-    const startMinutes = Math.round(Math.min(...data.windows.map((window) => window.start * 60)));
-    const endMinutes = Math.round(Math.max(...data.windows.map((window) => window.end * 60)));
-    const spanMinutes = Math.max(endMinutes - startMinutes, 1);
+    const windowsMinutes = data.windows
+      .map((window) => ({
+        start: Math.round(window.start * 60),
+        end: Math.round(window.end * 60),
+      }))
+      .filter((window) => window.end > window.start)
+      .sort((a, b) => a.start - b.start);
+    const startMinutes = Math.min(...windowsMinutes.map((window) => window.start));
+    const endMinutes = Math.max(...windowsMinutes.map((window) => window.end));
+    const displayStartMinutes = Math.floor(startMinutes / 60) * 60;
+    const displayEndMinutes = Math.ceil(endMinutes / 60) * 60;
+    const spanMinutes = Math.max(displayEndMinutes - displayStartMinutes, 1);
     const isMobileBookingsManager = Boolean(
       isBookingsDashboardPage
       && bookingsDashboardMode === 'manager'
@@ -1198,6 +1207,25 @@
       timelineTrackEl.appendChild(integratedHeaders);
     }
 
+    let inaccessibleCursorMinutes = displayStartMinutes;
+    windowsMinutes.forEach((window) => {
+      if (window.start > inaccessibleCursorMinutes) {
+        const inaccessibleEl = document.createElement('div');
+        inaccessibleEl.className = 'timeline-inaccessible-zone';
+        inaccessibleEl.style.top = `${timelineHeaderHeight + ((inaccessibleCursorMinutes - displayStartMinutes) * timelineMinuteHeight)}px`;
+        inaccessibleEl.style.height = `${(window.start - inaccessibleCursorMinutes) * timelineMinuteHeight}px`;
+        timelineTrackEl.appendChild(inaccessibleEl);
+      }
+      inaccessibleCursorMinutes = Math.max(inaccessibleCursorMinutes, window.end);
+    });
+    if (inaccessibleCursorMinutes < displayEndMinutes) {
+      const inaccessibleEl = document.createElement('div');
+      inaccessibleEl.className = 'timeline-inaccessible-zone';
+      inaccessibleEl.style.top = `${timelineHeaderHeight + ((inaccessibleCursorMinutes - displayStartMinutes) * timelineMinuteHeight)}px`;
+      inaccessibleEl.style.height = `${(displayEndMinutes - inaccessibleCursorMinutes) * timelineMinuteHeight}px`;
+      timelineTrackEl.appendChild(inaccessibleEl);
+    }
+
     for (let placeIndex = 1; placeIndex < safeCapacity; placeIndex += 1) {
       const columnDividerEl = document.createElement('div');
       columnDividerEl.className = 'timeline-place-divider';
@@ -1206,18 +1234,18 @@
       timelineTrackEl.appendChild(columnDividerEl);
     }
 
-    let lastRenderedMinute = startMinutes - tickStepMinutes;
-    for (let minute = startMinutes; minute <= endMinutes; minute += tickStepMinutes) {
+    let lastRenderedMinute = displayStartMinutes - tickStepMinutes;
+    for (let minute = displayStartMinutes; minute <= displayEndMinutes; minute += tickStepMinutes) {
       lastRenderedMinute = minute;
-      const offsetMinutes = minute - startMinutes;
+      const offsetMinutes = minute - displayStartMinutes;
       const isHourTick = minute % 60 === 0;
       const markerEl = document.createElement('div');
-      markerEl.className = `time-marker ${isHourTick ? 'is-hour' : 'is-subtick'}${minute === endMinutes ? ' is-end' : ''}`;
+      markerEl.className = `time-marker ${isHourTick ? 'is-hour' : 'is-subtick'}${minute === displayEndMinutes ? ' is-end' : ''}`;
       markerEl.style.top = `${timelineHeaderHeight + (offsetMinutes * timelineMinuteHeight)}px`;
       markerEl.textContent = formatHour(minute / 60);
       timelineTrackEl.appendChild(markerEl);
 
-      if (minute < endMinutes) {
+      if (minute < displayEndMinutes) {
         const dividerEl = document.createElement('div');
         dividerEl.className = `time-divider ${isHourTick ? 'is-hour' : 'is-subtick'}`;
         dividerEl.style.top = `${timelineHeaderHeight + (offsetMinutes * timelineMinuteHeight)}px`;
@@ -1225,13 +1253,13 @@
       }
     }
 
-    if (lastRenderedMinute !== endMinutes) {
-      const offsetMinutes = endMinutes - startMinutes;
-      const isHourTick = endMinutes % 60 === 0;
+    if (lastRenderedMinute !== displayEndMinutes) {
+      const offsetMinutes = displayEndMinutes - displayStartMinutes;
+      const isHourTick = displayEndMinutes % 60 === 0;
       const markerEl = document.createElement('div');
       markerEl.className = `time-marker ${isHourTick ? 'is-hour' : 'is-subtick'} is-end`;
       markerEl.style.top = `${timelineHeaderHeight + (offsetMinutes * timelineMinuteHeight)}px`;
-      markerEl.textContent = formatHour(endMinutes / 60);
+      markerEl.textContent = formatHour(displayEndMinutes / 60);
       timelineTrackEl.appendChild(markerEl);
     }
 
@@ -1251,7 +1279,7 @@
     placements.forEach((placement) => {
       const itemEl = document.createElement('article');
       itemEl.className = `timeline-reservation ${placement.kind}`;
-      itemEl.style.top = `${timelineHeaderHeight + ((placement.startMinutes - startMinutes) * timelineMinuteHeight)}px`;
+      itemEl.style.top = `${timelineHeaderHeight + ((placement.startMinutes - displayStartMinutes) * timelineMinuteHeight)}px`;
       itemEl.style.height = `${(placement.endMinutes - placement.startMinutes) * timelineMinuteHeight}px`;
       itemEl.style.left = `${((placement.columnStart - 1) / safeCapacity) * 100}%`;
       itemEl.style.width = `${(placement.columnSpan / safeCapacity) * 100}%`;
