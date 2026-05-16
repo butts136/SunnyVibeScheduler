@@ -33,6 +33,9 @@ pnpm-debug.log*
 # Local runtime data with sensitive content
 data/admin_account.key
 data/admin_account.json
+data/menu.json
+data/opening_hours.json
+data/reservation_config.json
 data/sunnyvibe.db
 data/*.db
 data/*.sqlite

@@ -11023,6 +11023,33 @@ body.admin-body #bookings-panel .timeline-container {
   padding: 0.6rem;
 }
 
+body.admin-body #bookings-panel .timeline-place-headers {
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+body.admin-body #bookings-panel .timeline-place-track {
+  gap: 0;
+  min-width: max(360px, calc(var(--capacity) * 132px));
+}
+
+body.admin-body #bookings-panel .timeline-place-chip {
+  min-width: 0;
+  border-radius: 0;
+  border-left: 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.11);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+body.admin-body #bookings-panel .timeline-place-chip:first-child {
+  border-left: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 999px 0 0 999px;
+}
+
+body.admin-body #bookings-panel .timeline-place-chip:last-child {
+  border-radius: 0 999px 999px 0;
+}
+
 body.admin-body #bookings-panel .timeline-track {
   min-width: max(360px, calc(var(--capacity) * 132px));
 }
@@ -11417,8 +11444,10 @@ body.admin-body.bookings-manager-open #bookings-panel .day-panel {
 body.admin-body.bookings-manager-open #bookings-panel .timeline-container {
   flex: 1 1 auto;
   min-height: 0;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   align-self: stretch;
+  overscroll-behavior: contain;
 }
 
 body.admin-body.bookings-manager-open #bookings-panel .bookings-details-panel {

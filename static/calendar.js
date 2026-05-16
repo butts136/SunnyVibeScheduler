@@ -109,6 +109,7 @@
   const createBookingApiUrl = resolveApiUrl(window.SUNNYVIBE_API_BOOKINGS_URL || 'api/bookings');
   const timeInputDirection = new WeakMap();
   const previousTimeValue = new WeakMap();
+  let timelineHeaderScrollSyncBound = false;
   const isActiveSlotsAvailabilityMode = configuredReservationConfig.availability_mode === 'active_slots';
   const isBookingsDashboardCardOverview = isBookingsDashboardPage && isActiveSlotsAvailabilityMode;
   const isCardsAvailabilityMode = (
@@ -1251,6 +1252,26 @@
 
     timelineContainerEl.innerHTML = '';
     timelineContainerEl.appendChild(timelineTrackEl);
+    syncTimelinePlaceHeaderScroll();
+  }
+
+  function syncTimelinePlaceHeaderScroll() {
+    if (!timelineContainerEl || !timelinePlaceHeadersEl || timelinePlaceHeadersEl.hidden) {
+      return;
+    }
+
+    timelinePlaceHeadersEl.scrollLeft = timelineContainerEl.scrollLeft;
+
+    if (timelineHeaderScrollSyncBound) {
+      return;
+    }
+
+    timelineHeaderScrollSyncBound = true;
+    timelineContainerEl.addEventListener('scroll', () => {
+      if (timelinePlaceHeadersEl && !timelinePlaceHeadersEl.hidden) {
+        timelinePlaceHeadersEl.scrollLeft = timelineContainerEl.scrollLeft;
+      }
+    }, { passive: true });
   }
 
   function chooseTimelineStepMinutes(spanMinutes, availableHeight, isCompact = false) {
