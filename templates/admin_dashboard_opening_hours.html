@@ -52,7 +52,9 @@
       name="{{ name }}"
       value="{{ value }}"
       placeholder="HH:MM"
-      readonly
+      maxlength="5"
+      pattern="[0-9]{2}:[0-9]{2}"
+      inputmode="numeric"
       autocomplete="off"
       spellcheck="false"
       {% if required %}required{% endif %}

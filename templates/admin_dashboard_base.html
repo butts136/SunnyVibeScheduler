@@ -348,6 +348,14 @@
           confirmed,
           temp: confirmed ? { ...confirmed } : { hour: 9, minute: 0 },
         };
+        input.addEventListener('change', () => {
+          const parsed = parseTime(input.value);
+          if (!parsed) {
+            return;
+          }
+          field.__timePickerState.confirmed = { ...parsed };
+          field.__timePickerState.temp = { ...parsed };
+        });
         const closeField = (commit = false) => {
           popup.hidden = true;
           popup.classList.add('hidden');
@@ -456,7 +464,34 @@
 
     document.querySelectorAll('form[data-auto-save-form]').forEach((form) => {
       let saveDebounceTimer = null;
+      const isValidTimeValue = (value) => /^([01]\d|2[0-3]):[0-5]\d$/.test(String(value || '').trim());
+      const normalizeTimeValue = (value) => {
+        const raw = String(value || '').trim();
+        if (isValidTimeValue(raw)) {
+          return raw;
+        }
+
+        const compactMatch = /^(\d{1,2})(?::?(\d{2}))?$/.exec(raw);
+        if (!compactMatch) {
+          return '';
+        }
+
+        const hour = Number(compactMatch[1]);
+        const minute = compactMatch[2] === undefined ? 0 : Number(compactMatch[2]);
+        if (!Number.isInteger(hour) || !Number.isInteger(minute) || hour < 0 || hour > 23 || minute < 0 || minute > 59) {
+          return '';
+        }
+
+        return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+      };
+      const formHasInvalidTime = () => Array.from(form.querySelectorAll('[data-time-input]')).some((field) => (
+        !field.disabled
+        && !isValidTimeValue(field.value)
+      ));
       const queueSave = () => {
+        if (formHasInvalidTime()) {
+          return;
+        }
         clearTimeout(saveDebounceTimer);
         saveDebounceTimer = setTimeout(() => {
           saveAdminAutoSaveForm(form).catch(() => {});
@@ -471,8 +506,23 @@
         if (field.type === 'hidden') {
           return;
         }
+        if (field.matches('[data-time-input]')) {
+          field.addEventListener('input', () => {
+            field.value = String(field.value || '')
+              .replace(/[^\d:]/g, '')
+              .replace(/^(\d{2})(\d)/, '$1:$2')
+              .slice(0, 5);
+          });
+          field.addEventListener('blur', () => {
+            const normalized = normalizeTimeValue(field.value);
+            if (normalized && normalized !== field.value) {
+              field.value = normalized;
+              field.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+          });
+        }
         field.addEventListener('change', queueSave);
-        if (field.matches('input[type="number"], input[type="text"], textarea')) {
+        if (field.matches('input[type="number"], input[type="text"]:not([data-time-input]), textarea')) {
           field.addEventListener('input', queueSave);
         }
       });
