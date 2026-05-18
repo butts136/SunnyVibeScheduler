@@ -112,10 +112,7 @@
   let timelineHeaderScrollSyncBound = false;
   const isActiveSlotsAvailabilityMode = configuredReservationConfig.availability_mode === 'active_slots';
   const isBookingsDashboardCardOverview = isBookingsDashboardPage && isActiveSlotsAvailabilityMode;
-  const isCardsAvailabilityMode = (
-    isActiveSlotsAvailabilityMode
-    && configuredReservationConfig.sunnygym_display_mode === 'cards'
-  );
+  const isCardsAvailabilityMode = configuredReservationConfig.sunnygym_display_mode === 'cards';
   const isSunnygymCardsMode = (
     Boolean(calendarMobileListEl)
     && (isCardsAvailabilityMode || isBookingsDashboardCardOverview)
@@ -919,65 +916,28 @@
     const introCard = document.createElement('section');
     introCard.className = 'sunnygym-cards-intro';
     introCard.innerHTML = `
-      <p class="sunnygym-cards-kicker">Plages activées</p>
-      <h3>Réservez parmi les prochaines ouvertures disponibles</h3>
+      <p class="sunnygym-cards-kicker">Disponibilités</p>
+      <h3>Choisissez une journée pour afficher la grille horaire</h3>
     `;
     calendarMobileListEl.appendChild(introCard);
 
-    const activeSlotsByDate = new Map();
-    configuredActiveSlots.forEach((slot) => {
-      const slotDate = parseDateKey(slot.date);
-      if (!slotDate || startOfDay(slotDate) < today) {
-        return;
-      }
-
-      if (!activeSlotsByDate.has(slot.date)) {
-        activeSlotsByDate.set(slot.date, []);
-      }
-      activeSlotsByDate.get(slot.date).push(slot);
-    });
-
-    const uniqueFutureDateKeys = Array.from(activeSlotsByDate.keys()).sort((a, b) => a.localeCompare(b));
+    const entries = getSunnygymCardEntries();
 
     let renderedCards = 0;
-    uniqueFutureDateKeys.forEach((dateKey) => {
-      const dateObj = parseDateKey(dateKey);
-      if (!dateObj) {
-        return;
-      }
-
-      const dateSlots = activeSlotsByDate.get(dateKey) || [];
-      if (!dateSlots.length) {
-        return;
-      }
-
-      const activeWindows = mergeTimeWindows(
-        dateSlots.map((slot) => ({
-          start: timeTextToHour(slot.start),
-          end: timeTextToHour(slot.end),
-        }))
-      );
-      const displayIntervals = activeWindows.length
-        ? activeWindows
-        : dateSlots.map((slot) => ({
-          start: timeTextToHour(slot.start),
-          end: timeTextToHour(slot.end),
-        }));
-
+    entries.forEach((entry) => {
+      const dateObj = entry.date;
       const dateWeekday = new Intl.DateTimeFormat('fr-CA', { weekday: 'long' }).format(dateObj);
       const dateLong = new Intl.DateTimeFormat('fr-CA', {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
       }).format(dateObj);
-      const availableIntervalsLabel = formatRangeLabel(displayIntervals);
-      const slotTitles = Array.from(new Set(dateSlots.map((slot) => slot.title).filter(Boolean)));
-      const slotTitleLabel = slotTitles.length ? slotTitles.join(' · ') : 'Plage activée';
       const holidayData = getHolidayForDate(dateObj);
 
       const card = document.createElement('button');
       card.type = 'button';
-      card.className = 'calendar-mobile-day-card sunnygym-slot-card available';
+      card.className = 'calendar-mobile-day-card sunnygym-slot-card';
+      card.classList.add(entry.hasPartialReservations ? 'partial' : 'available');
       if (isSameDay(dateObj, today)) {
         card.classList.add('today');
       }
@@ -997,12 +957,12 @@
           <span class="sunnygym-slot-card__badge">${isSameDay(dateObj, today) ? 'Aujourd’hui' : 'À venir'}</span>
         </div>
         <div class="sunnygym-slot-card__schedule">
-          <p class="sunnygym-slot-card__label">Créneaux actifs</p>
-          <p class="calendar-mobile-hours">${escapeHtml(availableIntervalsLabel)}</p>
+          <p class="sunnygym-slot-card__label">Plages disponibles</p>
+          <p class="calendar-mobile-hours">${escapeHtml(entry.availableIntervalsLabel)}</p>
         </div>
         <div class="sunnygym-slot-card__meta">
-          <p class="sunnygym-slot-card__label">Titre</p>
-          <p class="sunnygym-slot-card__meta-value">${escapeHtml(slotTitleLabel)}</p>
+          <p class="sunnygym-slot-card__label">Réservations</p>
+          <p class="sunnygym-slot-card__meta-value">${escapeHtml(entry.bookingCountText)}</p>
         </div>
         <div class="sunnygym-slot-card__footer">
           <span class="sunnygym-slot-card__cta">Voir le détail</span>
@@ -1020,7 +980,7 @@
     if (!renderedCards) {
       const emptyState = document.createElement('div');
       emptyState.className = 'calendar-mobile-empty-month';
-      if (userCanManageSlots) {
+      if (userCanManageSlots && configuredReservationConfig.availability_mode !== 'opening_hours') {
         emptyState.classList.add('calendar-mobile-empty-month--with-action');
         emptyState.innerHTML = `
           <p>Aucune plage horaire disponible à venir.</p>
@@ -1031,6 +991,33 @@
       }
       calendarMobileListEl.appendChild(emptyState);
     }
+  }
+
+  function getSunnygymCardEntries() {
+    const entries = [];
+    const horizonDays = 90;
+
+    for (let offset = 0; offset <= horizonDays; offset += 1) {
+      const date = new Date(today);
+      date.setDate(date.getDate() + offset);
+
+      const dayData = getDayData(date);
+      if (!dayData.hasAvailability || !dayData.availableIntervals.length) {
+        continue;
+      }
+
+      const bookingCount = getBookingCountForDate(date);
+      const intervalsForLabel = dayData.availableIntervals.length ? dayData.availableIntervals : dayData.windows;
+      entries.push({
+        date,
+        bookingCount,
+        bookingCountText: bookingCount === 1 ? '1 réservation' : `${bookingCount} réservations`,
+        availableIntervalsLabel: formatWindowsLabel(intervalsForLabel),
+        hasPartialReservations: Boolean(dayData.hasPartialReservations),
+      });
+    }
+
+    return entries;
   }
 
   function renderSelectedDayPanel() {
@@ -1095,7 +1082,7 @@
     daySummaryEl.innerHTML = '';
 
     if (addBookingBtn) {
-      addBookingBtn.disabled = !data.hasAvailability || selectedDate < today;
+      addBookingBtn.disabled = !data.hasAvailability || state.selectedDate < today;
     }
 
     if (data.windows.length === 0) {
