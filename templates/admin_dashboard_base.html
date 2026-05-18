@@ -105,6 +105,300 @@
   </dialog>
 
   <script>
+    function initAdminCalendarDatePickers(root = document) {
+      const fields = Array.from(root.querySelectorAll('[data-calendar-field]')).filter((field) => (
+        !field.dataset.calendarReady
+        && !(field.closest('#active-slots-panel') && field.querySelector('#active_slot_date'))
+      ));
+      const monthNames = [
+        'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+        'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
+      ];
+      const parseValue = (value) => {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value || ''))) {
+          return null;
+        }
+        const [y, m, d] = String(value).split('-').map(Number);
+        const date = new Date(y, m - 1, d);
+        date.setHours(0, 0, 0, 0);
+        return Number.isNaN(date.getTime()) ? null : date;
+      };
+      const formatValue = (date) => {
+        if (!(date instanceof Date) || Number.isNaN(date.getTime())) {
+          return '';
+        }
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+      };
+      const isSameDate = (a, b) => (
+        a && b
+        && a.getFullYear() === b.getFullYear()
+        && a.getMonth() === b.getMonth()
+        && a.getDate() === b.getDate()
+      );
+
+      fields.forEach((field) => {
+        field.dataset.calendarReady = 'true';
+        const input = field.querySelector('[data-calendar-input]');
+        const toggle = field.querySelector('[data-calendar-toggle]');
+        const popup = field.querySelector('[data-calendar-popup]');
+        const monthLabel = field.querySelector('[data-calendar-month]');
+        const daysGrid = field.querySelector('[data-calendar-days]');
+        const prevBtn = field.querySelector('[data-calendar-prev]');
+        const nextBtn = field.querySelector('[data-calendar-next]');
+        const acceptBtn = field.querySelector('[data-calendar-accept]');
+        const cancelBtn = field.querySelector('[data-calendar-cancel]');
+        if (!input || !toggle || !popup || !monthLabel || !daysGrid || !prevBtn || !nextBtn || !acceptBtn || !cancelBtn) {
+          return;
+        }
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        let confirmedDate = parseValue(input.value);
+        let tempSelectedDate = confirmedDate ? new Date(confirmedDate) : new Date(today);
+        let currentMonth = new Date((confirmedDate || today).getFullYear(), (confirmedDate || today).getMonth(), 1);
+
+        const positionPopup = () => {
+          const rect = field.getBoundingClientRect();
+          const popupRect = popup.getBoundingClientRect();
+          const preferredLeft = Math.max(16, Math.min(rect.left, window.innerWidth - popupRect.width - 16));
+          const belowTop = rect.bottom + 12;
+          const aboveTop = rect.top - popupRect.height - 12;
+          const top = (belowTop + popupRect.height > window.innerHeight - 16 && aboveTop >= 16)
+            ? aboveTop
+            : Math.min(belowTop, window.innerHeight - popupRect.height - 16);
+          popup.style.left = `${preferredLeft}px`;
+          popup.style.top = `${Math.max(16, top)}px`;
+        };
+
+        const renderCalendar = () => {
+          const year = currentMonth.getFullYear();
+          const month = currentMonth.getMonth();
+          monthLabel.textContent = `${monthNames[month]} ${year}`;
+          daysGrid.innerHTML = '';
+          const startDay = new Date(year, month, 1).getDay() === 0 ? 6 : new Date(year, month, 1).getDay() - 1;
+          const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+          for (let i = 0; i < startDay; i += 1) {
+            const empty = document.createElement('button');
+            empty.className = 'calendar-date-day empty';
+            empty.type = 'button';
+            empty.disabled = true;
+            daysGrid.appendChild(empty);
+          }
+
+          for (let day = 1; day <= daysInMonth; day += 1) {
+            const button = document.createElement('button');
+            button.className = 'calendar-date-day';
+            button.type = 'button';
+            button.textContent = String(day);
+            const date = new Date(year, month, day);
+            date.setHours(0, 0, 0, 0);
+            if (isSameDate(date, today)) {
+              button.classList.add('today');
+            }
+            if (isSameDate(date, tempSelectedDate)) {
+              button.classList.add('selected');
+            }
+            button.addEventListener('click', (event) => {
+              event.stopPropagation();
+              tempSelectedDate = new Date(date);
+              renderCalendar();
+            });
+            daysGrid.appendChild(button);
+          }
+        };
+
+        const closePopup = () => {
+          popup.hidden = true;
+          popup.classList.add('hidden');
+        };
+
+        toggle.addEventListener('click', (event) => {
+          event.preventDefault();
+          popup.hidden = false;
+          popup.classList.remove('hidden');
+          renderCalendar();
+          requestAnimationFrame(positionPopup);
+        });
+        prevBtn.addEventListener('click', () => {
+          currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1);
+          renderCalendar();
+        });
+        nextBtn.addEventListener('click', () => {
+          currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1);
+          renderCalendar();
+        });
+        acceptBtn.addEventListener('click', () => {
+          confirmedDate = new Date(tempSelectedDate);
+          input.value = formatValue(confirmedDate);
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+          closePopup();
+        });
+        cancelBtn.addEventListener('click', () => {
+          tempSelectedDate = confirmedDate ? new Date(confirmedDate) : new Date(today);
+          currentMonth = new Date(tempSelectedDate.getFullYear(), tempSelectedDate.getMonth(), 1);
+          closePopup();
+        });
+        document.addEventListener('click', (event) => {
+          if (!popup.hidden && !field.contains(event.target)) {
+            closePopup();
+          }
+        });
+        window.addEventListener('resize', () => {
+          if (!popup.hidden) {
+            positionPopup();
+          }
+        });
+      });
+    }
+
+    function initAdminTimePickers(root = document) {
+      const fields = Array.from(root.querySelectorAll('[data-time-field]')).filter((field) => (
+        !field.dataset.timeReady
+        && !field.closest('#active-slots-panel')
+      ));
+      const hourValues = Array.from({ length: 24 }, (_, hour) => String(hour).padStart(2, '0'));
+      const minuteValues = Array.from({ length: 12 }, (_, index) => String(index * 5).padStart(2, '0'));
+      const parseTime = (value) => {
+        if (!/^\d{2}:\d{2}$/.test(String(value || ''))) {
+          return null;
+        }
+        const [hourText, minuteText] = String(value).split(':');
+        const hour = Number(hourText);
+        const minute = Number(minuteText);
+        return Number.isInteger(hour) && Number.isInteger(minute) && hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59
+          ? { hour, minute }
+          : null;
+      };
+      const formatTime = (hour, minute) => `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+      let openField = null;
+
+      const positionPopup = (field) => {
+        const popup = field.querySelector('[data-time-popup]');
+        if (!popup || popup.hidden) {
+          return;
+        }
+        const rect = field.getBoundingClientRect();
+        const popupRect = popup.getBoundingClientRect();
+        const preferredLeft = Math.max(16, Math.min(rect.left, window.innerWidth - popupRect.width - 16));
+        const belowTop = rect.bottom + 12;
+        const aboveTop = rect.top - popupRect.height - 12;
+        const top = (belowTop + popupRect.height > window.innerHeight - 16 && aboveTop >= 16)
+          ? aboveTop
+          : Math.min(belowTop, window.innerHeight - popupRect.height - 16);
+        popup.style.left = `${preferredLeft}px`;
+        popup.style.top = `${Math.max(16, top)}px`;
+      };
+
+      const renderField = (field) => {
+        const state = field.__timePickerState;
+        const currentLabel = field.querySelector('[data-time-current]');
+        const hoursGrid = field.querySelector('[data-time-hours]');
+        const minutesGrid = field.querySelector('[data-time-minutes]');
+        if (!state || !currentLabel || !hoursGrid || !minutesGrid) {
+          return;
+        }
+        currentLabel.textContent = formatTime(state.temp.hour, state.temp.minute);
+        hoursGrid.innerHTML = '';
+        minutesGrid.innerHTML = '';
+        hourValues.forEach((hourText) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = `time-picker-option${state.temp.hour === Number(hourText) ? ' selected' : ''}`;
+          button.textContent = hourText;
+          button.addEventListener('click', () => {
+            state.temp = { ...state.temp, hour: Number(hourText) };
+            renderField(field);
+          });
+          hoursGrid.appendChild(button);
+        });
+        minuteValues.forEach((minuteText) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = `time-picker-option${state.temp.minute === Number(minuteText) ? ' selected' : ''}`;
+          button.textContent = minuteText;
+          button.addEventListener('click', () => {
+            state.temp = { ...state.temp, minute: Number(minuteText) };
+            renderField(field);
+          });
+          minutesGrid.appendChild(button);
+        });
+      };
+
+      fields.forEach((field) => {
+        field.dataset.timeReady = 'true';
+        const input = field.querySelector('[data-time-input]');
+        const toggle = field.querySelector('[data-time-toggle]');
+        const popup = field.querySelector('[data-time-popup]');
+        const cancelBtn = field.querySelector('[data-time-cancel]');
+        const acceptBtn = field.querySelector('[data-time-accept]');
+        if (!input || !toggle || !popup || !cancelBtn || !acceptBtn) {
+          return;
+        }
+        const confirmed = parseTime(input.value);
+        field.__timePickerState = {
+          confirmed,
+          temp: confirmed ? { ...confirmed } : { hour: 9, minute: 0 },
+        };
+        const closeField = (commit = false) => {
+          popup.hidden = true;
+          popup.classList.add('hidden');
+          if (!commit) {
+            const state = field.__timePickerState;
+            state.temp = state.confirmed ? { ...state.confirmed } : { hour: 9, minute: 0 };
+          }
+          if (openField === field) {
+            openField = null;
+          }
+        };
+        toggle.addEventListener('click', (event) => {
+          event.preventDefault();
+          if (toggle.disabled || input.disabled) {
+            return;
+          }
+          if (openField && openField !== field) {
+            openField.querySelector('[data-time-popup]')?.classList.add('hidden');
+            openField.querySelector('[data-time-popup]')?.setAttribute('hidden', 'hidden');
+          }
+          const state = field.__timePickerState;
+          state.temp = state.confirmed ? { ...state.confirmed } : { hour: 9, minute: 0 };
+          popup.hidden = false;
+          popup.classList.remove('hidden');
+          renderField(field);
+          openField = field;
+          requestAnimationFrame(() => positionPopup(field));
+        });
+        cancelBtn.addEventListener('click', () => closeField(false));
+        acceptBtn.addEventListener('click', () => {
+          const state = field.__timePickerState;
+          state.confirmed = { ...state.temp };
+          input.value = formatTime(state.confirmed.hour, state.confirmed.minute);
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+          closeField(true);
+        });
+      });
+
+      document.addEventListener('click', (event) => {
+        if (openField && !openField.contains(event.target)) {
+          const popup = openField.querySelector('[data-time-popup]');
+          if (popup) {
+            popup.hidden = true;
+            popup.classList.add('hidden');
+          }
+          openField = null;
+        }
+      });
+      window.addEventListener('resize', () => {
+        if (openField) {
+          positionPopup(openField);
+        }
+      });
+    }
+
+    initAdminCalendarDatePickers();
+    initAdminTimePickers();
+
     const openingHoursForm = document.querySelector('#opening-hours-panel .opening-hours-form');
     const openingHoursNotification = document.getElementById('openingHoursSaveNotification');
     let openingHoursSaveTimer = null;
@@ -155,7 +449,8 @@
 
     document.querySelectorAll('.opening-hours-row').forEach((row) => {
       const checkbox = row.querySelector('input[type="checkbox"]');
-      const timeInputs = row.querySelectorAll('input[type="time"]');
+      const timeInputs = row.querySelectorAll('[data-time-input], input[type="time"]');
+      const timeButtons = row.querySelectorAll('[data-time-toggle]');
       const slider = row.querySelector('.opening-hours-toggle');
       let saveDebounceTimer = null;
 
@@ -163,6 +458,9 @@
         slider?.classList.toggle('is-open', !checkbox.checked);
         timeInputs.forEach((input) => {
           input.disabled = checkbox.checked;
+        });
+        timeButtons.forEach((button) => {
+          button.disabled = checkbox.checked;
         });
       };
 
@@ -188,9 +486,11 @@
     if (specialClosedInput && specialStartInput && specialEndInput) {
       const syncSpecialInputs = () => {
         const disabled = specialClosedInput.checked;
+        specialClosedInput.closest('.opening-hours-toggle')?.classList.toggle('is-open', !disabled);
         [specialStartInput, specialEndInput].forEach((input) => {
           input.disabled = disabled;
           input.closest('.opening-special-time-row')?.classList.toggle('is-disabled', disabled);
+          input.closest('[data-time-field]')?.querySelector('[data-time-toggle]')?.toggleAttribute('disabled', disabled);
         });
       };
       specialClosedInput.addEventListener('change', syncSpecialInputs);

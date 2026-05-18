@@ -9429,9 +9429,26 @@ body.admin-body #opening-hours-panel .opening-hours-toggle__input {
 
 body.admin-body #opening-hours-panel .opening-hours-time-range {
   display: grid;
-  grid-template-columns: minmax(84px, 1fr) auto minmax(84px, 1fr);
+  grid-template-columns: minmax(145px, 1fr) auto minmax(145px, 1fr);
   align-items: center;
   gap: 0.36rem;
+}
+
+body.admin-body #opening-hours-panel .opening-hours-time-range .time-picker-field,
+body.admin-body #opening-hours-panel .opening-special-grid .time-picker-field,
+body.admin-body #opening-hours-panel .opening-special-grid .calendar-date-field {
+  min-width: 0;
+}
+
+body.admin-body #opening-hours-panel .opening-hours-time-range .time-picker-row,
+body.admin-body #opening-hours-panel .opening-special-grid .time-picker-row,
+body.admin-body #opening-hours-panel .opening-special-grid .calendar-date-row {
+  grid-template-columns: minmax(0, 1fr) 38px;
+  gap: 0.32rem;
+}
+
+body.admin-body #opening-hours-panel .opening-special-grid .calendar-date-row {
+  display: grid;
 }
 
 body.admin-body #opening-hours-panel .opening-hours-time-range input {
@@ -9440,6 +9457,8 @@ body.admin-body #opening-hours-panel .opening-hours-time-range input {
   text-align: center;
 }
 
+body.admin-body #opening-hours-panel .time-picker-input,
+body.admin-body #opening-hours-panel .calendar-date-input,
 body.admin-body #opening-hours-panel .opening-hours-time-range input[type="time"] {
   height: 36px;
   border-radius: 10px;
@@ -9450,6 +9469,19 @@ body.admin-body #opening-hours-panel .opening-hours-time-range input[type="time"
   font-weight: 700;
   letter-spacing: 0.5px;
   box-shadow: 0 5px 12px rgba(0, 0, 0, 0.16);
+}
+
+body.admin-body #opening-hours-panel .time-picker-toggle,
+body.admin-body #opening-hours-panel .calendar-date-button {
+  width: 38px;
+  height: 36px;
+  border-radius: 10px;
+}
+
+body.admin-body #opening-hours-panel .time-picker-toggle svg,
+body.admin-body #opening-hours-panel .calendar-date-button svg {
+  width: 18px;
+  height: 18px;
 }
 
 body.admin-body #opening-hours-panel .opening-hours-time-range input[type="time"]::-webkit-calendar-picker-indicator {
@@ -13787,7 +13819,7 @@ body.calendar-body.calendar-day-modal-open .time-divider.is-subtick {
   }
 
   body.admin-body #opening-hours-panel .opening-hours-time-range {
-    grid-template-columns: minmax(82px, 1fr) auto minmax(82px, 1fr);
+    grid-template-columns: minmax(120px, 1fr) auto minmax(120px, 1fr);
     gap: 0.34rem;
   }
 
