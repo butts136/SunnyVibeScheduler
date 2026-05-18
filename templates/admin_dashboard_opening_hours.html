@@ -24,10 +24,16 @@
                 <div class="opening-hours-row row-grid">
                   <label class="day-label" for="closed_{{ day_key }}">{{ day_label }}</label>
 
-                  <div class="switch-wrap opening-switch">
-                    <span>Fermé</span>
-                    {{ toggle('closed_' ~ day_key, 'closed_' ~ day_key, day.closed) }}
-                  </div>
+                  <label class="store-toggle opening-hours-toggle{% if not day.closed %} is-open{% endif %}" for="closed_{{ day_key }}">
+                    <input id="closed_{{ day_key }}" class="opening-hours-toggle__input" type="checkbox" name="closed_{{ day_key }}" {% if day.closed %}checked{% endif %}>
+                    <span class="toggle-label open">Ouvert</span>
+                    <span class="toggle-label closed">Fermé</span>
+
+                    <span class="toggle-knob" aria-hidden="true">
+                      <span class="toggle-emoji emoji-open" aria-hidden="true">😄</span>
+                      <span class="toggle-emoji emoji-closed" aria-hidden="true">😞</span>
+                    </span>
+                  </label>
 
                   <div class="opening-hours-time-range">
                     <input type="time" name="start_{{ day_key }}" value="{{ day.start }}" {% if day.closed %}disabled{% endif %}>
@@ -41,6 +47,14 @@
                   <button class="btn primary" type="submit">Enregistrer les horaires</button>
                 </div>
               </form>
+
+              <div class="save-notification" id="openingHoursSaveNotification" aria-live="polite" aria-atomic="true">
+                <div class="save-notification-content">
+                  <div class="save-notification-icon">✓</div>
+                  <div class="save-notification-text">Modification enregistrée.</div>
+                </div>
+                <div class="save-notification-bar"></div>
+              </div>
             </section>
 
             <section class="opening-hours-card">

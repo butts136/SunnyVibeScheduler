@@ -9269,6 +9269,164 @@ body.admin-body #opening-hours-panel .opening-switch {
   justify-content: flex-start;
 }
 
+body.admin-body #opening-hours-panel .opening-hours-toggle {
+  --width: 190px;
+  --height: 62px;
+  --padding: 6px;
+  --knob-size: calc(var(--height) - (var(--padding) * 2));
+
+  position: relative;
+  display: block;
+  width: min(100%, var(--width));
+  height: var(--height);
+  border: 0;
+  border-radius: 999px;
+  padding: var(--padding);
+  cursor: pointer;
+  overflow: hidden;
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.22),
+    inset 0 2px 5px rgba(255, 255, 255, 0.28),
+    inset 0 -4px 8px rgba(0, 0, 0, 0.2);
+  transition:
+    background 0.35s ease,
+    box-shadow 0.35s ease,
+    transform 0.18s ease;
+}
+
+body.admin-body #opening-hours-panel .opening-hours-toggle.is-open {
+  background: linear-gradient(135deg, #22c55e, #15803d);
+  box-shadow:
+    0 10px 24px rgba(34, 197, 94, 0.24),
+    inset 0 2px 5px rgba(255, 255, 255, 0.28),
+    inset 0 -4px 8px rgba(0, 0, 0, 0.2);
+}
+
+body.admin-body #opening-hours-panel .opening-hours-toggle:active {
+  transform: scale(0.97);
+}
+
+body.admin-body #opening-hours-panel .opening-hours-toggle::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: inherit;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    transparent 40%,
+    rgba(255, 255, 255, 0.28) 50%,
+    transparent 60%,
+    transparent 100%
+  );
+  transform: translateX(-110%);
+  transition: transform 0.55s ease;
+  pointer-events: none;
+}
+
+body.admin-body #opening-hours-panel .opening-hours-toggle.is-open::after {
+  transform: translateX(110%);
+}
+
+body.admin-body #opening-hours-panel .opening-hours-toggle .toggle-label {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  transform: translateY(-50%);
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    transform 0.35s ease;
+}
+
+body.admin-body #opening-hours-panel .opening-hours-toggle .toggle-label.open {
+  left: 25px;
+  opacity: 0;
+  transform: translateY(-50%) translateX(-8px);
+}
+
+body.admin-body #opening-hours-panel .opening-hours-toggle .toggle-label.closed {
+  right: 24px;
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+body.admin-body #opening-hours-panel .opening-hours-toggle.is-open .toggle-label.open {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+body.admin-body #opening-hours-panel .opening-hours-toggle.is-open .toggle-label.closed {
+  opacity: 0;
+  transform: translateY(-50%) translateX(8px);
+}
+
+body.admin-body #opening-hours-panel .opening-hours-toggle .toggle-knob {
+  position: absolute;
+  top: var(--padding);
+  left: var(--padding);
+  z-index: 3;
+  width: var(--knob-size);
+  height: var(--knob-size);
+  border-radius: 50%;
+  background: linear-gradient(145deg, #ffffff, #e5e7eb);
+  box-shadow:
+    0 6px 14px rgba(0, 0, 0, 0.28),
+    inset 0 2px 5px rgba(255, 255, 255, 0.9);
+  transition:
+    left 0.36s cubic-bezier(.34, 1.35, .64, 1),
+    transform 0.28s ease;
+}
+
+body.admin-body #opening-hours-panel .opening-hours-toggle.is-open .toggle-knob {
+  left: calc(100% - var(--knob-size) - var(--padding));
+  transform: rotate(360deg);
+}
+
+body.admin-body #opening-hours-panel .opening-hours-toggle .toggle-emoji {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  line-height: 1;
+  transition:
+    opacity 0.22s ease,
+    transform 0.32s ease;
+}
+
+body.admin-body #opening-hours-panel .opening-hours-toggle .emoji-open {
+  opacity: 0;
+  transform: scale(0.4) rotate(-60deg);
+}
+
+body.admin-body #opening-hours-panel .opening-hours-toggle .emoji-closed {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+body.admin-body #opening-hours-panel .opening-hours-toggle.is-open .emoji-open {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+body.admin-body #opening-hours-panel .opening-hours-toggle.is-open .emoji-closed {
+  opacity: 0;
+  transform: scale(0.4) rotate(60deg);
+}
+
+body.admin-body #opening-hours-panel .opening-hours-toggle__input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
 body.admin-body #opening-hours-panel .opening-hours-time-range {
   display: grid;
   grid-template-columns: minmax(104px, 1fr) auto minmax(104px, 1fr);
@@ -9280,6 +9438,100 @@ body.admin-body #opening-hours-panel .opening-hours-time-range input {
   width: 100%;
   min-width: 0;
   text-align: center;
+}
+
+body.admin-body #opening-hours-panel .opening-hours-time-range input[type="time"] {
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #1f2937;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+}
+
+body.admin-body #opening-hours-panel .opening-hours-time-range input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.8;
+}
+
+body.admin-body #opening-hours-panel .save-notification {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 9999;
+  min-width: 250px;
+  max-width: 340px;
+  overflow: hidden;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  color: #ffffff;
+  box-shadow:
+    0 14px 32px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  opacity: 0;
+  transform: translateX(120%) scale(0.96);
+  pointer-events: none;
+  transition:
+    opacity 0.28s ease,
+    transform 0.28s cubic-bezier(.22, 1.2, .36, 1);
+}
+
+body.admin-body #opening-hours-panel .save-notification.is-visible {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+}
+
+body.admin-body #opening-hours-panel .save-notification-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px 16px;
+}
+
+body.admin-body #opening-hours-panel .save-notification-icon {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  font-size: 16px;
+  font-weight: 900;
+}
+
+body.admin-body #opening-hours-panel .save-notification-text {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+body.admin-body #opening-hours-panel .save-notification-bar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 4px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.85);
+  transform-origin: left center;
+  transform: scaleX(1);
+}
+
+body.admin-body #opening-hours-panel .save-notification.is-visible .save-notification-bar {
+  animation: saveNotificationTimer 3s linear forwards;
+}
+
+@keyframes saveNotificationTimer {
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
 }
 
 .segmented-choice {

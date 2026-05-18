@@ -105,17 +105,80 @@
   </dialog>
 
   <script>
+    const openingHoursForm = document.querySelector('#opening-hours-panel .opening-hours-form');
+    const openingHoursNotification = document.getElementById('openingHoursSaveNotification');
+    let openingHoursSaveTimer = null;
+    let openingHoursSaveRequest = 0;
+
+    function showOpeningHoursNotification() {
+      if (!openingHoursNotification) {
+        return;
+      }
+
+      const bar = openingHoursNotification.querySelector('.save-notification-bar');
+      clearTimeout(openingHoursSaveTimer);
+      openingHoursNotification.classList.remove('is-visible');
+      if (bar) {
+        bar.style.animation = 'none';
+        void bar.offsetWidth;
+        bar.style.animation = '';
+      }
+      void openingHoursNotification.offsetWidth;
+      openingHoursNotification.classList.add('is-visible');
+      openingHoursSaveTimer = setTimeout(() => {
+        openingHoursNotification.classList.remove('is-visible');
+      }, 3000);
+    }
+
+    async function saveOpeningHoursForm() {
+      if (!openingHoursForm) {
+        return;
+      }
+
+      const requestId = ++openingHoursSaveRequest;
+      const response = await fetch(window.location.href, {
+        method: 'POST',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: new FormData(openingHoursForm),
+      });
+
+      if (requestId !== openingHoursSaveRequest) {
+        return;
+      }
+
+      if (response.ok) {
+        showOpeningHoursNotification();
+      }
+    }
+
     document.querySelectorAll('.opening-hours-row').forEach((row) => {
       const checkbox = row.querySelector('input[type="checkbox"]');
       const timeInputs = row.querySelectorAll('input[type="time"]');
+      const slider = row.querySelector('.opening-hours-toggle');
+      let saveDebounceTimer = null;
 
       const sync = () => {
+        slider?.classList.toggle('is-open', !checkbox.checked);
         timeInputs.forEach((input) => {
           input.disabled = checkbox.checked;
         });
       };
 
+      const queueSave = () => {
+        clearTimeout(saveDebounceTimer);
+        saveDebounceTimer = setTimeout(() => {
+          saveOpeningHoursForm().catch(() => {});
+        }, 180);
+      };
+
       checkbox.addEventListener('change', sync);
+      checkbox.addEventListener('change', queueSave);
+      timeInputs.forEach((input) => {
+        input.addEventListener('input', queueSave);
+        input.addEventListener('change', queueSave);
+      });
       sync();
     });
 
