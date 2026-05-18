@@ -268,12 +268,13 @@
       const hourValues = Array.from({ length: 24 }, (_, hour) => String(hour).padStart(2, '0'));
       const minuteValues = Array.from({ length: 12 }, (_, index) => String(index * 5).padStart(2, '0'));
       const parseTime = (value) => {
-        if (!/^\d{2}:\d{2}$/.test(String(value || ''))) {
+        const rawValue = String(value || '').trim();
+        const normalizedValue = /^(\d{1,2})(?::?(\d{2}))?$/.exec(rawValue);
+        if (!normalizedValue) {
           return null;
         }
-        const [hourText, minuteText] = String(value).split(':');
-        const hour = Number(hourText);
-        const minute = Number(minuteText);
+        const hour = Number(normalizedValue[1]);
+        const minute = normalizedValue[2] === undefined ? 0 : Number(normalizedValue[2]);
         return Number.isInteger(hour) && Number.isInteger(minute) && hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59
           ? { hour, minute }
           : null;
@@ -298,6 +299,12 @@
         popup.style.top = `${Math.max(16, top)}px`;
       };
 
+      const scrollSelectedOptionsIntoView = (field) => {
+        field.querySelectorAll('.time-picker-option.selected').forEach((option) => {
+          option.scrollIntoView({ block: 'center', inline: 'nearest' });
+        });
+      };
+
       const renderField = (field) => {
         const state = field.__timePickerState;
         const currentLabel = field.querySelector('[data-time-current]');
@@ -314,9 +321,11 @@
           button.type = 'button';
           button.className = `time-picker-option${state.temp.hour === Number(hourText) ? ' selected' : ''}`;
           button.textContent = hourText;
-          button.addEventListener('click', () => {
+          button.addEventListener('click', (event) => {
+            event.stopPropagation();
             state.temp = { ...state.temp, hour: Number(hourText) };
             renderField(field);
+            requestAnimationFrame(() => scrollSelectedOptionsIntoView(field));
           });
           hoursGrid.appendChild(button);
         });
@@ -325,9 +334,11 @@
           button.type = 'button';
           button.className = `time-picker-option${state.temp.minute === Number(minuteText) ? ' selected' : ''}`;
           button.textContent = minuteText;
-          button.addEventListener('click', () => {
+          button.addEventListener('click', (event) => {
+            event.stopPropagation();
             state.temp = { ...state.temp, minute: Number(minuteText) };
             renderField(field);
+            requestAnimationFrame(() => scrollSelectedOptionsIntoView(field));
           });
           minutesGrid.appendChild(button);
         });
@@ -377,15 +388,26 @@
             openField.querySelector('[data-time-popup]')?.setAttribute('hidden', 'hidden');
           }
           const state = field.__timePickerState;
-          state.temp = state.confirmed ? { ...state.confirmed } : { hour: 9, minute: 0 };
+          const currentValue = parseTime(input.value);
+          if (currentValue) {
+            state.confirmed = { ...currentValue };
+          }
+          state.temp = currentValue ? { ...currentValue } : (state.confirmed ? { ...state.confirmed } : { hour: 9, minute: 0 });
           popup.hidden = false;
           popup.classList.remove('hidden');
           renderField(field);
           openField = field;
-          requestAnimationFrame(() => positionPopup(field));
+          requestAnimationFrame(() => {
+            positionPopup(field);
+            scrollSelectedOptionsIntoView(field);
+          });
         });
-        cancelBtn.addEventListener('click', () => closeField(false));
-        acceptBtn.addEventListener('click', () => {
+        cancelBtn.addEventListener('click', (event) => {
+          event.stopPropagation();
+          closeField(false);
+        });
+        acceptBtn.addEventListener('click', (event) => {
+          event.stopPropagation();
           const state = field.__timePickerState;
           state.confirmed = { ...state.temp };
           input.value = formatTime(state.confirmed.hour, state.confirmed.minute);
