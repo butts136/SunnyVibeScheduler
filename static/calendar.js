@@ -675,7 +675,7 @@
       year: 'numeric',
     }).format(state.viewMonth);
 
-    prevMonthBtn.disabled = isSameMonth(state.viewMonth, minimumMonth);
+    prevMonthBtn.disabled = !isBookingsDashboardPage && isSameMonth(state.viewMonth, minimumMonth);
   }
 
   function renderCalendarGrid() {
@@ -773,7 +773,7 @@
         cellBtn.classList.add('past');
       }
 
-      if (isPast) {
+      if (isPast && !isBookingsDashboardPage) {
         cellBtn.disabled = true;
       } else {
         cellBtn.addEventListener('click', () => {
@@ -818,7 +818,7 @@
       const isToday = isSameDay(cellDate, today);
       const isSelected = isSameDay(cellDate, state.selectedDate);
       const isPast = cellDate < today;
-      if (isPast) {
+      if (isPast && !isBookingsDashboardPage) {
         continue;
       }
       const holidayData = getHolidayForDate(cellDate);
@@ -881,7 +881,7 @@
         `;
       }
 
-      if (isPast) {
+      if (isPast && !isBookingsDashboardPage) {
         card.disabled = true;
       } else {
         card.addEventListener('click', () => {
@@ -1095,7 +1095,7 @@
     daySummaryEl.innerHTML = '';
 
     if (addBookingBtn) {
-      addBookingBtn.disabled = !data.hasAvailability;
+      addBookingBtn.disabled = !data.hasAvailability || selectedDate < today;
     }
 
     if (data.windows.length === 0) {
@@ -2334,26 +2334,26 @@
     const entries = [];
     const horizonDays = 90;
 
-    for (let offset = 0; offset <= horizonDays; offset += 1) {
+    for (let offset = -horizonDays; offset <= horizonDays; offset += 1) {
       const date = new Date(today);
       date.setDate(date.getDate() + offset);
       const dayData = getDayData(date);
-      if (!dayData.hasAvailability || !dayData.availableIntervals.length) {
-        continue;
-      }
-
       const dateKey = toDateKey(date);
       const dateBookings = Array.isArray(configuredBookings[dateKey]) ? configuredBookings[dateKey] : [];
+      if (!dateBookings.length && (!dayData.hasAvailability || !dayData.availableIntervals.length)) {
+        continue;
+      }
       const bookingCount = dateBookings.length;
       const participantCount = dateBookings.reduce((sum, booking) => {
         return sum + Math.max(Number(booking.people_count) || 1, 1);
       }, 0);
+      const intervalsForLabel = dayData.availableIntervals.length ? dayData.availableIntervals : dayData.windows;
 
       entries.push({
         date,
         bookingCount,
         participantCount,
-        availableIntervalsLabel: formatWindowsLabel(dayData.availableIntervals),
+        availableIntervalsLabel: formatWindowsLabel(intervalsForLabel),
       });
     }
 
@@ -2391,6 +2391,9 @@
       card.type = 'button';
       card.className = 'calendar-mobile-day-card sunnygym-slot-card bookings-overview-card';
       card.classList.add('available');
+      if (dateObj < today) {
+        card.classList.add('past');
+      }
       if (isSameDay(dateObj, today)) {
         card.classList.add('today');
       }
