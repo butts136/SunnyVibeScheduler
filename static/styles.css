@@ -7740,6 +7740,10 @@ input[type="number"].number-input {
     display: block;
   }
 
+  body.calendar-body .calendar-panel:not(.cards-mode) .calendar-mobile-list {
+    display: none;
+  }
+
   .hours-calendar-desktop-panel {
     display: none;
   }
