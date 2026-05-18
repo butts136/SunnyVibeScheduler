@@ -116,7 +116,8 @@
   const isSunnygymCardsMode = (
     Boolean(calendarMobileListEl)
     && (isCardsAvailabilityMode || isBookingsDashboardCardOverview)
-    && (isCalendarPage || isAdminMode || isBookingsDashboardPage)
+    && !isCalendarPage
+    && (isAdminMode || isBookingsDashboardPage)
   );
   let bookingsDashboardMode = isBookingsDashboardPage ? 'overview' : '';
   let dayPanelRerenderFrame = 0;

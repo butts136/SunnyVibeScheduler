@@ -13441,6 +13441,10 @@ body.calendar-body.calendar-day-modal-open .time-divider.is-subtick {
     grid-template-columns: auto 1fr auto;
   }
 
+  .calendar-body .calendar-panel:not(.cards-mode) .reservation-calendar-wrapper {
+    gap: 0.5rem;
+  }
+
   .day-grid,
   .weekdays {
     gap: 0.4rem;
@@ -13549,7 +13553,7 @@ body.calendar-body.calendar-day-modal-open .time-divider.is-subtick {
   }
 
   .calendar-main {
-    padding-inline: 0.75rem;
+    padding-inline: 0.55rem;
   }
 
   .calendar-nav {
@@ -13563,23 +13567,40 @@ body.calendar-body.calendar-day-modal-open .time-divider.is-subtick {
 
   .day-grid,
   .weekdays {
-    gap: 0.28rem;
+    gap: 0.24rem;
   }
 
   .day-cell {
-    min-height: 82px;
-    padding: 0.36rem;
-    border-radius: 10px;
+    min-height: clamp(58px, 15vw, 74px);
+    padding: 0.28rem 0.22rem;
+    border-radius: 9px;
+    align-content: start;
+    gap: 0.16rem;
   }
 
   .day-cell .date-label {
-    font-size: 0.76rem;
+    font-size: clamp(0.68rem, 2.7vw, 0.78rem);
+    line-height: 1.1;
   }
 
-  .day-cell .hours-label,
-  .day-cell .day-state-pill,
+  .day-cell .hours-label {
+    display: none;
+  }
+
+  .day-cell .day-state-pill {
+    max-width: 100%;
+    padding: 0.12rem 0.28rem;
+    font-size: clamp(0.52rem, 2vw, 0.62rem);
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
   .day-cell .holiday-name,
   .day-cell .holiday-alert {
+    display: none;
+  }
+
+  .weekdays span {
     font-size: 0.62rem;
     line-height: 1.2;
   }

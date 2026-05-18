@@ -2,11 +2,11 @@
 {% from '_form_controls.html' import toggle %}
 
 {% block admin_panel %}
-        {% set sunnygym_display_mode = reservation_config.sunnygym_display_mode|default('calendar') %}
         <section id="settings-panel" class="admin-section tab-panel {% if active_tab == 'settings-panel' %}is-active{% endif %}">
           <form method="post" class="settings-form" data-auto-save-form novalidate>
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <input type="hidden" name="admin_action" value="save_reservation_config">
+            <input type="hidden" name="sunnygym_display_mode" value="calendar">
 
             <div class="settings-shell">
               <div class="settings-tabs-wrap">
@@ -95,18 +95,6 @@
                         </div>
                       </div>
 
-                      <div class="settings-option-row">
-                        <div class="settings-option-copy">
-                          <label for="sunnygym_display_mode">Affichage Sunny Gym</label>
-                          <p class="field-help">Choisissez la vue SunnyGym pour le mode actif: calendrier mensuel ou cartes en liste.</p>
-                        </div>
-                        <div class="settings-option-control">
-                          <select id="sunnygym_display_mode" name="sunnygym_display_mode">
-                            <option value="calendar" {% if sunnygym_display_mode == 'calendar' %}selected{% endif %}>Calendrier</option>
-                            <option value="cards" {% if sunnygym_display_mode == 'cards' %}selected{% endif %}>Cartes</option>
-                          </select>
-                        </div>
-                      </div>
                     </div>
                   </article>
 
