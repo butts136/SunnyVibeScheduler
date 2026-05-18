@@ -4,7 +4,7 @@
 {% block admin_panel %}
         {% set sunnygym_display_mode = reservation_config.sunnygym_display_mode|default('calendar') %}
         <section id="settings-panel" class="admin-section tab-panel {% if active_tab == 'settings-panel' %}is-active{% endif %}">
-          <form method="post" class="settings-form" novalidate>
+          <form method="post" class="settings-form" data-auto-save-form novalidate>
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <input type="hidden" name="admin_action" value="save_reservation_config">
 
@@ -294,7 +294,7 @@
 
               </div>
 
-              <div class="actions settings-actions">
+              <div class="actions settings-actions auto-save-actions">
                 <button class="btn primary" type="submit">Enregistrer les paramètres</button>
               </div>
             </div>

@@ -79,7 +79,7 @@
           </div>
 
           <div class="invitation-mode-panel" data-invitation-panel="custom" hidden>
-            <form method="post" class="reservation-config-form" novalidate>
+            <form method="post" class="reservation-config-form" data-auto-save-form novalidate>
               <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
               <input type="hidden" name="admin_action" value="save_invitation_config">
 
@@ -97,7 +97,7 @@
                   <input id="custom_code" type="text" maxlength="32" name="custom_code" value="{{ invitation_config.custom_code }}">
                 </div>
 
-                <div class="actions">
+                <div class="actions auto-save-actions">
                   <button class="btn primary" type="submit">Enregistrer la configuration</button>
                 </div>
               </section>

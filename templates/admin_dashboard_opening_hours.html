@@ -100,7 +100,7 @@
                 <p>Définissez vos heures standard pour chaque jour.</p>
               </div>
 
-              <form method="post" class="opening-hours-form" novalidate>
+              <form method="post" class="opening-hours-form" data-auto-save-form novalidate>
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <input type="hidden" name="admin_action" value="save_opening_hours">
                 <div class="opening-hours-head row-grid">
@@ -133,18 +133,10 @@
                 </div>
                 {% endfor %}
 
-                <div class="actions">
+                <div class="actions auto-save-actions">
                   <button class="btn primary" type="submit">Enregistrer les horaires</button>
                 </div>
               </form>
-
-              <div class="save-notification" id="openingHoursSaveNotification" aria-live="polite" aria-atomic="true">
-                <div class="save-notification-content">
-                  <div class="save-notification-icon">✓</div>
-                  <div class="save-notification-text">Modification enregistrée.</div>
-                </div>
-                <div class="save-notification-bar"></div>
-              </div>
             </section>
 
             <section class="opening-hours-card">

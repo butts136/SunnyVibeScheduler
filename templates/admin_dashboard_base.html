@@ -35,6 +35,14 @@
     </main>
   </div>
 
+  <div class="save-notification" id="adminAutoSaveNotification" aria-live="polite" aria-atomic="true">
+    <div class="save-notification-content">
+      <div class="save-notification-icon">✓</div>
+      <div class="save-notification-text">Modification enregistrée.</div>
+    </div>
+    <div class="save-notification-bar"></div>
+  </div>
+
   <dialog id="userDetailsModal" class="user-modal">
     <div class="user-modal-head">
       <h3 id="modalUserTitle">Détails utilisateur</h3>
@@ -399,60 +407,82 @@
     initAdminCalendarDatePickers();
     initAdminTimePickers();
 
-    const openingHoursForm = document.querySelector('#opening-hours-panel .opening-hours-form');
-    const openingHoursNotification = document.getElementById('openingHoursSaveNotification');
-    let openingHoursSaveTimer = null;
-    let openingHoursSaveRequest = 0;
+    const adminAutoSaveNotification = document.getElementById('adminAutoSaveNotification');
+    let adminAutoSaveTimer = null;
+    let adminAutoSaveRequest = 0;
 
-    function showOpeningHoursNotification() {
-      if (!openingHoursNotification) {
+    function showAdminAutoSaveNotification() {
+      if (!adminAutoSaveNotification) {
         return;
       }
 
-      const bar = openingHoursNotification.querySelector('.save-notification-bar');
-      clearTimeout(openingHoursSaveTimer);
-      openingHoursNotification.classList.remove('is-visible');
+      const bar = adminAutoSaveNotification.querySelector('.save-notification-bar');
+      clearTimeout(adminAutoSaveTimer);
+      adminAutoSaveNotification.classList.remove('is-visible');
       if (bar) {
         bar.style.animation = 'none';
         void bar.offsetWidth;
         bar.style.animation = '';
       }
-      void openingHoursNotification.offsetWidth;
-      openingHoursNotification.classList.add('is-visible');
-      openingHoursSaveTimer = setTimeout(() => {
-        openingHoursNotification.classList.remove('is-visible');
+      void adminAutoSaveNotification.offsetWidth;
+      adminAutoSaveNotification.classList.add('is-visible');
+      adminAutoSaveTimer = setTimeout(() => {
+        adminAutoSaveNotification.classList.remove('is-visible');
       }, 3000);
     }
 
-    async function saveOpeningHoursForm() {
-      if (!openingHoursForm) {
+    async function saveAdminAutoSaveForm(form) {
+      if (!form) {
         return;
       }
 
-      const requestId = ++openingHoursSaveRequest;
+      const requestId = ++adminAutoSaveRequest;
       const response = await fetch(window.location.href, {
         method: 'POST',
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
         },
-        body: new FormData(openingHoursForm),
+        body: new FormData(form),
       });
 
-      if (requestId !== openingHoursSaveRequest) {
+      if (requestId !== adminAutoSaveRequest) {
         return;
       }
 
       if (response.ok) {
-        showOpeningHoursNotification();
+        showAdminAutoSaveNotification();
       }
     }
+
+    document.querySelectorAll('form[data-auto-save-form]').forEach((form) => {
+      let saveDebounceTimer = null;
+      const queueSave = () => {
+        clearTimeout(saveDebounceTimer);
+        saveDebounceTimer = setTimeout(() => {
+          saveAdminAutoSaveForm(form).catch(() => {});
+        }, 220);
+      };
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        queueSave();
+      });
+      form.querySelectorAll('input, select, textarea').forEach((field) => {
+        if (field.type === 'hidden') {
+          return;
+        }
+        field.addEventListener('change', queueSave);
+        if (field.matches('input[type="number"], input[type="text"], textarea')) {
+          field.addEventListener('input', queueSave);
+        }
+      });
+    });
 
     document.querySelectorAll('.opening-hours-row').forEach((row) => {
       const checkbox = row.querySelector('input[type="checkbox"]');
       const timeInputs = row.querySelectorAll('[data-time-input], input[type="time"]');
       const timeButtons = row.querySelectorAll('[data-time-toggle]');
       const slider = row.querySelector('.opening-hours-toggle');
-      let saveDebounceTimer = null;
 
       const sync = () => {
         slider?.classList.toggle('is-open', !checkbox.checked);
@@ -464,19 +494,7 @@
         });
       };
 
-      const queueSave = () => {
-        clearTimeout(saveDebounceTimer);
-        saveDebounceTimer = setTimeout(() => {
-          saveOpeningHoursForm().catch(() => {});
-        }, 180);
-      };
-
       checkbox.addEventListener('change', sync);
-      checkbox.addEventListener('change', queueSave);
-      timeInputs.forEach((input) => {
-        input.addEventListener('input', queueSave);
-        input.addEventListener('change', queueSave);
-      });
       sync();
     });
 

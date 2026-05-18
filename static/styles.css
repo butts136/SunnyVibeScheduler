@@ -9489,7 +9489,7 @@ body.admin-body #opening-hours-panel .opening-hours-time-range input[type="time"
   opacity: 0.8;
 }
 
-body.admin-body #opening-hours-panel .save-notification {
+body.admin-body .save-notification {
   position: fixed;
   top: 18px;
   right: 18px;
@@ -9511,19 +9511,19 @@ body.admin-body #opening-hours-panel .save-notification {
     transform 0.28s cubic-bezier(.22, 1.2, .36, 1);
 }
 
-body.admin-body #opening-hours-panel .save-notification.is-visible {
+body.admin-body .save-notification.is-visible {
   opacity: 1;
   transform: translateX(0) scale(1);
 }
 
-body.admin-body #opening-hours-panel .save-notification-content {
+body.admin-body .save-notification-content {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 14px 16px 16px;
 }
 
-body.admin-body #opening-hours-panel .save-notification-icon {
+body.admin-body .save-notification-icon {
   width: 28px;
   height: 28px;
   flex: 0 0 28px;
@@ -9535,13 +9535,13 @@ body.admin-body #opening-hours-panel .save-notification-icon {
   font-weight: 900;
 }
 
-body.admin-body #opening-hours-panel .save-notification-text {
+body.admin-body .save-notification-text {
   font-size: 15px;
   font-weight: 800;
   letter-spacing: 0.2px;
 }
 
-body.admin-body #opening-hours-panel .save-notification-bar {
+body.admin-body .save-notification-bar {
   position: absolute;
   left: 0;
   bottom: 0;
@@ -9552,8 +9552,16 @@ body.admin-body #opening-hours-panel .save-notification-bar {
   transform: scaleX(1);
 }
 
-body.admin-body #opening-hours-panel .save-notification.is-visible .save-notification-bar {
+body.admin-body .save-notification.is-visible .save-notification-bar {
   animation: saveNotificationTimer 3s linear forwards;
+}
+
+body.admin-body form[data-auto-save-form] button[type="submit"] {
+  display: none;
+}
+
+body.admin-body form[data-auto-save-form] .auto-save-actions {
+  justify-content: flex-start;
 }
 
 @keyframes saveNotificationTimer {
@@ -13351,30 +13359,22 @@ body.calendar-body.calendar-day-modal-open .time-divider.is-subtick {
     justify-content: stretch;
   }
 
-  .opening-hours-head.row-grid,
-  .opening-hours-row.row-grid {
-    grid-template-columns: minmax(0, 1fr);
+  .opening-hours-card {
+    overflow-x: auto;
+  }
+
+  body.admin-body #opening-hours-panel .opening-hours-form {
+    min-width: 560px;
+  }
+
+  body.admin-body #opening-hours-panel .opening-hours-head.row-grid,
+  body.admin-body #opening-hours-panel .opening-hours-row.row-grid {
+    grid-template-columns: minmax(82px, 0.66fr) minmax(126px, 0.58fr) minmax(270px, 1.45fr);
+    column-gap: 0.6rem;
   }
 
   .opening-hours-head.row-grid {
-    display: none;
-  }
-
-  .opening-hours-row.row-grid {
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas:
-      "day switch"
-      "times times";
-    align-items: center;
-  }
-
-  .opening-hours-row .day-label {
-    grid-area: day;
-  }
-
-  .opening-hours-row .opening-switch {
-    grid-area: switch;
-    justify-self: end;
+    display: grid;
   }
 
   .opening-switch > span {
@@ -13391,10 +13391,6 @@ body.calendar-body.calendar-day-modal-open .time-divider.is-subtick {
   .opening-switch .toggle-switch__status {
     font-size: 0.54rem;
     letter-spacing: 0;
-  }
-
-  .opening-hours-row .opening-hours-time-range {
-    grid-area: times;
   }
 
   .active-slot-form-grid,
@@ -13791,18 +13787,13 @@ body.calendar-body.calendar-day-modal-open .time-divider.is-subtick {
   }
 
   .opening-hours-row.row-grid {
-    gap: 0.42rem;
-    padding: 0.48rem 0;
+    gap: 0.5rem;
+    padding: 0.4rem 0;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   .opening-hours-row.row-grid:first-of-type {
     border-top: 0;
-  }
-
-  .opening-hours-time-range {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0.38rem;
   }
 
   .opening-hours-time-range .time-separator {
@@ -13811,16 +13802,34 @@ body.calendar-body.calendar-day-modal-open .time-divider.is-subtick {
     color: var(--muted);
   }
 
+  body.admin-body #opening-hours-panel .opening-hours-form {
+    min-width: 520px;
+  }
+
   body.admin-body #opening-hours-panel .opening-hours-row.row-grid {
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas:
-      "day switch"
-      "times times";
+    grid-template-columns: minmax(74px, 0.58fr) minmax(116px, 0.52fr) minmax(250px, 1.55fr);
   }
 
   body.admin-body #opening-hours-panel .opening-hours-time-range {
-    grid-template-columns: minmax(120px, 1fr) auto minmax(120px, 1fr);
-    gap: 0.34rem;
+    grid-template-columns: minmax(106px, 1fr) auto minmax(106px, 1fr);
+    gap: 0.3rem;
+  }
+
+  body.admin-body #opening-hours-panel .opening-hours-toggle {
+    --width: 116px;
+    --height: 38px;
+  }
+
+  body.admin-body #opening-hours-panel .opening-hours-toggle .toggle-label {
+    font-size: 0.72rem;
+  }
+
+  body.admin-body #opening-hours-panel .opening-hours-toggle .toggle-label.open {
+    left: 12px;
+  }
+
+  body.admin-body #opening-hours-panel .opening-hours-toggle .toggle-label.closed {
+    right: 12px;
   }
 
   .special-date-item {

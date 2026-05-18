@@ -289,7 +289,7 @@
             <button type="button" class="btn" data-close-menu-modal="settings">Fermer</button>
           </div>
           <div class="user-modal-content">
-            <form method="post" class="menu-tab-modal-form" id="menuSettingsForm">
+            <form method="post" class="menu-tab-modal-form" id="menuSettingsForm" data-auto-save-form>
               <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
               <input type="hidden" name="admin_action" value="save_menu_settings">
               <label class="menu-admin-field">
@@ -301,7 +301,7 @@
                 </select>
               </label>
               <p class="subtitle">Désactivé masque l’avis. En-tête l’affiche au-dessus du menu. Popup le montre au chargement.</p>
-              <div class="modal-actions">
+              <div class="modal-actions auto-save-actions">
                 <button class="btn" id="openMenuDisclaimerEditor" type="button">Éditer le disclaimer</button>
                 <button class="btn primary" type="submit">Enregistrer</button>
               </div>
@@ -315,7 +315,7 @@
             <button type="button" class="btn" data-close-menu-modal="disclaimer">Fermer</button>
           </div>
           <div class="user-modal-content">
-            <form method="post" class="menu-tab-modal-form" id="menuDisclaimerEditorForm">
+            <form method="post" class="menu-tab-modal-form" id="menuDisclaimerEditorForm" data-auto-save-form>
               <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
               <input type="hidden" name="admin_action" value="save_menu_disclaimer">
               <label class="menu-admin-field">
@@ -330,7 +330,7 @@
                 <span>Paragraphe 3</span>
                 <textarea class="menu-glow-input menu-disclaimer-textarea" name="menu_disclaimer_text_3" rows="4">{{ menu_settings.disclaimer_texts[2] if menu_settings.disclaimer_texts|length > 2 else '' }}</textarea>
               </label>
-              <div class="modal-actions">
+              <div class="modal-actions auto-save-actions">
                 <button type="button" class="btn" data-close-menu-modal="disclaimer">Annuler</button>
                 <button type="submit" class="btn primary">Enregistrer le texte</button>
               </div>
