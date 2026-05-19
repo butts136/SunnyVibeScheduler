@@ -9950,34 +9950,74 @@ body.admin-body form[data-auto-save-form] .auto-save-actions {
 
 .active-slots-hero {
   display: grid;
-  gap: 1rem;
+  gap: 1.05rem;
+  overflow: visible;
+}
+
+.active-slots-hero__head {
+  display: grid;
+  gap: 0.28rem;
 }
 
 .active-slots-hero__head h3 {
   margin: 0;
   font-size: 1.08rem;
+  line-height: 1.25;
 }
 
 .active-slot-form {
   display: grid;
-  gap: 0.8rem;
+  gap: 0.9rem;
+  min-width: 0;
 }
 
 .active-slot-form-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) repeat(2, minmax(0, 1fr));
-  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  align-items: end;
+  gap: 0.85rem 0.95rem;
+  min-width: 0;
 }
 
 .active-slot-form-grid--blocked {
-  grid-template-columns: minmax(0, 1.6fr) repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.active-slot-form .config-row {
+  min-width: 0;
+}
+
+.active-slot-form .config-row > label {
+  min-height: 1.15rem;
+}
+
+.active-slot-form .calendar-date-field,
+.active-slot-form .calendar-date-row {
+  min-width: 0;
+  width: 100%;
+}
+
+.active-slot-form .calendar-date-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 42px;
+  gap: 0.5rem;
+}
+
+.active-slot-form .calendar-date-input {
+  min-width: 0;
+}
+
+.active-slot-form .calendar-date-button {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
 }
 
 body.admin-body #active-slots-panel .time-picker {
   container-type: inline-size;
   width: 260px;
   min-width: 140px;
-  max-width: 100%;
+  max-width: min(100%, 260px);
   aspect-ratio: 260 / 62;
   display: grid;
   grid-template-columns: 42px 1fr 42px;
@@ -9990,6 +10030,8 @@ body.admin-body #active-slots-panel .time-picker {
   box-shadow:
     0 10px 24px rgba(0, 0, 0, 0.22),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  justify-self: start;
+  align-self: end;
 }
 
 body.admin-body #active-slots-panel .time-control {
@@ -14468,5 +14510,346 @@ body.calendar-body.calendar-day-modal-open .time-divider.is-subtick {
 @media (max-width: 720px) {
   .register-contact-fields {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Mobile QA pass: keep every public/admin page readable without horizontal drift. */
+@media (max-width: 980px) {
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  body.nav-open {
+    overflow: hidden;
+  }
+
+  .layout.app-layout,
+  .layout.app-layout > :not(.left-nav):not(.left-nav-toggle):not(.left-nav-backdrop):not(.left-nav-mobile-bar),
+  .page,
+  .home-main,
+  .calendar-main,
+  .my-bookings-main,
+  .hours-calendar-main,
+  .admin-main,
+  .admin-card,
+  .admin-section,
+  .settings-shell,
+  .settings-tab-panels,
+  .settings-tab-panel,
+  .settings-section-card,
+  .config-section-block,
+  .calendar-panel,
+  .day-panel,
+  .opening-hours-card,
+  .my-bookings-card,
+  .menu-admin-shell,
+  .public-menu-shell {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .card,
+  .form-card,
+  .settings-section-card,
+  .config-section-block,
+  .calendar-panel,
+  .day-panel,
+  .opening-hours-card,
+  .my-bookings-card {
+    width: 100%;
+  }
+
+  img,
+  svg,
+  video,
+  canvas {
+    max-width: 100%;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    max-width: 100%;
+  }
+
+  .actions,
+  .modal-actions,
+  .settings-actions,
+  .booking-form-actions,
+  .active-slot-form__actions,
+  .menu-admin-item-actions,
+  .active-slot-card__actions {
+    flex-wrap: wrap;
+    gap: 0.55rem;
+  }
+
+  .admin-main > .admin-card,
+  .page > .card,
+  .home-main > .home-hero,
+  .hours-calendar-head,
+  .calendar-panel,
+  .day-panel,
+  .opening-hours-card,
+  .config-section-block,
+  .my-bookings-card,
+  .settings-section-card {
+    padding: clamp(0.82rem, 3vw, 1.05rem);
+    border-radius: 16px;
+  }
+
+  .settings-tabs-wrap,
+  .menu-body .settings-tabs-wrap,
+  .menu-admin-shell .settings-tabs-wrap,
+  .public-menu-shell .settings-tabs-wrap {
+    width: 100%;
+    overflow-x: visible;
+  }
+
+  .settings-tabs,
+  .menu-body .settings-tabs,
+  .menu-admin-shell .settings-tabs,
+  .public-menu-shell .settings-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .settings-tabs-indicator,
+  .settings-tabs-hover-indicator,
+  .menu-body .settings-tabs-indicator,
+  .menu-body .settings-tabs-hover-indicator,
+  .menu-admin-shell .settings-tabs-indicator,
+  .menu-admin-shell .settings-tabs-hover-indicator,
+  .public-menu-shell .settings-tabs-indicator,
+  .public-menu-shell .settings-tabs-hover-indicator {
+    display: none;
+  }
+
+  .settings-tab-btn,
+  .menu-body .settings-tab-btn,
+  .menu-admin-shell .settings-tab-btn,
+  .public-menu-shell .settings-tab-btn {
+    flex: 1 1 160px;
+    min-width: 0;
+    white-space: normal;
+    line-height: 1.15;
+    text-align: center;
+  }
+
+  .settings-option-row,
+  .settings-inline-fields,
+  .menu-product-form-grid,
+  .menu-ingredient-input-row,
+  .menu-admin-panel-head,
+  .menu-admin-summary,
+  .menu-admin-items,
+  .active-slot-form-grid,
+  .active-slot-form-grid--blocked,
+  .active-slot-card__meta,
+  .booking-item-head,
+  .booking-item-meta,
+  .my-booking-meta,
+  .account-history-meta {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .settings-option-control,
+  .settings-option-control-small,
+  .settings-option-control-frequency,
+  .settings-option-control-toggle {
+    justify-self: stretch;
+    width: 100%;
+    max-width: none;
+  }
+
+  .active-slot-form .calendar-date-row,
+  .opening-special-grid .calendar-date-row {
+    grid-template-columns: minmax(0, 1fr) 42px;
+  }
+
+  body.admin-body #active-slots-panel .time-picker,
+  body.admin-body #opening-hours-panel .time-picker {
+    width: min(100%, 260px);
+    justify-self: start;
+  }
+
+  .user-modal,
+  .booking-modal,
+  .menu-advisory-modal,
+  .nutrition-values-modal,
+  .menu-flavor-filter-modal {
+    width: calc(100vw - 1rem);
+    max-height: calc(100dvh - 1rem);
+    overflow: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .layout.app-layout > :not(.left-nav):not(.left-nav-toggle):not(.left-nav-backdrop):not(.left-nav-mobile-bar) {
+    padding-inline: 0.62rem;
+  }
+
+  .admin-main > .admin-card {
+    padding-inline: 0.68rem;
+  }
+
+  .left-nav-mobile-bar {
+    padding-inline: 0.55rem;
+  }
+
+  .left-nav-toggle {
+    min-height: 38px;
+    padding-inline: 0.78rem;
+  }
+
+  .left-nav {
+    width: min(88vw, 304px);
+    max-width: min(88vw, 304px);
+    padding: 1.25rem 1rem;
+  }
+
+  .sidebar-brand-logo {
+    width: 82px;
+    height: 82px;
+  }
+
+  .home-links,
+  .landing-page-actions,
+  .hours-special-list,
+  .hours-weekly-grid,
+  .public-menu-grid,
+  .menu-admin-items,
+  .users-cards-grid,
+  .my-bookings-list,
+  .account-booking-stats {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .public-menu-filterbar,
+  .menu-admin-searchbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: stretch;
+  }
+
+  .public-menu-filterbar > *,
+  .menu-admin-searchbar > * {
+    width: 100%;
+  }
+
+  .calendar-nav {
+    grid-template-columns: 38px minmax(0, 1fr) 38px;
+  }
+
+  .nav-btn {
+    min-width: 38px;
+    width: 38px;
+    height: 38px;
+  }
+
+  body.admin-body #opening-hours-panel .opening-hours-form {
+    min-width: 0;
+  }
+
+  body.admin-body #opening-hours-panel .opening-hours-head.row-grid {
+    display: none;
+  }
+
+  body.admin-body #opening-hours-panel .opening-hours-row.row-grid {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.5rem 0.65rem;
+    padding: 0.7rem 0;
+  }
+
+  body.admin-body #opening-hours-panel .opening-hours-time-range {
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    gap: 0.35rem;
+  }
+
+  body.admin-body #opening-hours-panel .opening-hours-time-range .time-separator {
+    justify-self: start;
+    padding-left: 0.2rem;
+  }
+
+  body.admin-body #opening-hours-panel .opening-hours-time-range .time-picker,
+  body.admin-body #active-slots-panel .time-picker {
+    width: min(100%, 250px);
+  }
+
+  .active-slot-form .calendar-date-row {
+    grid-template-columns: minmax(0, 1fr) 40px;
+  }
+
+  .active-slot-form .calendar-date-button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .active-slot-card__head,
+  .booking-item-head,
+  .my-booking-summary,
+  .account-history-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .active-slot-card__badge,
+  .booking-item-head-actions,
+  .booking-item-actions,
+  .my-booking-actions {
+    justify-self: start;
+  }
+
+  .actions .btn,
+  .modal-actions .btn,
+  .active-slot-card__actions .btn,
+  .booking-item-action-toggle,
+  .menu-admin-item-actions .btn {
+    width: 100%;
+  }
+
+  .calendar-date-popup,
+  .time-picker-popup {
+    width: calc(100vw - 1rem);
+    max-width: calc(100vw - 1rem);
+  }
+}
+
+@media (max-width: 420px) {
+  .settings-tab-btn,
+  .menu-body .settings-tab-btn,
+  .menu-admin-shell .settings-tab-btn,
+  .public-menu-shell .settings-tab-btn {
+    flex-basis: 100%;
+  }
+
+  body.admin-body #active-slots-panel .time-picker,
+  body.admin-body #opening-hours-panel .time-picker {
+    width: 100%;
+    min-width: 0;
+    grid-template-columns: 38px minmax(0, 1fr) 38px;
+  }
+
+  body.admin-body #active-slots-panel .time-input,
+  body.admin-body #opening-hours-panel .time-input {
+    font-size: clamp(1.45rem, 8vw, 2rem);
+  }
+
+  .day-cell {
+    min-height: 58px;
+  }
+
+  .month-label,
+  .calendar-panel h2,
+  .settings-section-head h3,
+  .active-slots-hero__head h3 {
+    overflow-wrap: anywhere;
   }
 }

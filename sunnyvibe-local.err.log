@@ -1,6 +1,15 @@
-[2026-05-18 22:17:06,999] INFO in app: Starting SunnyVibeScheduler on 0.0.0.0:39048 server=flask debug=False pid=8844
+[2026-05-18 22:32:21,220] INFO in app: Starting SunnyVibeScheduler on 0.0.0.0:39048 server=flask debug=False pid=5428
 WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
  * Running on all addresses (0.0.0.0)
  * Running on http://127.0.0.1:39048
  * Running on http://10.0.0.39:39048
 Press CTRL+C to quit
+127.0.0.1 - - [18/May/2026 22:32:39] "GET /menu HTTP/1.1" 200 -
+127.0.0.1 - - [18/May/2026 22:32:55] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [18/May/2026 23:17:14] "GET /admin/dashboard/active-slots HTTP/1.1" 302 -
+127.0.0.1 - - [18/May/2026 23:17:14] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [18/May/2026 23:17:15] "GET /static/styles.css?v=1779157882905021900 HTTP/1.1" 200 -
+127.0.0.1 - - [18/May/2026 23:17:15] "GET /static/favicon.png?v=1779157882905021900 HTTP/1.1" 200 -
+127.0.0.1 - - [18/May/2026 23:17:16] "POST /login HTTP/1.1" 302 -
+127.0.0.1 - - [18/May/2026 23:17:17] "GET /admin/dashboard/bookings HTTP/1.1" 200 -
+127.0.0.1 - - [18/May/2026 23:17:20] "GET /admin/dashboard/active-slots HTTP/1.1" 200 -
