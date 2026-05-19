@@ -9440,7 +9440,8 @@ body.admin-body #opening-hours-panel .opening-hours-time-range {
 
 body.admin-body #opening-hours-panel .opening-hours-time-range .time-picker-field,
 body.admin-body #opening-hours-panel .opening-special-grid .time-picker-field,
-body.admin-body #opening-hours-panel .opening-special-grid .calendar-date-field {
+body.admin-body #opening-hours-panel .opening-special-grid .calendar-date-field,
+body.admin-body #opening-hours-panel .digital-time-picker {
   min-width: 0;
 }
 
@@ -9491,6 +9492,126 @@ body.admin-body #opening-hours-panel .calendar-date-button svg {
 body.admin-body #opening-hours-panel .opening-hours-time-range input[type="time"]::-webkit-calendar-picker-indicator {
   filter: invert(1);
   opacity: 0.8;
+}
+
+body.admin-body #opening-hours-panel .digital-time-picker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.42rem;
+  width: 100%;
+  padding: 0.28rem 0.42rem;
+  border: 1px solid rgba(120, 140, 255, 0.36);
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(18, 20, 34, 0.96), rgba(9, 10, 18, 0.96));
+  box-shadow:
+    0 5px 14px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  user-select: none;
+}
+
+body.admin-body #opening-hours-panel .time-side-control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+  flex: 0 0 auto;
+}
+
+body.admin-body #opening-hours-panel .time-arrow {
+  width: 1.95rem;
+  height: 1.05rem;
+  border: 1px solid rgba(140, 155, 255, 0.42);
+  border-radius: 7px;
+  background:
+    linear-gradient(180deg, rgba(82, 95, 255, 0.36), rgba(42, 49, 135, 0.36)),
+    rgba(18, 20, 35, 0.95);
+  color: #f4f6ff;
+  font-size: 0.6rem;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow:
+    0 3px 7px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transition:
+    transform 0.12s ease,
+    border-color 0.12s ease,
+    background 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+body.admin-body #opening-hours-panel .time-arrow:hover {
+  border-color: rgba(160, 175, 255, 0.8);
+  background:
+    linear-gradient(180deg, rgba(100, 115, 255, 0.52), rgba(58, 67, 165, 0.5)),
+    rgba(22, 24, 42, 0.98);
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.28),
+    0 0 10px rgba(92, 112, 255, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+body.admin-body #opening-hours-panel .time-arrow:active {
+  transform: scale(0.92);
+}
+
+body.admin-body #opening-hours-panel .time-arrow:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+body.admin-body #opening-hours-panel .time-input-shell {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 5.85rem;
+  padding: 0.16rem;
+  border: 1px solid rgba(0, 255, 170, 0.38);
+  border-radius: 11px;
+  background:
+    linear-gradient(145deg, rgba(0, 255, 170, 0.1), rgba(80, 120, 255, 0.09)),
+    rgba(3, 5, 12, 0.95);
+  box-shadow:
+    0 0 11px rgba(0, 255, 170, 0.08),
+    inset 0 0 10px rgba(0, 0, 0, 0.66);
+}
+
+body.admin-body #opening-hours-panel .digital-time-input {
+  width: 100%;
+  height: 2rem;
+  border: 1px solid rgba(0, 255, 170, 0.54);
+  border-radius: 9px;
+  background:
+    radial-gradient(circle at top, rgba(0, 255, 170, 0.1), transparent 48%),
+    linear-gradient(180deg, #080b12, #020309);
+  color: #00ff9d;
+  font-family: "Courier New", monospace;
+  font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-align: center;
+  outline: none;
+  box-shadow:
+    inset 0 0 10px rgba(0, 0, 0, 0.9),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  text-shadow:
+    0 0 5px rgba(0, 255, 157, 0.66),
+    0 0 12px rgba(0, 255, 157, 0.22);
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+body.admin-body #opening-hours-panel .digital-time-input:focus {
+  border-color: rgba(0, 255, 170, 0.95);
+  box-shadow:
+    0 0 0 2px rgba(0, 255, 170, 0.12),
+    0 0 14px rgba(0, 255, 170, 0.16),
+    inset 0 0 10px rgba(0, 0, 0, 0.9);
+}
+
+body.admin-body #opening-hours-panel .digital-time-input::selection {
+  background: rgba(0, 255, 170, 0.28);
+  color: #ffffff;
 }
 
 body.admin-body .save-notification {

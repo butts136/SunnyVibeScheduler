@@ -550,10 +550,133 @@
       });
     });
 
+    document.querySelectorAll('[data-digital-time-picker]').forEach((picker) => {
+      if (picker.dataset.digitalTimeReady) {
+        return;
+      }
+      picker.dataset.digitalTimeReady = 'true';
+
+      const input = picker.querySelector('[data-time-input]');
+      const buttons = picker.querySelectorAll('[data-time-action]');
+      if (!input || !buttons.length) {
+        return;
+      }
+
+      let repeatTimer = null;
+      let repeatDelay = 280;
+
+      const parseTime = () => {
+        const raw = String(input.value || '').replace(/[^\d]/g, '').slice(0, 4);
+        let hours = 0;
+        let minutes = 0;
+
+        if (raw.length <= 2) {
+          hours = Number(raw || 0);
+        } else {
+          hours = Number(raw.slice(0, 2));
+          minutes = Number(raw.slice(2, 4));
+        }
+
+        hours = Math.max(0, Math.min(23, Number.isFinite(hours) ? hours : 0));
+        minutes = Math.max(0, Math.min(59, Number.isFinite(minutes) ? minutes : 0));
+        return { hours, minutes };
+      };
+
+      const formatTime = ({ hours, minutes }) => `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+      const setTime = (time, dispatchChange = true) => {
+        const nextValue = formatTime(time);
+        const changed = input.value !== nextValue;
+        input.value = nextValue;
+        if (dispatchChange && changed) {
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      };
+
+      const changeTime = (action) => {
+        if (input.disabled) {
+          return;
+        }
+        const time = parseTime();
+        if (action === 'hour-up') {
+          time.hours = (time.hours + 1) % 24;
+        } else if (action === 'hour-down') {
+          time.hours = (time.hours + 23) % 24;
+        } else if (action === 'minute-up') {
+          time.minutes = (time.minutes + 1) % 60;
+        } else if (action === 'minute-down') {
+          time.minutes = (time.minutes + 59) % 60;
+        }
+        setTime(time);
+      };
+
+      const stopHold = () => {
+        if (repeatTimer) {
+          clearTimeout(repeatTimer);
+          repeatTimer = null;
+        }
+      };
+
+      const startHold = (action) => {
+        stopHold();
+        changeTime(action);
+        repeatDelay = 280;
+
+        const repeat = () => {
+          changeTime(action);
+          repeatDelay = Math.max(55, repeatDelay - 22);
+          repeatTimer = setTimeout(repeat, repeatDelay);
+        };
+
+        repeatTimer = setTimeout(repeat, repeatDelay);
+      };
+
+      buttons.forEach((button) => {
+        const action = button.dataset.timeAction;
+        button.addEventListener('pointerdown', (event) => {
+          event.preventDefault();
+          startHold(action);
+        });
+        button.addEventListener('pointerup', stopHold);
+        button.addEventListener('pointercancel', stopHold);
+        button.addEventListener('pointerleave', stopHold);
+      });
+
+      document.addEventListener('pointerup', stopHold);
+
+      input.addEventListener('input', () => {
+        let value = String(input.value || '').replace(/[^\d]/g, '').slice(0, 4);
+        if (value.length > 2) {
+          value = `${value.slice(0, 2)}:${value.slice(2)}`;
+        }
+        input.value = value;
+      });
+
+      input.addEventListener('blur', () => {
+        setTime(parseTime());
+      });
+
+      input.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          setTime(parseTime());
+          input.blur();
+        } else if (event.key === 'ArrowUp') {
+          event.preventDefault();
+          changeTime('minute-up');
+        } else if (event.key === 'ArrowDown') {
+          event.preventDefault();
+          changeTime('minute-down');
+        }
+      });
+
+      setTime(parseTime(), false);
+    });
+
     document.querySelectorAll('.opening-hours-row').forEach((row) => {
       const checkbox = row.querySelector('input[type="checkbox"]');
       const timeInputs = row.querySelectorAll('[data-time-input], input[type="time"]');
-      const timeButtons = row.querySelectorAll('[data-time-toggle]');
+      const timeButtons = row.querySelectorAll('[data-time-toggle], [data-time-action]');
       const slider = row.querySelector('.opening-hours-toggle');
 
       const sync = () => {
@@ -580,7 +703,12 @@
         [specialStartInput, specialEndInput].forEach((input) => {
           input.disabled = disabled;
           input.closest('.opening-special-time-row')?.classList.toggle('is-disabled', disabled);
-          input.closest('[data-time-field]')?.querySelector('[data-time-toggle]')?.toggleAttribute('disabled', disabled);
+          input
+            .closest('[data-time-field], [data-digital-time-picker]')
+            ?.querySelectorAll('[data-time-toggle], [data-time-action]')
+            .forEach((button) => {
+              button.disabled = disabled;
+            });
         });
       };
       specialClosedInput.addEventListener('change', syncSpecialInputs);

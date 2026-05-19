@@ -43,11 +43,16 @@
 {%- endmacro %}
 
 {% macro time_picker(id, name, value='', required=False, disabled=False) -%}
-<div class="time-picker-field" data-time-field>
-  <div class="time-picker-row">
+<div class="digital-time-picker" data-digital-time-picker>
+  <div class="time-side-control">
+    <button type="button" class="time-arrow" data-time-action="hour-up" aria-label="Augmenter l'heure" {% if disabled %}disabled{% endif %}>▲</button>
+    <button type="button" class="time-arrow" data-time-action="hour-down" aria-label="Diminuer l'heure" {% if disabled %}disabled{% endif %}>▼</button>
+  </div>
+
+  <div class="time-input-shell">
     <input
       id="{{ id }}"
-      class="time-picker-input"
+      class="digital-time-input"
       type="text"
       name="{{ name }}"
       value="{{ value }}"
@@ -61,34 +66,11 @@
       {% if disabled %}disabled{% endif %}
       data-time-input
     >
-    <button class="calendar-date-button time-picker-toggle" type="button" data-time-toggle aria-label="Ouvrir le sélecteur d'heure" {% if disabled %}disabled{% endif %}>
-      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
-        <path d="M12 7V12L15 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
   </div>
-  <div class="time-picker-popup hidden" data-time-popup hidden>
-    <div class="time-picker-header">
-      <div>
-        <div class="time-picker-title">Sélecteur d'heure</div>
-        <div class="time-picker-current" data-time-current></div>
-      </div>
-    </div>
-    <div class="time-picker-columns">
-      <div class="time-picker-column">
-        <div class="time-picker-column-title">Heures</div>
-        <div class="time-picker-options" data-time-hours></div>
-      </div>
-      <div class="time-picker-column">
-        <div class="time-picker-column-title">Minutes</div>
-        <div class="time-picker-options" data-time-minutes></div>
-      </div>
-    </div>
-    <div class="time-picker-footer">
-      <button class="time-picker-footer-btn time-picker-cancel" type="button" data-time-cancel>Annuler</button>
-      <button class="time-picker-footer-btn time-picker-accept" type="button" data-time-accept>Accepter</button>
-    </div>
+
+  <div class="time-side-control">
+    <button type="button" class="time-arrow" data-time-action="minute-up" aria-label="Augmenter les minutes" {% if disabled %}disabled{% endif %}>▲</button>
+    <button type="button" class="time-arrow" data-time-action="minute-down" aria-label="Diminuer les minutes" {% if disabled %}disabled{% endif %}>▼</button>
   </div>
 </div>
 {%- endmacro %}
