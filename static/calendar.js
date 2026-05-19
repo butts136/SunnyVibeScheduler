@@ -110,14 +110,13 @@
   const timeInputDirection = new WeakMap();
   const previousTimeValue = new WeakMap();
   let timelineHeaderScrollSyncBound = false;
-  const isActiveSlotsAvailabilityMode = configuredReservationConfig.availability_mode === 'active_slots';
-  const isBookingsDashboardCardOverview = isBookingsDashboardPage && isActiveSlotsAvailabilityMode;
   const isCardsAvailabilityMode = configuredReservationConfig.sunnygym_display_mode === 'cards';
   const isSunnygymCardsMode = (
     Boolean(calendarMobileListEl)
-    && (isCardsAvailabilityMode || isBookingsDashboardCardOverview)
+    && isCardsAvailabilityMode
     && !isCalendarPage
-    && (isAdminMode || isBookingsDashboardPage)
+    && isAdminMode
+    && !isBookingsDashboardPage
   );
   let bookingsDashboardMode = isBookingsDashboardPage ? 'overview' : '';
   let dayPanelRerenderFrame = 0;
@@ -127,7 +126,7 @@
   }
 
   prevMonthBtn.addEventListener('click', () => {
-    if (isSameMonth(state.viewMonth, minimumMonth)) {
+    if (!isBookingsDashboardPage && isSameMonth(state.viewMonth, minimumMonth)) {
       return;
     }
 

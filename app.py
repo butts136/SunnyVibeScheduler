@@ -552,6 +552,21 @@ def _normalize_special_dates(raw_special_dates):
     return [by_date[date_key] for date_key in sorted(by_date.keys())]
 
 
+def _today_key_for_special_date_cleanup():
+    try:
+        return datetime.now(ZoneInfo(DEFAULT_RESERVATION_TIMEZONE)).strftime('%Y-%m-%d')
+    except ZoneInfoNotFoundError:
+        return datetime.now(timezone.utc).strftime('%Y-%m-%d')
+
+
+def _prune_expired_special_dates(special_dates, reference_date_key=None):
+    today_key = reference_date_key or _today_key_for_special_date_cleanup()
+    return [
+        item for item in _normalize_special_dates(special_dates)
+        if item.get('date', '') >= today_key
+    ]
+
+
 def _load_opening_hours_payload():
     if not OPENING_HOURS_PATH.exists():
         return {
@@ -564,12 +579,18 @@ def _load_opening_hours_payload():
     try:
         payload = json.loads(OPENING_HOURS_PATH.read_text(encoding='utf-8'))
         raw_hours = payload.get('opening_hours', payload)
-        return {
+        normalized_special_dates = _normalize_special_dates(payload.get('special_dates', []))
+        active_special_dates = _prune_expired_special_dates(normalized_special_dates)
+        normalized_payload = {
             'updated_at': payload.get('updated_at', datetime.now(timezone.utc).isoformat()),
             'opening_hours': _normalize_opening_hours(raw_hours),
             'holidays': _normalize_holidays(payload.get('holidays', [])),
-            'special_dates': _normalize_special_dates(payload.get('special_dates', [])),
+            'special_dates': active_special_dates,
         }
+        if len(active_special_dates) != len(normalized_special_dates):
+            normalized_payload['updated_at'] = datetime.now(timezone.utc).isoformat()
+            OPENING_HOURS_PATH.write_text(json.dumps(normalized_payload, indent=2), encoding='utf-8')
+        return normalized_payload
     except (json.JSONDecodeError, OSError, ValueError):
         return {
             'updated_at': datetime.now(timezone.utc).isoformat(),
@@ -934,7 +955,7 @@ def _save_opening_hours_payload(opening_hours=None, holidays=None, special_dates
         'holidays': _normalize_holidays(
             holidays if holidays is not None else current_payload.get('holidays', [])
         ),
-        'special_dates': _normalize_special_dates(
+        'special_dates': _prune_expired_special_dates(
             special_dates if special_dates is not None else current_payload.get('special_dates', [])
         ),
     }

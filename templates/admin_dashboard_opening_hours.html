@@ -43,34 +43,33 @@
 {%- endmacro %}
 
 {% macro time_picker(id, name, value='', required=False, disabled=False) -%}
-<div class="digital-time-picker" data-digital-time-picker>
-  <div class="time-side-control">
-    <button type="button" class="time-arrow" data-time-action="hour-up" aria-label="Augmenter l'heure" {% if disabled %}disabled{% endif %}>▲</button>
-    <button type="button" class="time-arrow" data-time-action="hour-down" aria-label="Diminuer l'heure" {% if disabled %}disabled{% endif %}>▼</button>
+<div class="time-picker" data-time-picker data-digital-time-picker>
+  <div class="time-control">
+    <button type="button" data-action="hour-up" data-time-action="hour-up" aria-label="Augmenter les heures" {% if disabled %}disabled{% endif %}>+</button>
+    <button type="button" data-action="hour-down" data-time-action="hour-down" aria-label="Diminuer les heures" {% if disabled %}disabled{% endif %}>−</button>
   </div>
 
-  <div class="time-input-shell">
-    <input
-      id="{{ id }}"
-      class="digital-time-input"
-      type="text"
-      name="{{ name }}"
-      value="{{ value }}"
-      placeholder="HH:MM"
-      maxlength="5"
-      pattern="[0-9]{2}:[0-9]{2}"
-      inputmode="numeric"
-      autocomplete="off"
-      spellcheck="false"
-      {% if required %}required{% endif %}
-      {% if disabled %}disabled{% endif %}
-      data-time-input
-    >
-  </div>
+  <input
+    id="{{ id }}"
+    class="time-input"
+    type="text"
+    name="{{ name }}"
+    value="{{ value }}"
+    placeholder="HH:MM"
+    maxlength="5"
+    pattern="[0-9]{2}:[0-9]{2}"
+    inputmode="numeric"
+    autocomplete="off"
+    spellcheck="false"
+    aria-label="Heure"
+    {% if required %}required{% endif %}
+    {% if disabled %}disabled{% endif %}
+    data-time-input
+  >
 
-  <div class="time-side-control">
-    <button type="button" class="time-arrow" data-time-action="minute-up" aria-label="Augmenter les minutes" {% if disabled %}disabled{% endif %}>▲</button>
-    <button type="button" class="time-arrow" data-time-action="minute-down" aria-label="Diminuer les minutes" {% if disabled %}disabled{% endif %}>▼</button>
+  <div class="time-control">
+    <button type="button" data-action="minute-up" data-time-action="minute-up" aria-label="Augmenter les minutes" {% if disabled %}disabled{% endif %}>+</button>
+    <button type="button" data-action="minute-down" data-time-action="minute-down" aria-label="Diminuer les minutes" {% if disabled %}disabled{% endif %}>−</button>
   </div>
 </div>
 {%- endmacro %}

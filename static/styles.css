@@ -9237,8 +9237,8 @@ input[type="number"].number-input {
   min-width: 0;
 }
 
-.opening-hours-time-range input,
-.opening-special-grid input,
+.opening-hours-time-range input:not(.digital-time-input):not(.time-input),
+.opening-special-grid input:not(.digital-time-input):not(.time-input),
 .opening-special-grid select {
   width: 100%;
   min-width: 0;
@@ -9254,18 +9254,31 @@ input[type="number"].number-input {
 
 body.admin-body #opening-hours-panel .opening-hours-form {
   min-width: 0;
+  gap: 0;
 }
 
 body.admin-body #opening-hours-panel .opening-hours-head.row-grid,
 body.admin-body #opening-hours-panel .opening-hours-row.row-grid {
   display: grid;
-  grid-template-columns: minmax(96px, 0.75fr) minmax(138px, 0.58fr) minmax(210px, 1.35fr);
+  grid-template-columns: 105px 112px max-content;
   align-items: center;
-  column-gap: clamp(0.55rem, 1.4vw, 0.95rem);
+  column-gap: 12px;
 }
 
 body.admin-body #opening-hours-panel .opening-hours-row.row-grid {
-  padding: 0.34rem 0;
+  min-height: 0;
+  padding: 5px 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: transparent;
+  box-shadow: none;
+}
+
+body.admin-body #opening-hours-panel .opening-hours-row.row-grid:first-of-type {
+  border-top: 0;
+}
+
+body.admin-body #opening-hours-panel .opening-hours-head.row-grid + .opening-hours-row.row-grid {
+  border-top: 0;
 }
 
 body.admin-body #opening-hours-panel .opening-switch {
@@ -9433,11 +9446,14 @@ body.admin-body #opening-hours-panel .opening-hours-toggle__input {
 
 body.admin-body #opening-hours-panel .opening-hours-time-range {
   display: grid;
-  grid-template-columns: minmax(145px, 1fr) auto minmax(145px, 1fr);
+  grid-template-columns: max-content auto max-content;
   align-items: center;
-  gap: 0.36rem;
+  gap: 8px;
+  width: fit-content;
+  justify-self: start;
 }
 
+body.admin-body #opening-hours-panel .opening-hours-time-range .time-picker,
 body.admin-body #opening-hours-panel .opening-hours-time-range .time-picker-field,
 body.admin-body #opening-hours-panel .opening-special-grid .time-picker-field,
 body.admin-body #opening-hours-panel .opening-special-grid .calendar-date-field,
@@ -9456,7 +9472,7 @@ body.admin-body #opening-hours-panel .opening-special-grid .calendar-date-row {
   display: grid;
 }
 
-body.admin-body #opening-hours-panel .opening-hours-time-range input {
+body.admin-body #opening-hours-panel .opening-hours-time-range input:not(.digital-time-input):not(.time-input) {
   width: 100%;
   min-width: 0;
   text-align: center;
@@ -9494,44 +9510,178 @@ body.admin-body #opening-hours-panel .opening-hours-time-range input[type="time"
   opacity: 0.8;
 }
 
+body.admin-body #opening-hours-panel .time-picker {
+  container-type: inline-size;
+
+  width: 260px;
+  min-width: 140px;
+  max-width: 100%;
+  aspect-ratio: 260 / 62;
+
+  display: grid;
+  grid-template-columns: 42px 1fr 42px;
+  gap: 6px;
+
+  padding: 6px;
+  box-sizing: border-box;
+
+  border: 1px solid rgba(130, 145, 255, 0.28);
+  border-radius: 16px;
+
+  background: #111522;
+
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+body.admin-body #opening-hours-panel .time-control {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 5px;
+}
+
+body.admin-body #opening-hours-panel .time-control button {
+  border: 0;
+  border-radius: 11px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #eef1ff;
+  background: #252d4f;
+
+  font-family: Arial, sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1;
+
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+
+  transition:
+    background 0.15s ease,
+    transform 0.1s ease,
+    box-shadow 0.15s ease;
+}
+
+body.admin-body #opening-hours-panel .time-control button:hover {
+  background: #323c6b;
+}
+
+body.admin-body #opening-hours-panel .time-control button:active {
+  transform: scale(0.92);
+  background: #3c4780;
+}
+
+body.admin-body #opening-hours-panel .time-control button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+body.admin-body #opening-hours-panel .time-input {
+  width: 100%;
+  min-width: 0;
+
+  border: 1px solid rgba(130, 145, 255, 0.22);
+  border-radius: 13px;
+
+  outline: none;
+  box-sizing: border-box;
+
+  color: #f8f9ff;
+  background: #070914;
+
+  text-align: center;
+
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 1px;
+
+  padding: 0 8px;
+
+  box-shadow:
+    inset 0 0 18px rgba(95, 120, 255, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+body.admin-body #opening-hours-panel .time-input:focus {
+  border-color: rgba(130, 145, 255, 0.7);
+  box-shadow:
+    inset 0 0 20px rgba(95, 120, 255, 0.18),
+    0 0 0 3px rgba(130, 145, 255, 0.12);
+}
+
+@container (max-width: 220px) {
+  body.admin-body #opening-hours-panel .time-picker {
+    grid-template-columns: 16cqw 1fr 16cqw;
+    gap: 2.3cqw;
+    padding: 2.3cqw;
+    border-radius: 6cqw;
+  }
+
+  body.admin-body #opening-hours-panel .time-control {
+    gap: 1.8cqw;
+  }
+
+  body.admin-body #opening-hours-panel .time-control button {
+    border-radius: 4cqw;
+    font-size: 9cqw;
+  }
+
+  body.admin-body #opening-hours-panel .time-input {
+    border-radius: 4.8cqw;
+    font-size: 13cqw;
+    padding: 0 2cqw;
+  }
+}
+
 body.admin-body #opening-hours-panel .digital-time-picker {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.42rem;
-  width: 100%;
-  padding: 0.28rem 0.42rem;
-  border: 1px solid rgba(120, 140, 255, 0.36);
-  border-radius: 12px;
-  background: linear-gradient(145deg, rgba(18, 20, 34, 0.96), rgba(9, 10, 18, 0.96));
+  gap: 5px;
+  width: fit-content;
+  padding: 4px 5px;
+  border: 1px solid rgba(120, 140, 255, 0.32);
+  border-radius: 11px;
+  background: linear-gradient(145deg, rgba(12, 17, 38, 0.98), rgba(5, 8, 19, 0.98));
   box-shadow:
-    0 5px 14px rgba(0, 0, 0, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    0 5px 12px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  flex: 0 0 auto;
   user-select: none;
 }
 
 body.admin-body #opening-hours-panel .time-side-control {
   display: flex;
   flex-direction: column;
-  gap: 0.18rem;
-  flex: 0 0 auto;
+  gap: 2px;
 }
 
 body.admin-body #opening-hours-panel .time-arrow {
-  width: 1.95rem;
-  height: 1.05rem;
-  border: 1px solid rgba(140, 155, 255, 0.42);
-  border-radius: 7px;
+  width: 22px;
+  height: 14px;
+  border: 1px solid rgba(150, 160, 255, 0.42);
+  border-radius: 6px;
   background:
-    linear-gradient(180deg, rgba(82, 95, 255, 0.36), rgba(42, 49, 135, 0.36)),
-    rgba(18, 20, 35, 0.95);
-  color: #f4f6ff;
-  font-size: 0.6rem;
+    linear-gradient(180deg, rgba(92, 105, 255, 0.42), rgba(43, 50, 132, 0.45)),
+    rgba(17, 21, 41, 0.98);
+  color: #f3f5ff;
+  font-size: 8px;
   font-weight: 900;
   line-height: 1;
   cursor: pointer;
   box-shadow:
-    0 3px 7px rgba(0, 0, 0, 0.24),
+    0 1px 4px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.12);
   transition:
     transform 0.12s ease,
@@ -9541,14 +9691,8 @@ body.admin-body #opening-hours-panel .time-arrow {
 }
 
 body.admin-body #opening-hours-panel .time-arrow:hover {
-  border-color: rgba(160, 175, 255, 0.8);
-  background:
-    linear-gradient(180deg, rgba(100, 115, 255, 0.52), rgba(58, 67, 165, 0.5)),
-    rgba(22, 24, 42, 0.98);
-  box-shadow:
-    0 4px 10px rgba(0, 0, 0, 0.28),
-    0 0 10px rgba(92, 112, 255, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  filter: brightness(1.2);
+  border-color: rgba(175, 185, 255, 0.85);
 }
 
 body.admin-body #opening-hours-panel .time-arrow:active {
@@ -9562,51 +9706,53 @@ body.admin-body #opening-hours-panel .time-arrow:disabled {
 
 body.admin-body #opening-hours-panel .time-input-shell {
   position: relative;
-  flex: 1 1 auto;
-  min-width: 5.85rem;
-  padding: 0.16rem;
-  border: 1px solid rgba(0, 255, 170, 0.38);
-  border-radius: 11px;
+  flex: 0 0 auto;
+  padding: 2px;
+  border: 1px solid rgba(0, 255, 170, 0.42);
+  border-radius: 9px;
   background:
-    linear-gradient(145deg, rgba(0, 255, 170, 0.1), rgba(80, 120, 255, 0.09)),
-    rgba(3, 5, 12, 0.95);
+    linear-gradient(145deg, rgba(0, 255, 170, 0.1), rgba(80, 120, 255, 0.07)),
+    rgba(2, 4, 10, 0.98);
   box-shadow:
-    0 0 11px rgba(0, 255, 170, 0.08),
-    inset 0 0 10px rgba(0, 0, 0, 0.66);
+    0 0 10px rgba(0, 255, 170, 0.08),
+    inset 0 0 10px rgba(0, 0, 0, 0.72);
 }
 
 body.admin-body #opening-hours-panel .digital-time-input {
-  width: 100%;
-  height: 2rem;
-  border: 1px solid rgba(0, 255, 170, 0.54);
-  border-radius: 9px;
+  width: 78px;
+  min-width: 78px;
+  max-width: 78px;
+  height: 28px;
+  border: 1px solid rgba(0, 255, 170, 0.6);
+  border-radius: 7px;
   background:
     radial-gradient(circle at top, rgba(0, 255, 170, 0.1), transparent 48%),
     linear-gradient(180deg, #080b12, #020309);
   color: #00ff9d;
   font-family: "Courier New", monospace;
-  font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+  font-size: 18px;
   font-weight: 900;
-  letter-spacing: 0.12em;
+  letter-spacing: 3px;
   text-align: center;
   outline: none;
   box-shadow:
-    inset 0 0 10px rgba(0, 0, 0, 0.9),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    inset 0 0 9px rgba(0, 0, 0, 0.92),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
   text-shadow:
-    0 0 5px rgba(0, 255, 157, 0.66),
-    0 0 12px rgba(0, 255, 157, 0.22);
+    0 0 6px rgba(0, 255, 157, 0.82),
+    0 0 13px rgba(0, 255, 157, 0.25);
   transition:
     border-color 0.16s ease,
-    box-shadow 0.16s ease;
+    box-shadow 0.16s ease,
+    transform 0.16s ease;
 }
 
 body.admin-body #opening-hours-panel .digital-time-input:focus {
   border-color: rgba(0, 255, 170, 0.95);
   box-shadow:
     0 0 0 2px rgba(0, 255, 170, 0.12),
-    0 0 14px rgba(0, 255, 170, 0.16),
-    inset 0 0 10px rgba(0, 0, 0, 0.9);
+    0 0 12px rgba(0, 255, 170, 0.18),
+    inset 0 0 9px rgba(0, 0, 0, 0.92);
 }
 
 body.admin-body #opening-hours-panel .digital-time-input::selection {
@@ -9825,6 +9971,116 @@ body.admin-body form[data-auto-save-form] .auto-save-actions {
 
 .active-slot-form-grid--blocked {
   grid-template-columns: minmax(0, 1.6fr) repeat(4, minmax(0, 1fr));
+}
+
+body.admin-body #active-slots-panel .time-picker {
+  container-type: inline-size;
+  width: 260px;
+  min-width: 140px;
+  max-width: 100%;
+  aspect-ratio: 260 / 62;
+  display: grid;
+  grid-template-columns: 42px 1fr 42px;
+  gap: 6px;
+  padding: 6px;
+  box-sizing: border-box;
+  border: 1px solid rgba(130, 145, 255, 0.28);
+  border-radius: 16px;
+  background: #111522;
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+body.admin-body #active-slots-panel .time-control {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 5px;
+}
+
+body.admin-body #active-slots-panel .time-control button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 11px;
+  color: #eef1ff;
+  background: #252d4f;
+  font-family: Arial, sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  transition:
+    background 0.15s ease,
+    transform 0.1s ease,
+    box-shadow 0.15s ease;
+}
+
+body.admin-body #active-slots-panel .time-control button:hover {
+  background: #323c6b;
+}
+
+body.admin-body #active-slots-panel .time-control button:active {
+  transform: scale(0.92);
+  background: #3c4780;
+}
+
+body.admin-body #active-slots-panel .time-input {
+  width: 100%;
+  min-width: 0;
+  padding: 0 8px;
+  border: 1px solid rgba(130, 145, 255, 0.22);
+  border-radius: 13px;
+  outline: none;
+  box-sizing: border-box;
+  color: #f8f9ff;
+  background: #070914;
+  text-align: center;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 1px;
+  box-shadow:
+    inset 0 0 18px rgba(95, 120, 255, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+body.admin-body #active-slots-panel .time-input:focus {
+  border-color: rgba(130, 145, 255, 0.7);
+  box-shadow:
+    inset 0 0 20px rgba(95, 120, 255, 0.18),
+    0 0 0 3px rgba(130, 145, 255, 0.12);
+}
+
+@container (max-width: 220px) {
+  body.admin-body #active-slots-panel .time-picker {
+    grid-template-columns: 16cqw 1fr 16cqw;
+    gap: 2.3cqw;
+    padding: 2.3cqw;
+    border-radius: 6cqw;
+  }
+
+  body.admin-body #active-slots-panel .time-control {
+    gap: 1.8cqw;
+  }
+
+  body.admin-body #active-slots-panel .time-control button {
+    border-radius: 4cqw;
+    font-size: 9cqw;
+  }
+
+  body.admin-body #active-slots-panel .time-input {
+    border-radius: 4.8cqw;
+    font-size: 13cqw;
+    padding: 0 2cqw;
+  }
 }
 
 .active-slot-title-row {
@@ -11665,6 +11921,7 @@ body.admin-body #bookings-panel .bookings-overview-stat strong {
 }
 
 body.admin-body #bookings-panel .bookings-overview-list {
+  display: none !important;
   grid-template-columns: minmax(0, 1fr);
   gap: 0.6rem;
   max-height: none;
@@ -11673,7 +11930,7 @@ body.admin-body #bookings-panel .bookings-overview-list {
 }
 
 body.admin-body #bookings-panel .bookings-overview-list.is-desktop-cards {
-  display: grid;
+  display: none !important;
   max-height: min(70vh, 840px);
   overflow: auto;
 }
@@ -11684,7 +11941,7 @@ body.admin-body #bookings-panel .bookings-overview-calendar .calendar-legend {
 
 @media (max-width: 980px) {
   body.admin-body #bookings-panel .bookings-overview-list {
-    display: grid;
+    display: none !important;
   }
 }
 
@@ -13494,7 +13751,7 @@ body.calendar-body.calendar-day-modal-open .time-divider.is-subtick {
 
   body.admin-body #opening-hours-panel .opening-hours-head.row-grid,
   body.admin-body #opening-hours-panel .opening-hours-row.row-grid {
-    grid-template-columns: minmax(82px, 0.66fr) minmax(126px, 0.58fr) minmax(270px, 1.45fr);
+    grid-template-columns: 92px 116px max-content;
     column-gap: 0.6rem;
   }
 
@@ -13949,16 +14206,16 @@ body.calendar-body.calendar-day-modal-open .time-divider.is-subtick {
   }
 
   body.admin-body #opening-hours-panel .opening-hours-form {
-    min-width: 520px;
+    min-width: 440px;
   }
 
   body.admin-body #opening-hours-panel .opening-hours-row.row-grid {
-    grid-template-columns: minmax(74px, 0.58fr) minmax(116px, 0.52fr) minmax(250px, 1.55fr);
+    grid-template-columns: 78px 112px max-content;
   }
 
   body.admin-body #opening-hours-panel .opening-hours-time-range {
-    grid-template-columns: minmax(106px, 1fr) auto minmax(106px, 1fr);
-    gap: 0.3rem;
+    grid-template-columns: max-content auto max-content;
+    gap: 0.26rem;
   }
 
   body.admin-body #opening-hours-panel .opening-hours-toggle {

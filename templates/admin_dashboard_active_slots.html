@@ -1,6 +1,6 @@
 {% extends 'admin_dashboard_base.html' %}
 
-{% macro date_picker(id, name, value='') -%}
+{% macro date_picker(id, name, value='', required=False) -%}
 <div class="calendar-date-field" data-calendar-field>
   <div class="calendar-date-row">
     <input
@@ -13,6 +13,7 @@
       readonly
       autocomplete="off"
       spellcheck="false"
+      {% if required %}required{% endif %}
       data-calendar-input
     >
     <button class="calendar-date-button" type="button" data-calendar-toggle aria-label="Ouvrir le calendrier">
@@ -40,6 +41,38 @@
 </div>
 {%- endmacro %}
 
+{% macro time_picker(id, name, value='', required=False, disabled=False) -%}
+<div class="time-picker" data-time-picker data-digital-time-picker>
+  <div class="time-control">
+    <button type="button" data-action="hour-up" data-time-action="hour-up" aria-label="Augmenter les heures" {% if disabled %}disabled{% endif %}>+</button>
+    <button type="button" data-action="hour-down" data-time-action="hour-down" aria-label="Diminuer les heures" {% if disabled %}disabled{% endif %}>−</button>
+  </div>
+
+  <input
+    id="{{ id }}"
+    class="time-input"
+    type="text"
+    name="{{ name }}"
+    value="{{ value }}"
+    placeholder="HH:MM"
+    maxlength="5"
+    pattern="[0-9]{2}:[0-9]{2}"
+    inputmode="numeric"
+    autocomplete="off"
+    spellcheck="false"
+    aria-label="Heure"
+    {% if required %}required{% endif %}
+    {% if disabled %}disabled{% endif %}
+    data-time-input
+  >
+
+  <div class="time-control">
+    <button type="button" data-action="minute-up" data-time-action="minute-up" aria-label="Augmenter les minutes" {% if disabled %}disabled{% endif %}>+</button>
+    <button type="button" data-action="minute-down" data-time-action="minute-down" aria-label="Diminuer les minutes" {% if disabled %}disabled{% endif %}>−</button>
+  </div>
+</div>
+{%- endmacro %}
+
 {% block admin_panel %}
         {% set is_active_slots_mode = reservation_config.availability_mode == 'active_slots' %}
         {% set is_hybrid_availability_mode = reservation_config.availability_mode == 'opening_hours_with_overrides' %}
@@ -60,7 +93,7 @@
           <section class="config-section-block active-slots-hero">
             <div class="active-slots-hero__head">
               <div>
-                <h3>{% if is_hybrid_availability_mode %}Dérogations réservables{% else %}Plages activées{% endif %}</h3>
+                <h3>Ajouter une plage horaire à l'horaire normal</h3>
                 <p class="field-help">
                   {% if is_hybrid_availability_mode %}
                   Chaque plage s'ajoute aux heures d'ouverture régulières dans le calendrier SunnyGym.
@@ -83,173 +116,17 @@
 
                 <div class="config-row active-slot-date-row">
                   <label for="active_slot_date">Date</label>
-                  <div class="calendar-date-field" data-calendar-field>
-                    <div class="calendar-date-row">
-                      <input
-                        id="active_slot_date"
-                        class="calendar-date-input"
-                        type="text"
-                        name="active_slot_date"
-                        value="{{ active_slot_form.date }}"
-                        placeholder="AAAA-MM-JJ"
-                        readonly
-                        autocomplete="off"
-                        spellcheck="false"
-                        required
-                        data-calendar-input
-                      >
-                      <button
-                        id="activeSlotDateToggle"
-                        class="calendar-date-button"
-                        type="button"
-                        data-calendar-toggle
-                        aria-label="Ouvrir le calendrier"
-                      >
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                          <rect x="3" y="5" width="18" height="16" rx="3" stroke="currentColor" stroke-width="2"/>
-                          <path d="M16 3v4M8 3v4M3 10h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                      </button>
-                    </div>
-                    <div class="calendar-date-popup hidden" data-calendar-popup hidden>
-                      <div class="calendar-date-header">
-                        <button class="calendar-date-nav" type="button" data-calendar-prev aria-label="Mois précédent">‹</button>
-                        <div class="calendar-date-month" data-calendar-month></div>
-                        <button class="calendar-date-nav" type="button" data-calendar-next aria-label="Mois suivant">›</button>
-                      </div>
-
-                      <div class="calendar-date-weekdays" aria-hidden="true">
-                        <div>Lun</div>
-                        <div>Mar</div>
-                        <div>Mer</div>
-                        <div>Jeu</div>
-                        <div>Ven</div>
-                        <div>Sam</div>
-                        <div>Dim</div>
-                      </div>
-
-                      <div class="calendar-date-days" data-calendar-days></div>
-
-                      <div class="calendar-date-footer">
-                        <button class="calendar-date-footer-btn calendar-date-footer-cancel" type="button" data-calendar-cancel>Annuler</button>
-                        <button class="calendar-date-footer-btn calendar-date-footer-accept" type="button" data-calendar-accept>Accepter</button>
-                      </div>
-                    </div>
-                  </div>
+                  {{ date_picker('active_slot_date', 'active_slot_date', active_slot_form.date, True) }}
                 </div>
 
                 <div class="config-row">
                   <label for="active_slot_start_time">Début</label>
-                  <div class="time-picker-field" data-time-field>
-                    <div class="time-picker-row">
-                      <input
-                        id="active_slot_start_time"
-                        class="time-picker-input"
-                        type="text"
-                        name="active_slot_start_time"
-                        value="{{ active_slot_form.start_time }}"
-                        placeholder="HH:MM"
-                        readonly
-                        autocomplete="off"
-                        spellcheck="false"
-                        required
-                        data-time-input
-                      >
-                      <button
-                        class="calendar-date-button time-picker-toggle"
-                        type="button"
-                        data-time-toggle
-                        aria-label="Ouvrir le sélecteur d'heure"
-                      >
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
-                          <path d="M12 7V12L15 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                      </button>
-                    </div>
-                    <div class="time-picker-popup hidden" data-time-popup hidden>
-                      <div class="time-picker-header">
-                        <div>
-                          <div class="time-picker-title">Sélecteur d'heure</div>
-                          <div class="time-picker-current" data-time-current></div>
-                        </div>
-                      </div>
-
-                      <div class="time-picker-columns">
-                        <div class="time-picker-column">
-                          <div class="time-picker-column-title">Heures</div>
-                          <div class="time-picker-options" data-time-hours></div>
-                        </div>
-
-                        <div class="time-picker-column">
-                          <div class="time-picker-column-title">Minutes</div>
-                          <div class="time-picker-options" data-time-minutes></div>
-                        </div>
-                      </div>
-
-                      <div class="time-picker-footer">
-                        <button class="time-picker-footer-btn time-picker-cancel" type="button" data-time-cancel>Annuler</button>
-                        <button class="time-picker-footer-btn time-picker-accept" type="button" data-time-accept>Accepter</button>
-                      </div>
-                    </div>
-                  </div>
+                  {{ time_picker('active_slot_start_time', 'active_slot_start_time', active_slot_form.start_time, True) }}
                 </div>
 
                 <div class="config-row">
                   <label for="active_slot_end_time">Fin</label>
-                  <div class="time-picker-field" data-time-field>
-                    <div class="time-picker-row">
-                      <input
-                        id="active_slot_end_time"
-                        class="time-picker-input"
-                        type="text"
-                        name="active_slot_end_time"
-                        value="{{ active_slot_form.end_time }}"
-                        placeholder="HH:MM"
-                        readonly
-                        autocomplete="off"
-                        spellcheck="false"
-                        required
-                        data-time-input
-                      >
-                      <button
-                        class="calendar-date-button time-picker-toggle"
-                        type="button"
-                        data-time-toggle
-                        aria-label="Ouvrir le sélecteur d'heure"
-                      >
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
-                          <path d="M12 7V12L15 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                      </button>
-                    </div>
-                    <div class="time-picker-popup hidden" data-time-popup hidden>
-                      <div class="time-picker-header">
-                        <div>
-                          <div class="time-picker-title">Sélecteur d'heure</div>
-                          <div class="time-picker-current" data-time-current></div>
-                        </div>
-                      </div>
-
-                      <div class="time-picker-columns">
-                        <div class="time-picker-column">
-                          <div class="time-picker-column-title">Heures</div>
-                          <div class="time-picker-options" data-time-hours></div>
-                        </div>
-
-                        <div class="time-picker-column">
-                          <div class="time-picker-column-title">Minutes</div>
-                          <div class="time-picker-options" data-time-minutes></div>
-                        </div>
-                      </div>
-
-                      <div class="time-picker-footer">
-                        <button class="time-picker-footer-btn time-picker-cancel" type="button" data-time-cancel>Annuler</button>
-                        <button class="time-picker-footer-btn time-picker-accept" type="button" data-time-accept>Accepter</button>
-                      </div>
-                    </div>
-                  </div>
+                  {{ time_picker('active_slot_end_time', 'active_slot_end_time', active_slot_form.end_time, True) }}
                 </div>
               </div>
 
@@ -298,7 +175,7 @@
           <section class="config-section-block active-slots-hero">
             <div class="active-slots-hero__head">
               <div>
-                <h3>Blocages horaires</h3>
+                <h3>Bloquer une plage horaire à l'horaire normal</h3>
                 <p class="field-help">Planifiez une indisponibilité ponctuelle, répétitive ou liée à une période.</p>
               </div>
             </div>
@@ -329,116 +206,12 @@
 
                 <div class="config-row">
                   <label for="blocked_start_time">Début</label>
-                  <div class="time-picker-field" data-time-field>
-                    <div class="time-picker-row">
-                      <input
-                        id="blocked_start_time"
-                        class="time-picker-input"
-                        type="text"
-                        name="blocked_start_time"
-                        value="{{ blocked_slot_form.start_time }}"
-                        placeholder="HH:MM"
-                        readonly
-                        autocomplete="off"
-                        spellcheck="false"
-                        required
-                        data-time-input
-                      >
-                      <button
-                        class="calendar-date-button time-picker-toggle"
-                        type="button"
-                        data-time-toggle
-                        aria-label="Ouvrir le sélecteur d'heure"
-                      >
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
-                          <path d="M12 7V12L15 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                      </button>
-                    </div>
-                    <div class="time-picker-popup hidden" data-time-popup hidden>
-                      <div class="time-picker-header">
-                        <div>
-                          <div class="time-picker-title">Sélecteur d'heure</div>
-                          <div class="time-picker-current" data-time-current></div>
-                        </div>
-                      </div>
-
-                      <div class="time-picker-columns">
-                        <div class="time-picker-column">
-                          <div class="time-picker-column-title">Heures</div>
-                          <div class="time-picker-options" data-time-hours></div>
-                        </div>
-
-                        <div class="time-picker-column">
-                          <div class="time-picker-column-title">Minutes</div>
-                          <div class="time-picker-options" data-time-minutes></div>
-                        </div>
-                      </div>
-
-                      <div class="time-picker-footer">
-                        <button class="time-picker-footer-btn time-picker-cancel" type="button" data-time-cancel>Annuler</button>
-                        <button class="time-picker-footer-btn time-picker-accept" type="button" data-time-accept>Accepter</button>
-                      </div>
-                    </div>
-                  </div>
+                  {{ time_picker('blocked_start_time', 'blocked_start_time', blocked_slot_form.start_time, True) }}
                 </div>
 
                 <div class="config-row">
                   <label for="blocked_end_time">Fin</label>
-                  <div class="time-picker-field" data-time-field>
-                    <div class="time-picker-row">
-                      <input
-                        id="blocked_end_time"
-                        class="time-picker-input"
-                        type="text"
-                        name="blocked_end_time"
-                        value="{{ blocked_slot_form.end_time }}"
-                        placeholder="HH:MM"
-                        readonly
-                        autocomplete="off"
-                        spellcheck="false"
-                        required
-                        data-time-input
-                      >
-                      <button
-                        class="calendar-date-button time-picker-toggle"
-                        type="button"
-                        data-time-toggle
-                        aria-label="Ouvrir le sélecteur d'heure"
-                      >
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
-                          <path d="M12 7V12L15 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                      </button>
-                    </div>
-                    <div class="time-picker-popup hidden" data-time-popup hidden>
-                      <div class="time-picker-header">
-                        <div>
-                          <div class="time-picker-title">Sélecteur d'heure</div>
-                          <div class="time-picker-current" data-time-current></div>
-                        </div>
-                      </div>
-
-                      <div class="time-picker-columns">
-                        <div class="time-picker-column">
-                          <div class="time-picker-column-title">Heures</div>
-                          <div class="time-picker-options" data-time-hours></div>
-                        </div>
-
-                        <div class="time-picker-column">
-                          <div class="time-picker-column-title">Minutes</div>
-                          <div class="time-picker-options" data-time-minutes></div>
-                        </div>
-                      </div>
-
-                      <div class="time-picker-footer">
-                        <button class="time-picker-footer-btn time-picker-cancel" type="button" data-time-cancel>Annuler</button>
-                        <button class="time-picker-footer-btn time-picker-accept" type="button" data-time-accept>Accepter</button>
-                      </div>
-                    </div>
-                  </div>
+                  {{ time_picker('blocked_end_time', 'blocked_end_time', blocked_slot_form.end_time, True) }}
                 </div>
 
                 <div class="config-row">
