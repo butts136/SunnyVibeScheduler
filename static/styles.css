@@ -15078,11 +15078,24 @@ body.calendar-body.calendar-day-modal-open .time-divider.is-subtick {
 }
 
 @media (max-width: 420px) {
+  .settings-tabs,
+  .menu-body .settings-tabs,
+  .menu-admin-shell .settings-tabs,
+  .public-menu-shell .settings-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.45rem;
+    align-items: stretch;
+  }
+
   .settings-tab-btn,
   .menu-body .settings-tab-btn,
   .menu-admin-shell .settings-tab-btn,
   .public-menu-shell .settings-tab-btn {
-    flex-basis: 100%;
+    flex-basis: auto;
+    width: 100%;
+    min-height: 40px;
+    padding-inline: 0.6rem;
   }
 
   body.admin-body #active-slots-panel .time-picker,
