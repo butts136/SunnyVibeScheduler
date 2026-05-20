@@ -1,5 +1,7 @@
 import base64
 import calendar as pycalendar
+import copy
+import gzip
 import hashlib
 import hmac
 import json
@@ -9,6 +11,7 @@ import os
 import re
 import secrets
 import sqlite3
+import threading
 import unicodedata
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -41,6 +44,11 @@ DATABASE_PATH = DATA_DIR / 'sunnyvibe.db'
 RESERVATION_CONFIG_PATH = DATA_DIR / 'reservation_config.json'
 INVITATION_CONFIG_PATH = DATA_DIR / 'invitation_config.json'
 MENU_PATH = DATA_DIR / 'menu.json'
+_FILE_WRITE_LOCK = threading.RLock()
+_MENU_PAYLOAD_CACHE = {
+    'mtime_ns': None,
+    'payload': None,
+}
 DEFAULT_MENU_DISCLAIMER_TEXTS = [
     "Il est à noter que nous ne pouvons garantir que nos produits, une fois reconstitués au Sunny Vibes Nutrition, seront exempts de quelconque allergène ou intolérance.",
     "Il est donc IMPORTANT de nous aviser si vous avez des ALLERGIES et/ou une INTOLÉRANCE dès votre arrivée.",
@@ -198,15 +206,31 @@ MENU_CATEGORY_OPTIONS = [
 
 def _get_db_connection():
     DATA_DIR.mkdir(exist_ok=True)
-    conn = sqlite3.connect(DATABASE_PATH)
+    conn = sqlite3.connect(DATABASE_PATH, timeout=5)
     conn.row_factory = sqlite3.Row
     conn.execute('PRAGMA foreign_keys = ON')
+    conn.execute('PRAGMA busy_timeout = 5000')
+    conn.execute('PRAGMA synchronous = NORMAL')
+    conn.execute('PRAGMA temp_store = MEMORY')
     return conn
+
+
+def _atomic_write_text(path, text, encoding='utf-8'):
+    path.parent.mkdir(exist_ok=True)
+    tmp_path = path.with_name(f'.{path.name}.{os.getpid()}.{threading.get_ident()}.tmp')
+    with _FILE_WRITE_LOCK:
+        tmp_path.write_text(text, encoding=encoding)
+        os.replace(tmp_path, path)
+
+
+def _write_json_file(path, payload):
+    _atomic_write_text(path, json.dumps(payload, indent=2), encoding='utf-8')
 
 
 def _init_db():
     conn = _get_db_connection()
     try:
+        conn.execute('PRAGMA journal_mode = WAL')
         conn.executescript(
             '''
             CREATE TABLE IF NOT EXISTS users (
@@ -589,7 +613,7 @@ def _load_opening_hours_payload():
         }
         if len(active_special_dates) != len(normalized_special_dates):
             normalized_payload['updated_at'] = datetime.now(timezone.utc).isoformat()
-            OPENING_HOURS_PATH.write_text(json.dumps(normalized_payload, indent=2), encoding='utf-8')
+            _write_json_file(OPENING_HOURS_PATH, normalized_payload)
         return normalized_payload
     except (json.JSONDecodeError, OSError, ValueError):
         return {
@@ -959,7 +983,7 @@ def _save_opening_hours_payload(opening_hours=None, holidays=None, special_dates
             special_dates if special_dates is not None else current_payload.get('special_dates', [])
         ),
     }
-    OPENING_HOURS_PATH.write_text(json.dumps(payload, indent=2), encoding='utf-8')
+    _write_json_file(OPENING_HOURS_PATH, payload)
 
 
 def _save_opening_hours(opening_hours):
@@ -1078,6 +1102,9 @@ def _normalize_menu_payload(raw_payload):
     normalized_ingredients = []
     if isinstance(raw_ingredients, list):
         normalized_ingredients = _dedupe_menu_labels(raw_ingredients)
+    normalized_ingredient_map = {
+        ingredient.casefold(): ingredient for ingredient in normalized_ingredients
+    }
 
     raw_items = raw_payload.get('items', [])
     normalized_items = []
@@ -1098,9 +1125,7 @@ def _normalize_menu_payload(raw_payload):
                     'category': category_key,
                     'description': str(item.get('description', '')).strip(),
                     'price': str(item.get('price', '')).strip(),
-                    'ingredients': _dedupe_menu_labels(item.get('ingredients', []), existing_map={
-                        ingredient.casefold(): ingredient for ingredient in normalized_ingredients
-                    }),
+                    'ingredients': _dedupe_menu_labels(item.get('ingredients', []), existing_map=normalized_ingredient_map),
                     'is_active': bool(item.get('is_active', True)),
                 }
             )
@@ -1159,7 +1184,14 @@ def _save_menu_payload(menu_payload):
     DATA_DIR.mkdir(exist_ok=True)
     payload = _normalize_menu_payload(menu_payload)
     payload['updated_at'] = datetime.now(timezone.utc).isoformat()
-    MENU_PATH.write_text(json.dumps(payload, indent=2), encoding='utf-8')
+    _write_json_file(MENU_PATH, payload)
+    try:
+        mtime_ns = MENU_PATH.stat().st_mtime_ns
+    except OSError:
+        mtime_ns = None
+    with _FILE_WRITE_LOCK:
+        _MENU_PAYLOAD_CACHE['mtime_ns'] = mtime_ns
+        _MENU_PAYLOAD_CACHE['payload'] = copy.deepcopy(payload)
 
 
 def _load_menu_payload():
@@ -1168,6 +1200,15 @@ def _load_menu_payload():
         payload = _default_menu_payload()
         _save_menu_payload(payload)
         return _normalize_menu_payload(payload)
+
+    try:
+        mtime_ns = MENU_PATH.stat().st_mtime_ns
+    except OSError:
+        mtime_ns = None
+    with _FILE_WRITE_LOCK:
+        cached_payload = _MENU_PAYLOAD_CACHE.get('payload')
+        if cached_payload is not None and _MENU_PAYLOAD_CACHE.get('mtime_ns') == mtime_ns:
+            return copy.deepcopy(cached_payload)
 
     try:
         raw_payload = json.loads(MENU_PATH.read_text(encoding='utf-8'))
@@ -1179,19 +1220,25 @@ def _load_menu_payload():
     payload = _normalize_menu_payload(raw_payload)
     if payload != raw_payload:
         _save_menu_payload(payload)
+    else:
+        with _FILE_WRITE_LOCK:
+            _MENU_PAYLOAD_CACHE['mtime_ns'] = mtime_ns
+            _MENU_PAYLOAD_CACHE['payload'] = copy.deepcopy(payload)
     return payload
 
 
 def _group_menu_items_by_category(menu_payload):
-    payload = _normalize_menu_payload(menu_payload)
+    payload = menu_payload if isinstance(menu_payload, dict) else _default_menu_payload()
     items = payload.get('items', [])
     grouped = {'all': list(items)}
-
+    grouped_by_key = {}
+    for item in items:
+        grouped_by_key.setdefault(item.get('category'), []).append(item)
     for category in payload.get('categories', []):
         key = category.get('key')
         if not key or key == 'all':
             continue
-        grouped[key] = [item for item in items if item.get('category') == key]
+        grouped[key] = list(grouped_by_key.get(key, []))
 
     return grouped
 
@@ -1388,7 +1435,7 @@ def _save_invitation_config(invitation_config):
         'updated_at': datetime.now(timezone.utc).isoformat(),
         'invitation_config': _normalize_invitation_config(invitation_config),
     }
-    INVITATION_CONFIG_PATH.write_text(json.dumps(payload, indent=2), encoding='utf-8')
+    _write_json_file(INVITATION_CONFIG_PATH, payload)
 
 
 def _generate_one_time_invitation_code(conn, validity_days):
@@ -1502,7 +1549,7 @@ def _save_reservation_config(reservation_config):
         'updated_at': datetime.now(timezone.utc).isoformat(),
         'reservation_config': _normalize_reservation_config(reservation_config),
     }
-    RESERVATION_CONFIG_PATH.write_text(json.dumps(payload, indent=2), encoding='utf-8')
+    _write_json_file(RESERVATION_CONFIG_PATH, payload)
 
 
 def _get_reservation_timezone_name(reservation_config=None):
@@ -2999,19 +3046,16 @@ def _save_super_admin_recovery_account(account):
     if not candidate:
         return None
 
-    SUPER_ADMIN_RECOVERY_PATH.write_text(
-        json.dumps(
-            {
-                'identifier': SUPER_ADMIN_IDENTIFIER,
-                'password_salt': candidate['password_salt'],
-                'password_hash': candidate['password_hash'],
-                'created_at': candidate['created_at'],
-                'is_super_admin': True,
-                'signature': _super_admin_recovery_signature(candidate),
-            },
-            indent=2,
-        ),
-        encoding='utf-8',
+    _write_json_file(
+        SUPER_ADMIN_RECOVERY_PATH,
+        {
+            'identifier': SUPER_ADMIN_IDENTIFIER,
+            'password_salt': candidate['password_salt'],
+            'password_hash': candidate['password_hash'],
+            'created_at': candidate['created_at'],
+            'is_super_admin': True,
+            'signature': _super_admin_recovery_signature(candidate),
+        },
     )
 
 
@@ -3119,7 +3163,7 @@ def _save_admin_accounts(accounts, ensure_super_admin=True):
         'version': 2,
         'encrypted_payload': encrypted_payload,
     }
-    ADMIN_STORE_PATH.write_text(json.dumps(container, indent=2), encoding='utf-8')
+    _write_json_file(ADMIN_STORE_PATH, container)
 
 
 def _find_admin_account(identifier):
@@ -3313,9 +3357,48 @@ def _set_security_headers(response):
     response.headers['X-Frame-Options'] = 'DENY'
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
     response.headers['X-XSS-Protection'] = '1; mode=block'
-    if request.endpoint == 'static' and request.args.get('v'):
+    if (request.endpoint == 'static' and request.args.get('v')) or request.endpoint == 'favicon':
         response.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
+    if _should_gzip_response(response):
+        compressed_payload = gzip.compress(response.get_data())
+        response.set_data(compressed_payload)
+        response.headers['Content-Encoding'] = 'gzip'
+        response.headers['Content-Length'] = str(len(compressed_payload))
+        response.headers['Vary'] = _append_vary_header(response.headers.get('Vary'), 'Accept-Encoding')
     return response
+
+
+def _append_vary_header(current_value, value):
+    existing_values = [
+        item.strip()
+        for item in str(current_value or '').split(',')
+        if item.strip()
+    ]
+    if value.lower() not in {item.lower() for item in existing_values}:
+        existing_values.append(value)
+    return ', '.join(existing_values)
+
+
+def _should_gzip_response(response):
+    if 'gzip' not in request.headers.get('Accept-Encoding', '').lower():
+        return False
+    if response.direct_passthrough or response.status_code < 200 or response.status_code >= 300:
+        return False
+    if response.headers.get('Content-Encoding'):
+        return False
+    content_type = response.mimetype or ''
+    if content_type not in {
+        'text/html',
+        'text/css',
+        'text/plain',
+        'application/json',
+        'application/javascript',
+        'text/javascript',
+        'image/svg+xml',
+    }:
+        return False
+    content_length = response.calculate_content_length()
+    return bool(content_length and content_length >= 1024)
 
 
 @app.errorhandler(Exception)
@@ -5513,10 +5596,11 @@ if __name__ == '__main__':
         flask_port = int(os.environ.get(port_env_var, '39048'))
     except ValueError:
         flask_port = 39048
-    flask_host = os.environ.get('FLASK_RUN_HOST', '0.0.0.0')
+    flask_host = os.environ.get('FLASK_RUN_HOST', '127.0.0.1')
+    default_server_name = 'waitress'
     server_name = os.environ.get(
         'SUNNYVIBE_SERVER',
-        'waitress' if production_mode else 'flask',
+        default_server_name,
     ).strip().lower()
 
     app.logger.info(
@@ -5529,22 +5613,25 @@ if __name__ == '__main__':
     )
 
     if server_name == 'waitress':
-        from waitress import serve
-
-        serve(
-            app,
-            host=flask_host,
-            port=flask_port,
-            threads=int(os.environ.get('SUNNYVIBE_WAITRESS_THREADS', '8')),
-            connection_limit=int(os.environ.get('SUNNYVIBE_WAITRESS_CONNECTION_LIMIT', '80')),
-            channel_timeout=int(os.environ.get('SUNNYVIBE_WAITRESS_CHANNEL_TIMEOUT', '30')),
-        )
-        raise SystemExit(0)
+        try:
+            from waitress import serve
+        except ImportError:
+            app.logger.warning('Waitress is unavailable; falling back to Flask threaded server.')
+        else:
+            serve(
+                app,
+                host=flask_host,
+                port=flask_port,
+                threads=int(os.environ.get('SUNNYVIBE_WAITRESS_THREADS', '24')),
+                connection_limit=int(os.environ.get('SUNNYVIBE_WAITRESS_CONNECTION_LIMIT', '200')),
+                channel_timeout=int(os.environ.get('SUNNYVIBE_WAITRESS_CHANNEL_TIMEOUT', '30')),
+            )
+            raise SystemExit(0)
 
     app.run(
         host=flask_host,
         port=flask_port,
         debug=flask_debug_enabled,
-        threaded=False,
+        threaded=True,
         use_reloader=flask_debug_enabled,
     )
