@@ -720,7 +720,9 @@
       const hoursLabel = formatWindowsLabel(dayData.windows);
       const isClosedDay = dayData.totalMinutes === 0;
       const bookingCount = getBookingCountForDate(cellDate);
-      const bookingCountText = bookingCount === 1 ? '1 réservation' : `${bookingCount} réservations`;
+      const bookingCountText = isBookingsDashboardPage
+        ? String(bookingCount)
+        : (bookingCount === 1 ? '1 réservation' : `${bookingCount} réservations`);
       const dayStateText = showFinishedBadge
         ? 'Terminé'
         : (isClosedDay
@@ -821,7 +823,9 @@
       const holidayData = getHolidayForDate(cellDate);
       const isClosedDay = dayData.totalMinutes === 0;
       const bookingCount = getBookingCountForDate(cellDate);
-      const bookingCountText = bookingCount === 1 ? '1 réservation' : `${bookingCount} réservations`;
+      const bookingCountText = isBookingsDashboardPage
+        ? String(bookingCount)
+        : (bookingCount === 1 ? '1 réservation' : `${bookingCount} réservations`);
       const dayStateText = isClosedDay
         ? 'Fermé'
         : (isAdminMode
@@ -1011,7 +1015,9 @@
       entries.push({
         date,
         bookingCount,
-        bookingCountText: bookingCount === 1 ? '1 réservation' : `${bookingCount} réservations`,
+        bookingCountText: isBookingsDashboardPage
+          ? String(bookingCount)
+          : (bookingCount === 1 ? '1 réservation' : `${bookingCount} réservations`),
         availableIntervalsLabel: formatWindowsLabel(intervalsForLabel),
         hasPartialReservations: Boolean(dayData.hasPartialReservations),
       });
@@ -2401,7 +2407,6 @@
         </div>
         <div class="bookings-overview-card__meta">
           <div>
-            <small>Réservations</small>
             <strong>${escapeHtml(entry.bookingCount)}</strong>
           </div>
           <div>

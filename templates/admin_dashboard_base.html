@@ -1228,6 +1228,7 @@
       const detailsHtml = `${pastSectionHtml}${upcomingEmptyHtml}${upcomingHtml}`;
 
       adminBookingsDetailsList.innerHTML = detailsHtml;
+      adminBookingsDetailsList.dataset.dateKey = dateKey;
     };
 
     const selectBookingInAdminView = (bookingId, scrollTarget = '') => {
@@ -1392,7 +1393,11 @@
       if (!selectedDateKey) {
         return;
       }
-      setBookingManagerMobileView('grid');
+      const previousDateKey = adminBookingsDetailsList ? (adminBookingsDetailsList.dataset.dateKey || '') : '';
+      const dateChanged = previousDateKey !== selectedDateKey;
+      if (dateChanged) {
+        setBookingManagerMobileView('grid');
+      }
       renderBookingsDetailListForDate(selectedDateKey);
     });
 

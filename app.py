@@ -22,42 +22,20 @@ from flask import Flask, jsonify, redirect, render_template, request, send_from_
 from werkzeug.exceptions import HTTPException
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-BASE_DIR = Path(__file__).resolve().parent
-DATA_DIR = BASE_DIR / 'data'
-
-
-def _load_or_create_persistent_secret_key():
-    secret_path = DATA_DIR / '.flask-secret-key'
-    try:
-        if secret_path.exists():
-            existing_secret = secret_path.read_text(encoding='utf-8').strip()
-            if existing_secret:
-                return existing_secret
-        DATA_DIR.mkdir(exist_ok=True)
-        generated_secret = secrets.token_hex(32)
-        secret_path.write_text(generated_secret, encoding='utf-8')
-        return generated_secret
-    except OSError:
-        return secrets.token_hex(32)
-
-
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
-_configured_secret_key = os.environ.get('FLASK_SECRET_KEY', '').strip()
-_require_env_secret = os.environ.get('SUNNYVIBE_REQUIRE_SECRET', '').strip().lower() in {'1', 'true', 'yes', 'on'}
-if _require_env_secret and not _configured_secret_key:
-    raise RuntimeError('FLASK_SECRET_KEY must be configured before running SunnyVibeScheduler in production.')
-_fallback_key = _load_or_create_persistent_secret_key()
-app.config['SECRET_KEY'] = _configured_secret_key or _fallback_key
+_fallback_key = secrets.token_hex(32)
+app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY', _fallback_key)
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=1)
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_SECURE'] = os.environ.get('COOKIE_SECURE', '').strip().lower() in {'1', 'true', 'yes', 'on'} or os.environ.get('FLASK_ENV') == 'production'
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(days=30)
 
-STATIC_DIR = BASE_DIR / 'static'
-LOG_DIR = BASE_DIR / 'logs'
+DATA_DIR = Path(__file__).resolve().parent / 'data'
+STATIC_DIR = Path(__file__).resolve().parent / 'static'
+LOG_DIR = Path(__file__).resolve().parent / 'logs'
 ADMIN_STORE_PATH = DATA_DIR / 'admin_account.json'
 ADMIN_KEY_PATH = DATA_DIR / 'admin_account.key'
 SUPER_ADMIN_RECOVERY_PATH = DATA_DIR / 'super_admin_account.json'

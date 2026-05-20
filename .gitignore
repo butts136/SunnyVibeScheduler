@@ -44,7 +44,6 @@ data/*.sqlite3
 data/super_admin_account.json
 data/invitation_config.json
 data/.session-secret
-data/.flask-secret-key
 
 # Temporary/local working files
 TEMP_FILES/
