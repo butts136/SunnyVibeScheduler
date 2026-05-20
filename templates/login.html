@@ -113,6 +113,10 @@
           Confirmation du mot de passe
           <input id="adminPasswordConfirmInput" type="password" name="admin_password_confirm" minlength="8" autocomplete="new-password" required>
         </label>
+        <label class="full-width" for="adminSetupTokenInput">
+          Jeton d'installation
+          <input id="adminSetupTokenInput" type="password" name="setup_token" autocomplete="off" placeholder="Requis en production si configuré">
+        </label>
         <div class="full-width actions">
           <button class="btn primary" type="submit">Créer le compte admin</button>
         </div>

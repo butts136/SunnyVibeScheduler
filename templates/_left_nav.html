@@ -105,7 +105,10 @@
 
     <div class="left-nav-links">
       {% if is_user_authenticated or is_admin_authenticated %}
-      <a class="btn" href="{{ url_for('logout') }}">Déconnexion</a>
+      <form class="left-nav-logout-form" method="post" action="{{ url_for('logout') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button class="btn" type="submit">Déconnexion</button>
+      </form>
       {% else %}
       <a class="btn" href="{{ url_for('login') }}">Connexion</a>
       <a class="btn" href="{{ url_for('register') }}">Créer un compte</a>

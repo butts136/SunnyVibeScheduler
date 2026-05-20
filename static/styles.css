@@ -1111,6 +1111,256 @@ img, svg { display: block; max-width: 100%; }
   }
 }
 
+/* Mobile access hardening: keep navigation, dialogs and dense admin grids usable. */
+.left-nav-logout-form {
+  display: contents;
+}
+
+.left-nav-logout-form .btn {
+  width: 100%;
+}
+
+@media (max-width: 980px) {
+  body.nav-open {
+    overflow: hidden;
+    touch-action: none;
+  }
+
+  .left-nav-mobile-bar {
+    min-height: 56px;
+    padding: 8px max(12px, env(safe-area-inset-left)) 8px max(12px, env(safe-area-inset-right));
+    backdrop-filter: blur(18px);
+  }
+
+  .left-nav-toggle {
+    min-height: 44px;
+    max-width: min(58vw, 220px);
+    white-space: nowrap;
+  }
+
+  .left-nav {
+    width: min(84vw, 304px);
+    max-width: calc(100vw - 24px);
+    height: 100dvh;
+    max-height: 100dvh;
+    padding: max(12px, env(safe-area-inset-top)) 10px max(14px, env(safe-area-inset-bottom));
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .left-nav-head {
+    padding: 4px 6px 8px;
+  }
+
+  .sidebar-brand-logo {
+    width: 70px;
+    height: 70px;
+  }
+
+  .left-nav-links {
+    gap: 7px;
+  }
+
+  .left-nav-links .btn,
+  .left-nav .admin-tab,
+  .left-nav-submenu .btn,
+  .left-nav-auth .btn {
+    min-height: 44px;
+    padding: 10px 12px;
+    font-size: 0.94rem;
+    line-height: 1.15;
+    white-space: normal;
+  }
+
+  .left-nav-submenu {
+    max-height: min(52dvh, 360px);
+    overflow-y: auto;
+    padding: 7px;
+  }
+
+  .left-nav-help {
+    font-size: 0.86rem;
+    line-height: 1.35;
+  }
+
+  .left-nav-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    background: rgba(0, 0, 0, 0.54);
+    backdrop-filter: blur(3px);
+  }
+
+  .layout.app-layout > :not(.left-nav):not(.left-nav-toggle):not(.left-nav-backdrop):not(.left-nav-mobile-bar) {
+    min-width: 0;
+    max-width: 100vw;
+    overflow-x: clip;
+  }
+
+  .timeline-container,
+  .reservation-calendar-wrapper,
+  .bookings-table-wrap,
+  .settings-table-wrap,
+  .users-table-wrap,
+  .admin-table-wrap,
+  .nutrition-values-content {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .timeline-container {
+    overflow-y: auto;
+  }
+
+  .user-modal,
+  .booking-modal,
+  .calendar-day-modal,
+  .nutrition-values-modal,
+  dialog.user-modal,
+  dialog.booking-modal {
+    width: min(100vw - 16px, 720px);
+    max-width: calc(100vw - 16px);
+    max-height: calc(100dvh - 16px);
+    margin: auto;
+    overflow: hidden;
+  }
+
+  .user-modal-head,
+  .calendar-day-modal-head {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  .user-modal-content,
+  .booking-modal .user-modal-content,
+  .modal-body,
+  .nutrition-values-content {
+    max-height: calc(100dvh - 132px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .modal-actions,
+  .booking-modal .modal-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+  }
+
+  button,
+  .btn,
+  .calendar-date-button,
+  .time-control button,
+  .bhc-switch,
+  .store-toggle,
+  .range-button,
+  .settings-tab-btn,
+  .menu-filter-button,
+  .menu-tab-action-btn {
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 640px) {
+  .left-nav {
+    width: min(86vw, 292px);
+  }
+
+  .left-nav-toggle {
+    max-width: min(68vw, 200px);
+  }
+
+  .modal-actions,
+  .booking-modal .modal-actions,
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .modal-actions .btn,
+  .booking-modal .modal-actions .btn,
+  .actions .btn {
+    width: 100%;
+  }
+
+  .menu-card-head,
+  .menu-item-head,
+  .menu-admin-item-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .menu-category-pill,
+  .menu-item-category {
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  .nutrition-values-modal {
+    width: 100vw;
+    max-width: 100vw;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+
+  .nutrition-values-content {
+    max-height: calc(100dvh - 72px);
+    overflow: auto;
+  }
+
+  .nutrition-values-content img {
+    width: auto;
+    max-width: none;
+    min-width: 100%;
+  }
+}
+
+/* Signup is a long public form; it must scroll as a normal document. */
+body.register-body {
+  min-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+body.register-body .layout.app-layout {
+  height: auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: visible;
+  align-items: flex-start;
+}
+
+body.register-body .layout.app-layout > .page {
+  height: auto;
+  max-height: none;
+  min-height: auto;
+  overflow: visible;
+  align-content: start;
+  padding-bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
+}
+
+body.register-body .page > .form-card {
+  overflow: visible;
+  align-self: start;
+}
+
+@media (max-width: 980px) {
+  body.register-body .layout.app-layout > .page {
+    padding-top: calc(4.2rem + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(2.5rem + env(safe-area-inset-bottom, 0px));
+    overflow: visible;
+  }
+}
+
 .service-status-card {
   position: relative;
   display: flex;

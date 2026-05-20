@@ -25,12 +25,16 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
+_configured_secret_key = os.environ.get('FLASK_SECRET_KEY', '').strip()
+_production_like = os.environ.get('FLASK_ENV') == 'production' or os.environ.get('SUNNYVIBE_REQUIRE_SECRET', '').strip().lower() in {'1', 'true', 'yes', 'on'}
+if _production_like and not _configured_secret_key:
+    raise RuntimeError('FLASK_SECRET_KEY must be configured before running SunnyVibeScheduler in production.')
 _fallback_key = secrets.token_hex(32)
-app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY', _fallback_key)
+app.config['SECRET_KEY'] = _configured_secret_key or _fallback_key
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=1)
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-app.config['SESSION_COOKIE_SECURE'] = os.environ.get('FLASK_ENV') == 'production'
+app.config['SESSION_COOKIE_SECURE'] = os.environ.get('COOKIE_SECURE', '').strip().lower() in {'1', 'true', 'yes', 'on'} or os.environ.get('FLASK_ENV') == 'production'
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(days=30)
 
 DATA_DIR = Path(__file__).resolve().parent / 'data'
@@ -49,6 +53,9 @@ _MENU_PAYLOAD_CACHE = {
     'mtime_ns': None,
     'payload': None,
 }
+_RATE_LIMIT_LOCK = threading.RLock()
+_RATE_LIMIT_BUCKETS = {}
+_BOOKING_WRITE_LOCK = threading.RLock()
 DEFAULT_MENU_DISCLAIMER_TEXTS = [
     "Il est à noter que nous ne pouvons garantir que nos produits, une fois reconstitués au Sunny Vibes Nutrition, seront exempts de quelconque allergène ou intolérance.",
     "Il est donc IMPORTANT de nous aviser si vous avez des ALLERGIES et/ou une INTOLÉRANCE dès votre arrivée.",
@@ -176,6 +183,7 @@ FRENCH_MONTHS = {
     12: 'Décembre',
 }
 SESSION_IDLE_TIMEOUT_SECONDS = 60 * 60
+PASSWORD_RESET_VERIFICATION_TTL_SECONDS = 15 * 60
 BLOCKED_SLOT_REPEAT_OPTIONS = [
     ('once', 'Une seule fois'),
     ('weekly', 'Chaque semaine'),
@@ -225,6 +233,35 @@ def _atomic_write_text(path, text, encoding='utf-8'):
 
 def _write_json_file(path, payload):
     _atomic_write_text(path, json.dumps(payload, indent=2), encoding='utf-8')
+
+
+def _client_ip():
+    forwarded_for = request.headers.get('X-Forwarded-For', '')
+    if forwarded_for:
+        return forwarded_for.split(',', 1)[0].strip() or request.remote_addr or 'unknown'
+    return request.remote_addr or 'unknown'
+
+
+def _rate_limit_key(bucket, identifier=''):
+    normalized_identifier = str(identifier or '').strip().lower()
+    return f'{bucket}:{_client_ip()}:{normalized_identifier}'
+
+
+def _check_rate_limit(bucket, identifier='', limit=10, window_seconds=900):
+    now_ts = int(datetime.now(timezone.utc).timestamp())
+    key = _rate_limit_key(bucket, identifier)
+    with _RATE_LIMIT_LOCK:
+        attempts = [
+            attempt_ts
+            for attempt_ts in _RATE_LIMIT_BUCKETS.get(key, [])
+            if now_ts - attempt_ts < window_seconds
+        ]
+        if len(attempts) >= limit:
+            _RATE_LIMIT_BUCKETS[key] = attempts
+            return False
+        attempts.append(now_ts)
+        _RATE_LIMIT_BUCKETS[key] = attempts
+    return True
 
 
 def _init_db():
@@ -2585,6 +2622,9 @@ def _validate_booking_request(
 
     requested_start_dt = datetime.combine(date_obj, datetime.min.time()) + timedelta(minutes=start_minutes)
     requested_end_dt = datetime.combine(date_obj, datetime.min.time()) + timedelta(minutes=end_minutes)
+    now_local_naive = _now_in_reservation_timezone(reservation_config).replace(tzinfo=None)
+    if requested_start_dt <= now_local_naive:
+        return False, "Impossible de réserver une plage horaire passée.", None
 
     if reservation_config.get('single_booking_per_day', False):
         day_start_text = datetime.combine(date_obj, datetime.min.time()).isoformat(timespec='minutes')
@@ -3404,6 +3444,8 @@ def _should_gzip_response(response):
 @app.errorhandler(Exception)
 def _log_unhandled_exception(error):
     if isinstance(error, HTTPException):
+        if request.path.startswith('/api/'):
+            return jsonify({'ok': False, 'error': error.description}), error.code
         return error
 
     app.logger.exception(
@@ -3541,6 +3583,10 @@ def register():
 
         password = request.form.get('password', '')
         password_confirm = request.form.get('password_confirm', '')
+
+        rate_identifier = form_data['username'] or form_data['email'] or form_data['phone']
+        if not _check_rate_limit('register', rate_identifier, limit=8, window_seconds=900):
+            errors.append("Trop de tentatives d'inscription. Réessayez dans quelques minutes.")
 
         if not form_data['first_name']:
             errors.append("Le prénom est requis.")
@@ -3760,9 +3806,17 @@ def login():
             form_data['admin_identifier'] = request.form.get('admin_identifier', '').strip()
             admin_password = request.form.get('admin_password', '')
             admin_password_confirm = request.form.get('admin_password_confirm', '')
+            setup_token = request.form.get('setup_token', '').strip()
+            required_setup_token = os.environ.get('INITIAL_ADMIN_SETUP_TOKEN', '').strip()
 
+            if not _check_rate_limit('admin_setup', form_data['admin_identifier'], limit=5, window_seconds=900):
+                errors.append("Trop de tentatives de création administrateur. Réessayez dans quelques minutes.")
             if admin_exists:
                 errors.append("Le compte administrateur existe déjà.")
+            if _production_like and not required_setup_token:
+                errors.append("INITIAL_ADMIN_SETUP_TOKEN doit être configuré pour créer l'administrateur en production.")
+            if _production_like and required_setup_token and setup_token != required_setup_token:
+                errors.append("Jeton d'installation administrateur invalide.")
             if not form_data['admin_identifier']:
                 errors.append("L'identifiant administrateur est requis.")
             if len(admin_password) < 8:
@@ -3793,6 +3847,8 @@ def login():
             form_data['identifier'] = request.form.get('identifier', '').strip()
             password = request.form.get('password', '')
 
+            if not _check_rate_limit('login', form_data['identifier'], limit=12, window_seconds=900):
+                errors.append("Trop de tentatives de connexion. Réessayez dans quelques minutes.")
             if not form_data['identifier']:
                 errors.append("Le nom d'utilisateur, le courriel ou le téléphone est requis.")
             if not password:
@@ -3807,11 +3863,10 @@ def login():
                         admin_account['password_hash'],
                     )
                     if password_ok:
+                        session.clear()
                         session['is_admin_authenticated'] = True
                         session['admin_identifier'] = admin_account['identifier']
                         session['is_super_admin'] = bool(admin_account.get('is_super_admin'))
-                        session.pop('password_reset_user_id', None)
-                        session.pop('password_reset_verified_at', None)
                         session.permanent = True
                         session['last_activity_ts'] = int(datetime.now(timezone.utc).timestamp())
                         return redirect(url_for('admin_dashboard_bookings'))
@@ -3841,12 +3896,9 @@ def login():
                 elif not _verify_user_password(password, user_row['password_hash']):
                     errors.append("Identifiants invalides.")
                 else:
+                    session.clear()
                     session['user_id'] = user_row['id']
                     session['is_admin_authenticated'] = False
-                    session.pop('admin_identifier', None)
-                    session.pop('is_super_admin', None)
-                    session.pop('password_reset_user_id', None)
-                    session.pop('password_reset_verified_at', None)
                     session['must_change_password'] = bool(user_row['must_change_password'])
                     session.permanent = True
                     session['last_activity_ts'] = int(datetime.now(timezone.utc).timestamp())
@@ -3882,6 +3934,15 @@ def password_reset():
     }
     reset_questions = []
     reset_user_id = session.get('password_reset_user_id')
+
+    if reset_user_id:
+        verified_at = _parse_session_activity_timestamp(session.get('password_reset_verified_at'))
+        now_ts = int(datetime.now(timezone.utc).timestamp())
+        if verified_at is None or (now_ts - verified_at) > PASSWORD_RESET_VERIFICATION_TTL_SECONDS:
+            session.pop('password_reset_user_id', None)
+            session.pop('password_reset_verified_at', None)
+            reset_user_id = None
+            errors.append("Session de récupération expirée. Recommencez.")
 
     if reset_user_id:
         conn = _get_db_connection()
@@ -3925,6 +3986,8 @@ def password_reset():
             reset_lookup_data['identifier'] = request.form.get('reset_identifier', '').strip()
             reset_lookup_data['birth_date'] = request.form.get('reset_birth_date', '').strip()
 
+            if not _check_rate_limit('password_reset_lookup', reset_lookup_data['identifier'], limit=8, window_seconds=900):
+                errors.append("Trop de tentatives de récupération. Réessayez dans quelques minutes.")
             if not reset_lookup_data['identifier']:
                 errors.append("Le nom d'utilisateur, le courriel ou le téléphone est requis pour la récupération.")
             if not reset_lookup_data['birth_date']:
@@ -3976,8 +4039,17 @@ def password_reset():
             new_password_confirm = request.form.get('reset_new_password_confirm', '')
 
             reset_user_id = session.get('password_reset_user_id')
+            verified_at = _parse_session_activity_timestamp(session.get('password_reset_verified_at'))
+            now_ts = int(datetime.now(timezone.utc).timestamp())
+            if verified_at is None or (now_ts - verified_at) > PASSWORD_RESET_VERIFICATION_TTL_SECONDS:
+                session.pop('password_reset_user_id', None)
+                session.pop('password_reset_verified_at', None)
+                reset_user_id = None
+                errors.append("Session de récupération expirée. Recommencez.")
             if not reset_user_id:
                 errors.append("Commencez par vérifier votre identité.")
+            if reset_user_id and not _check_rate_limit('password_reset_answer', str(reset_user_id), limit=8, window_seconds=900):
+                errors.append("Trop de tentatives de réponse de sécurité. Réessayez dans quelques minutes.")
             if reset_password_data['question_index'] not in {'1', '2', '3'}:
                 errors.append("Question de sécurité invalide.")
             if not reset_answer:
@@ -4098,7 +4170,7 @@ def create_booking():
         return jsonify({'ok': False, 'error': 'Vous devez d’abord changer votre mot de passe.'}), 403
 
     if not _validate_csrf_token():
-        return jsonify({'ok': False, 'error': 'Jeton de sécurité invalide. Veuillez réessayer.'}), 400
+        return jsonify({'ok': False, 'error': 'Jeton de sécurité invalide. Veuillez réessayer.'}), 403
 
     payload = request.get_json(silent=True) or request.form
     date_text = str(payload.get('date', '')).strip()
@@ -4119,48 +4191,53 @@ def create_booking():
     else:
         is_private = bool(raw_is_private)
 
-    is_valid, error_message, _ = _validate_booking_request(
-        user_id,
-        date_text,
-        start_text,
-        end_text,
-        companion_count=companion_count,
-        is_private=is_private,
-    )
-    if not is_valid:
-        return jsonify({'ok': False, 'error': error_message}), 400
-
-    start_storage = _date_and_time_to_storage(date_text, start_text)
-    end_storage = _date_and_time_to_storage(date_text, end_text)
-
-    conn = _get_db_connection()
-    try:
-        conn.execute(
-            '''
-            INSERT INTO bookings (
-                user_id,
-                start,
-                end,
-                title,
-                allow_companion,
-                companion_count,
-                is_private
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-            ''',
-            (
-                user_id,
-                start_storage,
-                end_storage,
-                title or None,
-                1 if companion_count > 0 else 0,
-                companion_count,
-                1 if is_private else 0,
-            ),
+    with _BOOKING_WRITE_LOCK:
+        is_valid, error_message, _ = _validate_booking_request(
+            user_id,
+            date_text,
+            start_text,
+            end_text,
+            companion_count=companion_count,
+            is_private=is_private,
         )
-        conn.commit()
-    finally:
-        conn.close()
+        if not is_valid:
+            return jsonify({'ok': False, 'error': error_message}), 400
+
+        start_storage = _date_and_time_to_storage(date_text, start_text)
+        end_storage = _date_and_time_to_storage(date_text, end_text)
+
+        conn = _get_db_connection()
+        try:
+            conn.execute('BEGIN IMMEDIATE')
+            conn.execute(
+                '''
+                INSERT INTO bookings (
+                    user_id,
+                    start,
+                    end,
+                    title,
+                    allow_companion,
+                    companion_count,
+                    is_private
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                ''',
+                (
+                    user_id,
+                    start_storage,
+                    end_storage,
+                    title or None,
+                    1 if companion_count > 0 else 0,
+                    companion_count,
+                    1 if is_private else 0,
+                ),
+            )
+            conn.commit()
+        except Exception:
+            conn.rollback()
+            raise
+        finally:
+            conn.close()
 
     return jsonify({'ok': True})
 
@@ -4415,8 +4492,14 @@ def my_account():
     )
 
 
-@app.route('/logout')
+@app.route('/logout', methods=['GET', 'POST'])
 def logout():
+    if request.method != 'POST':
+        return redirect(url_for('index'))
+    if not _validate_csrf_token():
+        if request.path.startswith('/api/'):
+            return jsonify({'ok': False, 'error': 'Jeton de sécurité invalide. Veuillez réessayer.'}), 403
+        return redirect(url_for('index'))
     session.clear()
     return redirect(url_for('index'))
 
