@@ -27,6 +27,10 @@ function minutesToTime(value: number) {
   return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
 }
 
+function formatWindowLabel(start: number, end: number) {
+  return `${minutesToTime(start)} - ${minutesToTime(end)}`;
+}
+
 export function SunnyGymClient({
   csrfToken,
   userCanBook,
@@ -100,6 +104,15 @@ export function SunnyGymClient({
                 >
                   <strong>{day.label}</strong>
                   <span className="muted">{day.weekday}</span>
+                  <div className="calendar-day-hours">
+                    {day.windows.length > 0 ? day.windows.map((window) => (
+                      <span key={`${day.dateKey}-${window.start}-${window.end}`}>
+                        {formatWindowLabel(window.start, window.end)}
+                      </span>
+                    )) : (
+                      <span>Fermé</span>
+                    )}
+                  </div>
                   <div className="badge-row">
                     <span className="badge neutral">{day.closed ? 'Fermé' : `${day.windows.length} plage(s)`}</span>
                     <span className="badge">{day.remainingCapacity} place(s) restantes</span>
