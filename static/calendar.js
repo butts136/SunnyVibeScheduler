@@ -1053,6 +1053,7 @@
       }
       if (selectedDateSubtextEl) {
         selectedDateSubtextEl.textContent = 'Sélectionnez une date dans le calendrier.';
+        selectedDateSubtextEl.hidden = false;
       }
       if (daySummaryEl) {
         daySummaryEl.innerHTML = '';
@@ -1092,12 +1093,15 @@
       })
     );
 
-    if (data.totalMinutes === 0) {
-      selectedDateSubtextEl.textContent = 'Salle fermée pour cette journée.';
-    } else if (data.hasAvailability) {
-      selectedDateSubtextEl.textContent = `Plage ouverte: ${windowsLabel}. Des plages sont encore disponibles.`;
-    } else {
-      selectedDateSubtextEl.textContent = `Plage ouverte: ${windowsLabel}. Plus aucune disponibilité pour cette journée.`;
+    if (selectedDateSubtextEl) {
+      selectedDateSubtextEl.textContent = isCalendarPage ? '' : (
+        data.totalMinutes === 0
+          ? 'Salle fermée pour cette journée.'
+          : (data.hasAvailability
+            ? `Plage ouverte: ${windowsLabel}. Des plages sont encore disponibles.`
+            : `Plage ouverte: ${windowsLabel}. Plus aucune disponibilité pour cette journée.`)
+      );
+      selectedDateSubtextEl.hidden = isCalendarPage;
     }
 
     daySummaryEl.innerHTML = '';
