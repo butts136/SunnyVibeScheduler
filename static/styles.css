@@ -15308,6 +15308,14 @@ body.calendar-body.calendar-day-modal-open .time-divider.is-subtick {
     padding: 1.25rem 1rem;
   }
 
+  body.calendar-body {
+    --calendar-mobile-nav-offset: 78px;
+  }
+
+  body.calendar-body .layout.app-layout > .calendar-main {
+    padding-top: calc(var(--calendar-mobile-nav-offset) + env(safe-area-inset-top, 0px)) !important;
+  }
+
   .sidebar-brand-logo {
     width: 82px;
     height: 82px;
