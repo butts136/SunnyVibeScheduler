@@ -13481,10 +13481,14 @@ body.calendar-body.calendar-booking-view-open .booking-modal {
   color: var(--text);
   background: transparent;
   box-shadow: none;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 body.calendar-body.calendar-booking-view-open .booking-modal .user-modal-content {
+  display: block;
   height: 100%;
   min-height: 0;
   max-height: 100%;
@@ -13496,8 +13500,10 @@ body.calendar-body.calendar-booking-view-open .booking-modal .user-modal-content
 }
 
 body.calendar-body.calendar-booking-view-open .booking-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   align-content: start;
-  gap: 0.5rem;
+  gap: 0.38rem 0.55rem;
   min-height: max-content;
   padding-bottom: calc(0.8rem + env(safe-area-inset-bottom, 0px));
 }
@@ -13520,9 +13526,9 @@ body.calendar-body.calendar-booking-view-open .user-modal-head h3 {
 }
 
 body.calendar-body.calendar-booking-view-open .booking-rules {
-  gap: 0.14rem;
-  margin-bottom: 0.45rem;
-  padding: 0.45rem 0.55rem;
+  gap: 0.1rem;
+  margin: 0 0 0.35rem;
+  padding: 0.34rem 0.48rem;
   border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.035);
@@ -13534,7 +13540,7 @@ body.calendar-body.calendar-booking-view-open .booking-rules p {
 }
 
 body.calendar-body.calendar-booking-view-open .booking-field {
-  gap: 0.28rem;
+  gap: 0.18rem;
 }
 
 body.calendar-body.calendar-booking-view-open .booking-field label,
@@ -13545,16 +13551,27 @@ body.calendar-body.calendar-booking-view-open .checkbox-row > label {
 
 body.calendar-body.calendar-booking-view-open .booking-field input,
 body.calendar-body.calendar-booking-view-open .time-input-wrap input {
-  min-height: 36px;
-  height: 36px;
-  padding-block: 0.35rem;
-  font-size: 0.88rem;
+  min-height: 32px;
+  height: 32px;
+  padding: 0.28rem 0.55rem;
+  border-radius: 9px;
+  font-size: 0.84rem;
+}
+
+body.calendar-body.calendar-booking-view-open .time-input-wrap {
+  grid-template-columns: minmax(0, 1fr) 26px;
+  gap: 0.3rem;
+}
+
+body.calendar-body.calendar-booking-view-open .time-arrows {
+  gap: 0.18rem;
 }
 
 body.calendar-body.calendar-booking-view-open .time-arrow-btn {
-  width: 28px;
-  height: 17px;
-  border-radius: 7px;
+  width: 26px;
+  height: 15px;
+  border-radius: 6px;
+  font-size: 0.58rem;
 }
 
 body.calendar-body.calendar-booking-view-open .field-help {
@@ -13564,7 +13581,37 @@ body.calendar-body.calendar-booking-view-open .field-help {
 }
 
 body.calendar-body.calendar-booking-view-open .booking-form-actions {
-  margin-top: 0.2rem;
+  margin-top: 0.1rem;
+}
+
+body.calendar-body.calendar-booking-view-open .booking-form-actions .btn {
+  min-height: 34px;
+  padding-block: 0.42rem;
+}
+
+@media (max-width: 640px) {
+  body.calendar-body.calendar-booking-view-open .booking-modal {
+    padding: 0.32rem 0.38rem 0.45rem;
+  }
+
+  body.calendar-body.calendar-booking-view-open .booking-modal .user-modal-content {
+    height: auto;
+    max-height: calc(100dvh - var(--calendar-mobile-nav-offset, 60px) - 3.1rem);
+  }
+
+  body.calendar-body.calendar-booking-view-open .booking-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.34rem;
+  }
+
+  body.calendar-body.calendar-booking-view-open .user-modal-head {
+    padding-bottom: 0.38rem;
+    margin-bottom: 0.38rem;
+  }
+
+  body.calendar-body.calendar-booking-view-open .booking-rules {
+    padding: 0.3rem 0.42rem;
+  }
 }
 
 body.calendar-body .calendar-back-btn {
