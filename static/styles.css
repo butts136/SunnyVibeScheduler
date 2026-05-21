@@ -9701,9 +9701,9 @@ body.admin-body #opening-hours-panel .opening-hours-toggle__input {
 
 body.admin-body #opening-hours-panel .opening-hours-time-range {
   display: grid;
-  grid-template-columns: max-content auto max-content;
+  grid-template-columns: minmax(0, 132px) auto minmax(0, 132px);
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   width: fit-content;
   justify-self: start;
 }
@@ -9745,6 +9745,13 @@ body.admin-body #opening-hours-panel .opening-hours-time-range input[type="time"
   font-weight: 700;
   letter-spacing: 0.5px;
   box-shadow: 0 5px 12px rgba(0, 0, 0, 0.16);
+}
+
+body.admin-body #opening-hours-panel .opening-hours-time-input {
+  width: 100%;
+  min-width: 0;
+  max-width: 132px;
+  justify-self: start;
 }
 
 body.admin-body #opening-hours-panel .time-picker-toggle,
@@ -15033,7 +15040,11 @@ body.calendar-body.calendar-day-modal-open .time-divider.is-subtick {
     padding-left: 0.2rem;
   }
 
-  body.admin-body #opening-hours-panel .opening-hours-time-range .time-picker,
+  body.admin-body #opening-hours-panel .opening-hours-time-input {
+    width: 100%;
+    max-width: none;
+  }
+
   body.admin-body #active-slots-panel .time-picker {
     width: min(100%, 250px);
   }
