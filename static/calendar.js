@@ -1140,7 +1140,7 @@
     renderTimelinePlaceHeaders(data.capacity, !usesIntegratedTimelineHeaders);
     const timelineHourHeight = isMobileTimelineGrid ? 72 : (usesIntegratedTimelineHeaders ? 32 : HOUR_HEIGHT);
     const timelineHeaderHeight = usesIntegratedTimelineHeaders ? (isMobileTimelineGrid ? 24 : 34) : 0;
-    const mobileTimelineEndInset = isMobileTimelineGrid ? 18 : 0;
+    const mobileTimelineEndInset = isMobileBookingsManager ? 18 : 0;
     const mobileTimelineNoScrollLimitMinutes = 240;
     let timelineScale = 1;
     let availableHeight = 0;
@@ -1198,7 +1198,9 @@
     }
     const trackContentHeight = spanMinutes * timelineMinuteHeight;
     const trackHeight = trackContentHeight + timelineHeaderHeight + mobileTimelineEndInset;
-    const tickStepMinutes = chooseTimelineStepMinutes(spanMinutes, trackHeight, isMobileTimelineGrid);
+    const tickStepMinutes = isCalendarPage && usesDayPanelModal
+      ? 30
+      : chooseTimelineStepMinutes(spanMinutes, trackHeight, isMobileTimelineGrid);
     const safeCapacity = Math.max(Number(data.capacity) || 1, 1);
 
     const timelineTrackEl = document.createElement('div');

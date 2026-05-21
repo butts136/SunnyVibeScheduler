@@ -13263,7 +13263,7 @@ body.calendar-body.calendar-day-modal-open .calendar-day-modal-panel {
   height: 100%;
   max-height: none;
   min-height: 0;
-  padding: clamp(0.7rem, 1.4vw, 1rem);
+  padding: clamp(0.35rem, 0.9vw, 0.7rem);
   overflow: hidden;
 }
 
@@ -13276,11 +13276,27 @@ body.calendar-body.calendar-day-modal-open .calendar-day-modal-panel > .subtitle
   flex: 0 0 auto;
 }
 
+body.calendar-body.calendar-day-modal-open .calendar-day-modal-head {
+  min-height: 0;
+  margin: 0 0 0.25rem;
+}
+
+body.calendar-body.calendar-day-modal-open .day-panel-head {
+  gap: 0.1rem;
+  margin: 0 0 0.25rem;
+}
+
+body.calendar-body.calendar-day-modal-open .day-panel-head h2 {
+  margin: 0;
+  font-size: clamp(0.98rem, 2.4vw, 1.18rem);
+  line-height: 1.12;
+}
+
 body.calendar-body.calendar-day-modal-open .timeline-container {
   flex: 1 1 auto;
   width: 100%;
   min-height: 0;
-  padding: 0.6rem;
+  padding: 0.35rem;
   overflow-x: auto;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -13365,7 +13381,7 @@ body.calendar-body.calendar-day-modal-open .time-divider.is-subtick {
 
 @media (max-width: 780px) {
   body.calendar-body.calendar-day-modal-open .calendar-day-modal-panel {
-    padding: 0.65rem;
+    padding: 0.28rem 0.35rem 0.4rem;
   }
 
   body.calendar-body.calendar-day-modal-open .day-panel {
@@ -13540,9 +13556,11 @@ body.calendar-body.calendar-booking-view-open .booking-form-actions {
 
 body.calendar-body .calendar-back-btn {
   width: auto;
-  min-height: 38px;
-  padding: 0.45rem 0.86rem;
+  min-height: 28px;
+  padding: 0.24rem 0.58rem;
   border-radius: 999px;
+  font-size: 0.78rem;
+  line-height: 1.1;
 }
 
 .booking-modal .user-modal-content {
@@ -15420,7 +15438,7 @@ body.calendar-body .calendar-back-btn {
   }
 
   body.calendar-body {
-    --calendar-mobile-nav-offset: 78px;
+    --calendar-mobile-nav-offset: 60px;
   }
 
   body.calendar-body .layout.app-layout > .calendar-main {
