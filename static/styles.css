@@ -7285,20 +7285,30 @@ body.calendar-body {
 }
 
 body.calendar-body .layout.app-layout {
-  height: auto;
+  height: 100vh;
+  height: 100dvh;
   min-height: 100vh;
   min-height: 100dvh;
-  overflow: visible;
-  align-items: flex-start;
+  overflow: hidden;
+  align-items: stretch;
 }
 
 body.calendar-body .layout.app-layout > :not(.left-nav):not(.left-nav-toggle):not(.left-nav-backdrop):not(.left-nav-mobile-bar) {
-  height: auto;
-  max-height: none;
-  min-height: auto;
-  overflow: visible;
-  align-self: flex-start;
-  padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  align-self: stretch;
+  padding: clamp(0.55rem, 1.1vw, 1rem);
+}
+
+body.calendar-body .layout.app-layout > .calendar-main {
+  flex: 1 1 auto;
+  width: auto;
+  max-width: none;
+  margin: 0;
 }
 
 body.my-bookings-body {
@@ -7920,9 +7930,28 @@ input[type="number"].number-input {
     overflow: visible;
   }
 
+  body.calendar-body .layout.app-layout {
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+  }
+
   .layout.app-layout > :not(.left-nav):not(.left-nav-toggle):not(.left-nav-backdrop):not(.left-nav-mobile-bar) {
     padding: calc(4.15rem + env(safe-area-inset-top)) 1rem 1.35rem;
     overflow: visible;
+  }
+
+  body.calendar-body .layout.app-layout > .calendar-main {
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+    padding:
+      calc(3.2rem + env(safe-area-inset-top, 0px))
+      clamp(0.12rem, 0.8vw, 0.32rem)
+      calc(0.18rem + env(safe-area-inset-bottom, 0px));
   }
 
   .left-nav-mobile-bar {
@@ -11394,6 +11423,30 @@ body.admin-body #bookings-panel .bookings-overview-calendar {
   min-height: 0;
 }
 
+body.calendar-body .calendar-main,
+body.calendar-body .calendar-shell,
+body.calendar-body .calendar-shell-single,
+body.calendar-body .calendar-panel {
+  width: 100%;
+  max-width: none;
+}
+
+body.calendar-body .calendar-shell,
+body.calendar-body .calendar-shell-single,
+body.calendar-body .calendar-panel {
+  height: 100%;
+}
+
+body.calendar-body .calendar-panel {
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: hidden;
+}
+
 body.calendar-body .reservation-calendar-wrapper,
 body.admin-body #bookings-panel .bookings-overview-calendar .reservation-calendar-wrapper {
   min-height: 0;
@@ -11780,7 +11833,7 @@ body.admin-body #bookings-panel .bookings-overview-calendar .reservation-calenda
   body.calendar-body .layout.app-layout > .calendar-main {
     min-height: 100dvh;
     display: grid;
-    padding-block: clamp(1rem, 2vh, 1.75rem);
+    padding: clamp(0.45rem, 1vw, 0.9rem);
   }
 
   body.calendar-body .calendar-shell,
