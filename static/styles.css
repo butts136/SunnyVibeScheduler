@@ -7928,6 +7928,10 @@ input[type="number"].number-input {
     overflow-x: hidden;
   }
 
+  body.calendar-body {
+    --calendar-mobile-nav-offset: 64px;
+  }
+
   .layout.app-layout {
     display: block;
     min-height: 100vh;
@@ -7954,7 +7958,7 @@ input[type="number"].number-input {
     min-height: 0;
     overflow: hidden;
     padding:
-      calc(3.2rem + env(safe-area-inset-top, 0px))
+      calc(var(--calendar-mobile-nav-offset) + env(safe-area-inset-top, 0px))
       clamp(0.12rem, 0.8vw, 0.32rem)
       calc(0.18rem + env(safe-area-inset-bottom, 0px));
   }
@@ -14433,7 +14437,7 @@ body.calendar-body.calendar-day-modal-open .time-divider.is-subtick {
     max-height: 100dvh;
     min-height: 0;
     padding:
-      calc(3.25rem + env(safe-area-inset-top, 0px))
+      calc(var(--calendar-mobile-nav-offset) + env(safe-area-inset-top, 0px))
       clamp(0.14rem, 0.9vw, 0.34rem)
       calc(0.22rem + env(safe-area-inset-bottom, 0px));
     display: grid;
