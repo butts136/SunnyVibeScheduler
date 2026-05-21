@@ -10,6 +10,7 @@
   const monthLabelEl = document.getElementById('monthLabel');
   const calendarGridEl = document.getElementById('calendarGrid');
   const calendarMobileListEl = document.getElementById('calendarMobileList');
+  const calendarOverviewEl = document.querySelector('.calendar-shell');
   const dayPanelModalEl = document.getElementById('dayPanelModal');
   const closeDayPanelModalBtn = document.getElementById('closeDayPanelModalBtn');
   const prevMonthBtn = document.getElementById('prevMonthBtn');
@@ -214,6 +215,10 @@
       setBookingFormMessage('', '');
       previousTimeValue.set(bookingStartInput, bookingStartInput.value);
       previousTimeValue.set(bookingEndInput, bookingEndInput.value);
+      if (isCalendarPage) {
+        openBookingView();
+        return;
+      }
       if (usesDayPanelModal && dayPanelModalEl && dayPanelModalEl.open) {
         closeDayPanelModal();
       }
@@ -221,6 +226,10 @@
     });
 
     closeBookingModalBtn.addEventListener('click', () => {
+      if (isCalendarPage) {
+        closeBookingView();
+        return;
+      }
       bookingModal.close();
     });
 
@@ -313,7 +322,13 @@
         render();
 
         setBookingFormMessage('Réservation ajoutée avec succès.', 'success');
-        window.setTimeout(() => bookingModal.close(), 700);
+        window.setTimeout(() => {
+          if (isCalendarPage) {
+            closeBookingView();
+            return;
+          }
+          bookingModal.close();
+        }, 700);
       } catch (error) {
         setBookingFormMessage('Erreur réseau. Réessayez.', 'error');
       }
@@ -2660,6 +2675,21 @@
     dayPanelEl.hidden = false;
     dayPanelEl.removeAttribute('hidden');
 
+    if (isCalendarPage) {
+      calendarOverviewEl?.setAttribute('hidden', 'hidden');
+      dayPanelModalEl.hidden = false;
+      dayPanelModalEl.removeAttribute('hidden');
+      dayPanelModalEl.setAttribute('open', 'open');
+      bookingModal?.removeAttribute('open');
+      bookingModal?.setAttribute('hidden', 'hidden');
+      document.body.classList.add('calendar-day-modal-open');
+      document.body.classList.remove('calendar-booking-view-open');
+      window.requestAnimationFrame(() => {
+        renderSelectedDayPanel();
+      });
+      return;
+    }
+
     if (typeof dayPanelModalEl.show === 'function') {
       if (!dayPanelModalEl.open) {
         dayPanelModalEl.show();
@@ -2678,6 +2708,14 @@
       return;
     }
 
+    if (isCalendarPage) {
+      dayPanelModalEl.removeAttribute('open');
+      dayPanelModalEl.setAttribute('hidden', 'hidden');
+      calendarOverviewEl?.removeAttribute('hidden');
+      document.body.classList.remove('calendar-day-modal-open', 'calendar-booking-view-open');
+      return;
+    }
+
     if (typeof dayPanelModalEl.close === 'function') {
       if (dayPanelModalEl.open) {
         dayPanelModalEl.close();
@@ -2686,6 +2724,32 @@
       dayPanelModalEl.removeAttribute('open');
     }
     document.body.classList.remove('calendar-day-modal-open');
+  }
+
+  function openBookingView() {
+    if (!bookingModal || !isCalendarPage) {
+      return;
+    }
+
+    calendarOverviewEl?.setAttribute('hidden', 'hidden');
+    dayPanelModalEl?.removeAttribute('open');
+    dayPanelModalEl?.setAttribute('hidden', 'hidden');
+    bookingModal.hidden = false;
+    bookingModal.removeAttribute('hidden');
+    bookingModal.setAttribute('open', 'open');
+    document.body.classList.add('calendar-booking-view-open');
+    document.body.classList.remove('calendar-day-modal-open');
+  }
+
+  function closeBookingView() {
+    if (!bookingModal || !isCalendarPage) {
+      return;
+    }
+
+    bookingModal.removeAttribute('open');
+    bookingModal.setAttribute('hidden', 'hidden');
+    document.body.classList.remove('calendar-booking-view-open');
+    openDayPanelModal();
   }
 
   function getDefaultSelectionForMonth(monthDate, currentDate) {

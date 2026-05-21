@@ -49,108 +49,108 @@
         </section>
 
       </div>
+
+      <dialog id="dayPanelModal" class="calendar-day-modal">
+        <section id="dayPanel" class="day-panel calendar-day-modal-panel" hidden>
+          <div class="calendar-day-modal-head">
+            <button id="closeDayPanelModalBtn" class="calendar-day-modal-close calendar-back-btn" type="button" aria-label="Retour au calendrier">Retour</button>
+          </div>
+
+          <div class="day-panel-head">
+            <h2 id="selectedDateLabel">Jour sélectionné</h2>
+            <p id="selectedDateSubtext" class="subtitle">Sélectionnez une date dans le calendrier.</p>
+          </div>
+
+          <div id="daySummary" class="day-summary"></div>
+          <div id="timelinePlaceHeaders" class="timeline-place-headers" hidden></div>
+          <div class="timeline-legend" aria-label="Légende du planificateur">
+            <span class="timeline-legend__item">
+              <i class="timeline-legend__dot booking"></i>
+              Réservation
+            </span>
+            <span class="timeline-legend__item">
+              <i class="timeline-legend__dot private"></i>
+              Réservation privée
+            </span>
+            <span class="timeline-legend__item">
+              <i class="timeline-legend__dot blocked"></i>
+              Blocage
+            </span>
+          </div>
+          <div id="timelineContainer" class="timeline-container"></div>
+
+          {% if user_can_book %}
+          <div class="actions booking-actions">
+            <button id="addBookingBtn" class="btn primary" type="button">Ajouter une réservation</button>
+          </div>
+          {% else %}
+          <p class="subtitle">Connectez-vous avec un compte utilisateur pour ajouter une réservation.</p>
+          {% endif %}
+        </section>
+      </dialog>
+
+      <dialog id="bookingModal" class="user-modal booking-modal">
+        <div class="user-modal-head">
+          <h3>Ajouter une réservation</h3>
+          <button id="closeBookingModalBtn" class="btn calendar-back-btn" type="button">Retour</button>
+        </div>
+        <div class="user-modal-content">
+          <div id="bookingFormMessage"></div>
+          <div id="bookingRules" class="booking-rules" aria-live="polite"></div>
+          <form id="bookingForm" class="reservation-config-form booking-form-grid" novalidate>
+            <div class="config-row booking-field booking-field-date">
+              <label for="bookingDateInput">Date</label>
+              <input id="bookingDateInput" type="date" name="date" required>
+            </div>
+
+            <div class="config-row booking-field booking-field-start">
+              <label for="bookingStartInput">Heure de début</label>
+              <div class="time-input-wrap">
+                <input id="bookingStartInput" type="time" name="start_time" required>
+                <div class="time-arrows">
+                  <button class="time-arrow-btn" type="button" data-target="bookingStartInput" data-direction="up" aria-label="Augmenter l'heure de début">&#9650;</button>
+                  <button class="time-arrow-btn" type="button" data-target="bookingStartInput" data-direction="down" aria-label="Diminuer l'heure de début">&#9660;</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="config-row booking-field booking-field-end">
+              <label for="bookingEndInput">Heure de fin</label>
+              <div class="time-input-wrap">
+                <input id="bookingEndInput" type="time" name="end_time" required>
+                <div class="time-arrows">
+                  <button class="time-arrow-btn" type="button" data-target="bookingEndInput" data-direction="up" aria-label="Augmenter l'heure de fin">&#9650;</button>
+                  <button class="time-arrow-btn" type="button" data-target="bookingEndInput" data-direction="down" aria-label="Diminuer l'heure de fin">&#9660;</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="config-row booking-field booking-field-title">
+              <label for="bookingTitleInput">Titre (optionnel)</label>
+              <input id="bookingTitleInput" type="text" name="title" maxlength="120" placeholder="Ex: Entraînement">
+            </div>
+
+            {% if reservation_config_json.allow_companion_booking %}
+            <div id="bookingCompanionWrap" class="config-row booking-field booking-field-companions">
+              <label for="bookingCompanionCountInput">Nombre d’accompagnateurs</label>
+              <input id="bookingCompanionCountInput" type="number" min="0" step="1" value="0" name="companion_count">
+              <p class="field-help">Le total de personnes = vous + accompagnateurs.</p>
+            </div>
+            {% endif %}
+
+            <div id="bookingPrivateWrap" class="config-row checkbox-row booking-field booking-field-private">
+              <label for="bookingPrivateInput">Réservation privée (salle non partagée)</label>
+              {{ toggle('bookingPrivateInput', 'is_private', False) }}
+            </div>
+
+            <div class="actions booking-form-actions">
+              <button class="btn primary" type="submit">Confirmer la réservation</button>
+            </div>
+          </form>
+        </div>
+      </dialog>
     </div>
   </div>
-
-  <dialog id="dayPanelModal" class="calendar-day-modal">
-    <section id="dayPanel" class="day-panel calendar-day-modal-panel" hidden>
-      <div class="calendar-day-modal-head">
-        <button id="closeDayPanelModalBtn" class="calendar-day-modal-close" type="button" aria-label="Fermer la fenêtre">×</button>
-      </div>
-
-      <div class="day-panel-head">
-        <h2 id="selectedDateLabel">Jour sélectionné</h2>
-        <p id="selectedDateSubtext" class="subtitle">Sélectionnez une date dans le calendrier.</p>
-      </div>
-
-      <div id="daySummary" class="day-summary"></div>
-      <div id="timelinePlaceHeaders" class="timeline-place-headers" hidden></div>
-      <div class="timeline-legend" aria-label="Légende du planificateur">
-        <span class="timeline-legend__item">
-          <i class="timeline-legend__dot booking"></i>
-          Réservation
-        </span>
-        <span class="timeline-legend__item">
-          <i class="timeline-legend__dot private"></i>
-          Réservation privée
-        </span>
-        <span class="timeline-legend__item">
-          <i class="timeline-legend__dot blocked"></i>
-          Blocage
-        </span>
-      </div>
-      <div id="timelineContainer" class="timeline-container"></div>
-
-      {% if user_can_book %}
-      <div class="actions booking-actions">
-        <button id="addBookingBtn" class="btn primary" type="button">Ajouter une réservation</button>
-      </div>
-      {% else %}
-      <p class="subtitle">Connectez-vous avec un compte utilisateur pour ajouter une réservation.</p>
-      {% endif %}
-    </section>
-  </dialog>
-
-  <dialog id="bookingModal" class="user-modal booking-modal">
-    <div class="user-modal-head">
-      <h3>Ajouter une réservation</h3>
-      <button id="closeBookingModalBtn" class="btn" type="button">Fermer</button>
-    </div>
-    <div class="user-modal-content">
-      <div id="bookingFormMessage"></div>
-      <div id="bookingRules" class="booking-rules" aria-live="polite"></div>
-      <form id="bookingForm" class="reservation-config-form booking-form-grid" novalidate>
-        <div class="config-row booking-field booking-field-date">
-          <label for="bookingDateInput">Date</label>
-          <input id="bookingDateInput" type="date" name="date" required>
-        </div>
-
-        <div class="config-row booking-field booking-field-start">
-          <label for="bookingStartInput">Heure de début</label>
-          <div class="time-input-wrap">
-            <input id="bookingStartInput" type="time" name="start_time" required>
-            <div class="time-arrows">
-              <button class="time-arrow-btn" type="button" data-target="bookingStartInput" data-direction="up" aria-label="Augmenter l'heure de début">&#9650;</button>
-              <button class="time-arrow-btn" type="button" data-target="bookingStartInput" data-direction="down" aria-label="Diminuer l'heure de début">&#9660;</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="config-row booking-field booking-field-end">
-          <label for="bookingEndInput">Heure de fin</label>
-          <div class="time-input-wrap">
-            <input id="bookingEndInput" type="time" name="end_time" required>
-            <div class="time-arrows">
-              <button class="time-arrow-btn" type="button" data-target="bookingEndInput" data-direction="up" aria-label="Augmenter l'heure de fin">&#9650;</button>
-              <button class="time-arrow-btn" type="button" data-target="bookingEndInput" data-direction="down" aria-label="Diminuer l'heure de fin">&#9660;</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="config-row booking-field booking-field-title">
-          <label for="bookingTitleInput">Titre (optionnel)</label>
-          <input id="bookingTitleInput" type="text" name="title" maxlength="120" placeholder="Ex: Entraînement">
-        </div>
-
-        {% if reservation_config_json.allow_companion_booking %}
-        <div id="bookingCompanionWrap" class="config-row booking-field booking-field-companions">
-          <label for="bookingCompanionCountInput">Nombre d’accompagnateurs</label>
-          <input id="bookingCompanionCountInput" type="number" min="0" step="1" value="0" name="companion_count">
-          <p class="field-help">Le total de personnes = vous + accompagnateurs.</p>
-        </div>
-        {% endif %}
-
-        <div id="bookingPrivateWrap" class="config-row checkbox-row booking-field booking-field-private">
-          <label for="bookingPrivateInput">Réservation privée (salle non partagée)</label>
-          {{ toggle('bookingPrivateInput', 'is_private', False) }}
-        </div>
-
-        <div class="actions booking-form-actions">
-          <button class="btn primary" type="submit">Confirmer la réservation</button>
-        </div>
-      </form>
-    </div>
-  </dialog>
 
   <script>
     window.SUNNYVIBE_OPENING_HOURS = {{ opening_hours_json|tojson }};

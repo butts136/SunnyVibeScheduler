@@ -13240,20 +13240,20 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
 }
 
 body.calendar-body.calendar-day-modal-open .calendar-day-modal {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 280px;
-  z-index: 1000;
-  width: calc(100vw - 280px);
+  position: relative;
+  inset: auto;
+  z-index: auto;
+  width: 100%;
   max-width: none;
   margin: 0;
-  height: 100vh;
-  height: 100dvh;
+  height: 100%;
   max-height: none;
   border: 0;
   border-radius: 0;
+  padding: 0;
+  color: var(--text);
+  background: transparent;
+  box-shadow: none;
 }
 
 body.calendar-body.calendar-day-modal-open .calendar-day-modal-panel {
@@ -13358,10 +13358,8 @@ body.calendar-body.calendar-day-modal-open .time-divider.is-subtick {
 
 @media (max-width: 980px) {
   body.calendar-body.calendar-day-modal-open .calendar-day-modal {
-    top: calc(3.55rem + env(safe-area-inset-top, 0px));
-    left: 0;
-    width: 100vw;
-    height: calc(100dvh - 3.55rem - env(safe-area-inset-top, 0px));
+    width: 100%;
+    height: 100%;
   }
 }
 
@@ -13432,6 +13430,51 @@ body.calendar-body.calendar-day-modal-open .time-divider.is-subtick {
   max-width: 760px;
   max-height: min(92vh, 820px);
   overflow: hidden;
+}
+
+body.calendar-body .calendar-main > dialog[open] {
+  display: block;
+}
+
+body.calendar-body .calendar-main > dialog[hidden],
+body.calendar-body .calendar-main > [hidden] {
+  display: none !important;
+}
+
+body.calendar-body.calendar-booking-view-open .booking-modal {
+  position: relative;
+  inset: auto;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: clamp(0.7rem, 1.4vw, 1rem);
+  border: 0;
+  border-radius: 0;
+  color: var(--text);
+  background: transparent;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+body.calendar-body.calendar-booking-view-open .booking-modal .user-modal-content {
+  min-height: 0;
+  max-height: none;
+  overflow: auto;
+}
+
+body.calendar-body.calendar-booking-view-open .booking-form-grid {
+  align-content: start;
+}
+
+body.calendar-body .calendar-back-btn {
+  width: auto;
+  min-height: 38px;
+  padding: 0.45rem 0.86rem;
+  border-radius: 999px;
 }
 
 .booking-modal .user-modal-content {
