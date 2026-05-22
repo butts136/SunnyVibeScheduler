@@ -1111,6 +1111,72 @@ img, svg { display: block; max-width: 100%; }
   }
 }
 
+/* Final Bookings layout overrides: this page must behave like SunnyGym and use
+   the full viewport without an extra dashboard card around the calendar. */
+body.admin-bookings-body .layout.app-layout > .admin-main,
+body.admin-bookings-body.bookings-manager-open .layout.app-layout > .admin-main {
+  height: 100dvh;
+  max-height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+body.admin-bookings-body .admin-card,
+body.admin-bookings-body.bookings-manager-open .admin-card {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+body.admin-bookings-body #bookings-panel .bookings-overview-panel,
+body.admin-bookings-body #bookings-panel .bookings-overview-calendar,
+body.admin-bookings-body #bookings-panel .reservation-calendar-wrapper,
+body.admin-bookings-body #bookings-panel .day-grid {
+  min-height: 0;
+  height: 100%;
+  max-height: 100%;
+}
+
+body.admin-bookings-body #bookings-panel .bookings-overview-calendar {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: hidden;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+
+body.admin-bookings-body #bookings-panel .day-grid {
+  grid-auto-rows: minmax(0, 1fr);
+}
+
+body.admin-bookings-body #bookings-panel .bookings-overview-calendar .day-cell,
+body.admin-bookings-body #bookings-panel .day-cell {
+  min-height: 0;
+  height: 100%;
+}
+
+body.admin-bookings-body #bookings-panel .booking-manager-grid .day-panel,
+body.admin-bookings-body #bookings-panel .booking-manager-grid .bookings-details-panel {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+@media (max-width: 980px) {
+  body.admin-bookings-body .layout.app-layout > .admin-main,
+  body.admin-bookings-body.bookings-manager-open .layout.app-layout > .admin-main {
+    padding:
+      calc(var(--admin-bookings-mobile-nav-offset, 64px) + env(safe-area-inset-top, 0px))
+      clamp(0.16rem, 1vw, 0.38rem)
+      calc(0.22rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
 /* Mobile access hardening: keep navigation, dialogs and dense admin grids usable. */
 .left-nav-logout-form {
   display: contents;
@@ -13212,6 +13278,262 @@ body.admin-body #bookings-panel .booking-manager-grid .bookings-details-panel {
   body.admin-body.bookings-manager-open #bookings-panel .booking-item-time strong,
   body.admin-body.bookings-manager-open #bookings-panel .booking-item-value {
     font-size: 0.86rem;
+  }
+}
+
+body.admin-bookings-body {
+  overflow: hidden;
+}
+
+body.admin-bookings-body .layout.app-layout {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+  align-items: stretch;
+}
+
+body.admin-bookings-body .layout.app-layout > .admin-main {
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
+  min-height: 0;
+  padding: clamp(0.42rem, 0.9vw, 0.8rem);
+  overflow: hidden;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+}
+
+body.admin-bookings-body .admin-card {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+body.admin-bookings-body .admin-card > h1 {
+  display: none;
+}
+
+body.admin-bookings-body .admin-card > .alert {
+  flex: 0 0 auto;
+  margin: 0 0 0.5rem;
+}
+
+body.admin-bookings-body #bookings-panel {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  gap: 0;
+}
+
+body.admin-bookings-body #bookings-panel .bookings-overview-panel,
+body.admin-bookings-body #bookings-panel .booking-manager-panel {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+body.admin-bookings-body #bookings-panel .bookings-overview-panel {
+  display: flex;
+  min-height: 0;
+}
+
+body.admin-bookings-body #bookings-panel .bookings-overview-calendar,
+body.admin-bookings-body #bookings-panel .calendar-panel {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: clamp(0.36rem, 0.8vw, 0.62rem);
+}
+
+body.admin-bookings-body #bookings-panel .calendar-nav {
+  flex: 0 0 auto;
+}
+
+body.admin-bookings-body #bookings-panel .month-label {
+  font-size: clamp(1.05rem, 2.2vw, 1.7rem);
+  line-height: 1.08;
+}
+
+body.admin-bookings-body #bookings-panel .reservation-calendar-wrapper {
+  min-height: 0;
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: clamp(0.28rem, 0.65vw, 0.52rem);
+  overflow: hidden;
+}
+
+body.admin-bookings-body #bookings-panel .weekdays,
+body.admin-bookings-body #bookings-panel .day-grid {
+  gap: clamp(0.22rem, 0.55vw, 0.45rem);
+}
+
+body.admin-bookings-body #bookings-panel .day-grid {
+  min-height: 0;
+  height: 100%;
+  grid-auto-rows: minmax(0, 1fr);
+}
+
+body.admin-bookings-body #bookings-panel .day-cell {
+  height: 100%;
+  min-height: 0;
+  padding: clamp(0.28rem, 0.7vw, 0.58rem);
+  border-radius: clamp(9px, 1.1vw, 15px);
+}
+
+body.admin-bookings-body #bookings-panel .calendar-legend {
+  flex: 0 0 auto;
+  margin: 0;
+  gap: 0.38rem 0.7rem;
+}
+
+body.admin-bookings-body #bookings-panel .booking-manager-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+body.admin-bookings-body #bookings-panel .booking-manager-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  grid-template-rows: minmax(0, 1fr);
+  align-items: stretch;
+  align-content: stretch;
+  overflow: hidden;
+}
+
+body.admin-bookings-body #bookings-panel .booking-manager-grid .day-panel,
+body.admin-bookings-body #bookings-panel .booking-manager-grid .bookings-details-panel {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body.admin-bookings-body #bookings-panel .booking-manager-grid .bookings-details-panel {
+  overflow: hidden;
+}
+
+body.admin-bookings-body #bookings-panel .booking-manager-grid .day-panel {
+  gap: 0.45rem;
+}
+
+body.admin-bookings-body #bookings-panel .timeline-container {
+  flex: 1 1 auto;
+  min-height: 0;
+  border-radius: 0;
+}
+
+@media (min-width: 981px) {
+  body.admin-bookings-body .layout.app-layout > .admin-main,
+  body.admin-body.admin-bookings-body.bookings-manager-open .layout.app-layout > .admin-main {
+    position: static;
+    inset: auto;
+    width: auto;
+    height: 100dvh;
+    max-height: 100dvh;
+  }
+
+  body.admin-bookings-body #bookings-panel .day-cell {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 980px) {
+  body.admin-bookings-body {
+    --admin-bookings-mobile-nav-offset: 64px;
+    height: 100dvh;
+  }
+
+  body.admin-bookings-body .layout.app-layout {
+    display: block;
+    height: 100dvh;
+    min-height: 100dvh;
+  }
+
+  body.admin-bookings-body .layout.app-layout > .admin-main {
+    width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    padding:
+      calc(var(--admin-bookings-mobile-nav-offset) + env(safe-area-inset-top, 0px))
+      clamp(0.16rem, 1vw, 0.38rem)
+      calc(0.22rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  body.admin-bookings-body #bookings-panel .bookings-overview-calendar {
+    gap: 0.34rem;
+  }
+
+  body.admin-bookings-body #bookings-panel .nav-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+  }
+
+  body.admin-bookings-body #bookings-panel .month-label {
+    font-size: clamp(1rem, 5vw, 1.32rem);
+  }
+
+  body.admin-bookings-body #bookings-panel .weekdays span {
+    min-height: 22px;
+    font-size: 0.64rem;
+  }
+
+  body.admin-bookings-body #bookings-panel .day-cell {
+    padding: clamp(0.2rem, 1.2vw, 0.38rem);
+  }
+
+  body.admin-bookings-body #bookings-panel .day-cell .date-label {
+    font-size: clamp(0.72rem, 3vw, 0.92rem);
+  }
+
+  body.admin-bookings-body #bookings-panel .day-cell .hours-label,
+  body.admin-bookings-body #bookings-panel .day-cell .booking-count-label {
+    font-size: clamp(0.54rem, 2.35vw, 0.7rem);
+    line-height: 1.05;
+  }
+
+  body.admin-bookings-body #bookings-panel .calendar-legend {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  body.admin-bookings-body {
+    --admin-bookings-mobile-nav-offset: 60px;
   }
 }
 

@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="{{ url_for('static', filename='favicon.png', v=styles_version) }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v=styles_version) }}">
 </head>
-<body data-ui-mode="dark" data-theme="modern-gradient" class="admin-body with-left-nav">
+<body data-ui-mode="dark" data-theme="modern-gradient" class="admin-body with-left-nav {% if active_tab|default('') == 'bookings-panel' %}admin-bookings-body{% endif %}">
   <div class="layout app-layout">
     {% include '_left_nav.html' %}
 
