@@ -3,11 +3,19 @@
 {% block admin_panel %}
         <section id="my-account-panel" class="admin-section tab-panel is-active">
           <div class="my-account-layout">
-            <section class="settings-section-card my-account-card">
-              <div class="settings-section-head">
-                <div>
-                  <h2>Mon compte</h2>
-                  <p class="subtitle">Consultez les informations visibles sur votre fiche et vos statistiques d'utilisation.</p>
+            {% set account_name = profile.full_name or profile.username or profile.email or 'Mon compte' %}
+            {% set account_initial = (profile.first_name or profile.full_name or profile.username or profile.email or 'S')[:1] %}
+
+            <section class="settings-section-card my-account-card my-account-profile-card">
+              <div class="account-hero">
+                <div class="account-avatar" aria-hidden="true">{{ account_initial|upper }}</div>
+                <div class="account-hero-main">
+                  <span class="account-kicker">Profil membre</span>
+                  <h2>{{ account_name }}</h2>
+                  <p>{{ profile.email if profile.email else 'Aucun courriel enregistré' }}</p>
+                </div>
+                <div class="account-state-pill {% if profile.is_blocked %}is-blocked{% else %}is-active{% endif %}">
+                  {{ 'Compte bloqué' if profile.is_blocked else 'Compte actif' }}
                 </div>
               </div>
 
@@ -32,15 +40,15 @@
                     <p class="field-help">Les données affichées ici correspondent à ce qui est visible dans votre fiche.</p>
                   </div>
                 </div>
-              <div class="user-details-grid account-details-grid">
-                <div><strong>Prénom</strong><span>{{ profile.first_name if profile.first_name else '-' }}</span></div>
-                <div><strong>Nom</strong><span>{{ profile.last_name if profile.last_name else '-' }}</span></div>
-                <div><strong>Nom d'utilisateur</strong><span>{{ profile.username if profile.username else '-' }}</span></div>
-                <div><strong>Nom complet</strong><span>{{ profile.full_name if profile.full_name else '-' }}</span></div>
-                <div><strong>Courriel</strong><span>{{ profile.email if profile.email else '-' }}</span></div>
-                <div><strong>Téléphone</strong><span>{{ profile.phone if profile.phone else '-' }}</span></div>
-                <div><strong>Créé le</strong><span>{{ profile.created_at if profile.created_at else '-' }}</span></div>
-              </div>
+                <div class="account-details-grid">
+                  <div><strong>Prénom</strong><span>{{ profile.first_name if profile.first_name else '-' }}</span></div>
+                  <div><strong>Nom</strong><span>{{ profile.last_name if profile.last_name else '-' }}</span></div>
+                  <div><strong>Nom d'utilisateur</strong><span>{{ profile.username if profile.username else '-' }}</span></div>
+                  <div><strong>Nom complet</strong><span>{{ profile.full_name if profile.full_name else '-' }}</span></div>
+                  <div><strong>Courriel</strong><span>{{ profile.email if profile.email else '-' }}</span></div>
+                  <div><strong>Téléphone</strong><span>{{ profile.phone if profile.phone else '-' }}</span></div>
+                  <div><strong>Créé le</strong><span>{{ profile.created_at if profile.created_at else '-' }}</span></div>
+                </div>
               </section>
             </section>
 
@@ -56,16 +64,21 @@
               </div>
 
               <section class="account-history-section">
-                <h3>Historique récent</h3>
                 <div class="account-booking-stats">
-                  <div><strong>Limite réservations</strong><span>{{ profile.reservation_limit if profile.reservation_limit is not none else 'Aucune' }}</span></div>
-                  <div><strong>Total réservations</strong><span>{{ profile.booking_count }}</span></div>
-                  <div><strong>Présences</strong><span>{{ profile.present_count }}</span></div>
-                  <div><strong>Pas venue</strong><span>{{ profile.no_show_count }}</span></div>
-                  <div><strong>Fiabilité</strong><span>{% if profile.reliability_rate is not none %}{{ profile.reliability_rate }}%{% else %}Aucune donnée{% endif %}</span></div>
-                  <div><strong>Dernière réservation</strong><span>{{ profile.last_booking_start if profile.last_booking_start else '-' }}</span></div>
-                  <div><strong>Prochaine réservation</strong><span>{{ profile.next_booking_start if profile.next_booking_start else 'Aucune' }}</span></div>
+                  <div class="account-stat-card"><strong>Limite</strong><span>{{ profile.reservation_limit if profile.reservation_limit is not none else 'Aucune' }}</span></div>
+                  <div class="account-stat-card"><strong>Total</strong><span>{{ profile.booking_count }}</span></div>
+                  <div class="account-stat-card is-positive"><strong>Présences</strong><span>{{ profile.present_count }}</span></div>
+                  <div class="account-stat-card is-warning"><strong>Absences</strong><span>{{ profile.no_show_count }}</span></div>
+                  <div class="account-stat-card is-featured"><strong>Fiabilité</strong><span>{% if profile.reliability_rate is not none %}{{ profile.reliability_rate }}%{% else %}Aucune donnée{% endif %}</span></div>
+                  <div class="account-stat-card"><strong>Dernière</strong><span>{{ profile.last_booking_start if profile.last_booking_start else '-' }}</span></div>
+                  <div class="account-stat-card"><strong>Prochaine</strong><span>{{ profile.next_booking_start if profile.next_booking_start else 'Aucune' }}</span></div>
                 </div>
+
+                <div class="account-section-title">
+                  <h3>Historique récent</h3>
+                  <span>{{ profile.recent_bookings|length }} affichée{% if profile.recent_bookings|length > 1 %}s{% endif %}</span>
+                </div>
+
                 {% if profile.recent_bookings %}
                 <div class="account-history-list">
                   {% for booking in profile.recent_bookings %}
